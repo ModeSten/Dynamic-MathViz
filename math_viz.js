@@ -77,6 +77,8 @@ class CanvasObj {
 
     update_canvas(){
 
+        this.notify_children();
+
     }
 
     add_child( obj, func){
@@ -127,6 +129,7 @@ class ChartObj {
             this.assigne_to_canvas( parentCanvas );
         }
 
+        this.set_dependents();
 
     }
 
@@ -195,16 +198,12 @@ class ChartObj {
     // assignr chart to dive container and create svg ellement
     assigne_to_canvas( targetCanvas ){
 
-
         this.canvas = targetCanvas;
         this.set_dependents();
-
         this.xAxis = d3.axisBottom(this.xScale); 
         this.yAxis = d3.axisLeft(this.yScale); 
-
+        this.canvas.add_child( this, () => { this.set_dependents(); this.svg_init() } );
         this.svg_init();
-
-        this.canvas.add_child( this, () => { this.svg_init() } );
 
     }
 
@@ -223,31 +222,32 @@ class ChartObj {
             .attr("transform", `translate(${this.yAxisOfset},0)`)
             .call(this.yAxis);
 
-    // Axes label
+        // Axes label
 
-    // x label
-    this.canvas.svg.append("text")
-        .attr("class", "x-label")
-        .attr("text-anchor", "end")
-        .attr("x",  -15)
-        .attr("y", this.xAxisOfset)
-        .text("x");
+        // x label
+        this.canvas.svg.append("text")
+            .attr("class", `x-label`)
+            .attr("text-anchor", "end")
+            .attr("x",  -15)
+            .attr("y", this.xAxisOfset)
+            .text("x");
 
-    // y label
-    this.canvas.svg.append("text")  
-        .attr("class", "y-label")
-        .attr("text-anchor", "end")
-        .attr("x", this.yAxisOfset)
-        .attr("y", -15)
-        .html("y");
-
+        // y label
+        this.canvas.svg.append("text")  
+            .attr("class", "y-label")
+            .attr("text-anchor", "end")
+            .attr("x", this.yAxisOfset)
+            .attr("y", -15)
+            .html("y");
 
     }
+
 
     // remove from canvas (svg)
     remove_from_canvas(){
 
-
+        this.canvas.svg.remove(d3.selectAll("."+this.id));
+        this.canvas.removeChild(this);
 
     }
 
@@ -275,12 +275,11 @@ function test_canvas(){
         width = 450 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
 
-    let canvas = new CanvasObj(width, height, margin, "canvas1", [-6,6], [-6,6]);
-    let chart = new ChartObj( "chart1" );
-    chart.assigne_to_canvas(canvas);
+    let canvas = new CanvasObj(width, height, margin, "canvas1", [-6,6], [-6,6], "viz1");
+    let chart = new ChartObj( "chart1", canvas );
+
+    canvas.remove_from_div();
     canvas.assign_to_div("viz1");
-
-
 
 }
 
