@@ -13,8 +13,9 @@ class CanvasObj {
 
         this.ID = id;
         this.parentId; // div container for svg
+        this.children = [];     // canvas child objects / elements [ class-objet, callback]
 
-        this.svg = null;
+        this.svg = null; 
 
         this.width = width;     // svg height (pixels)
         this.height = height;   // svg width  (pixels)
@@ -32,6 +33,7 @@ class CanvasObj {
             this.assign_to_div( parentId );
         }
 
+
     }
 
     set_dependent_params(){
@@ -41,6 +43,7 @@ class CanvasObj {
 
     }
 
+    // assign canvas to div and create svg element
     assign_to_div ( targetDivId ){
 
         this.parentId = targetDivId;
@@ -52,6 +55,8 @@ class CanvasObj {
                 .attr("height", this.height + this.margin.top + this.margin.bottom)
             .append("g")
                 .attr("transform", "translate("+ this.margin.left + "," + this.margin.top +")");
+
+        this.notify_children();
 
     }
 
@@ -66,11 +71,33 @@ class CanvasObj {
         this.parent = null;
         this.svg = null;
 
+        this.notify_children();
+
     }
 
     update_canvas(){
 
     }
+
+    add_child( obj, func){
+
+        this.children.push( {element: obj, callback: func} )
+
+    }
+
+    removeChild( obj ){
+
+        this.children = this.children.filter( (e) => {e.element === obj} );
+
+    }
+
+    // notify change to canvas (ex assignment to div)
+    notify_children(){
+
+        this.children.forEach( (c) => { c.callback();} );
+
+    }
+
 
 }
 
@@ -79,8 +106,8 @@ class ChartObj {
 
     constructor ( id, parentCanvas=null, xRange = null, yRange = null){
 
-        this.canvas = null;    // containing canvas (svg) id
-        this.ID = id;               
+        this.canvas = parentCanvas;    // containing canvas (svg) id
+        this.id = id;               
 
         this.xRange = xRange; // chart x value range; if null, use canvas x-Range
         this.yRange = yRange; // chart y value range; if null, use canvas y-range
@@ -168,11 +195,25 @@ class ChartObj {
     // assignr chart to dive container and create svg ellement
     assigne_to_canvas( targetCanvas ){
 
+
         this.canvas = targetCanvas;
         this.set_dependents();
 
         this.xAxis = d3.axisBottom(this.xScale); 
         this.yAxis = d3.axisLeft(this.yScale); 
+
+        this.svg_init();
+
+        this.canvas.add_child( this, () => { this.svg_init() } );
+
+    }
+
+
+    svg_init(){
+
+        if (this.canvas.svg === null){
+            return;
+        }
 
         this.canvas.svg.append("g")
             .attr("transform", `translate(0,${this.xAxisOfset})`)
@@ -234,14 +275,12 @@ function test_canvas(){
         width = 450 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
 
-    let canvas = new CanvasObj(width, height, margin, "canvas1", [-4,4], [-4,4], "viz1");
+    let canvas = new CanvasObj(width, height, margin, "canvas1", [-6,6], [-6,6]);
     let chart = new ChartObj( "chart1" );
-
     chart.assigne_to_canvas(canvas);
-
-    canvas.remove_from_div();
     canvas.assign_to_div("viz1");
-    chart.assigne_to_canvas(canvas);
+
+
 
 }
 
