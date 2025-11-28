@@ -1,5 +1,78 @@
 
 /* mathematics visualisation, generci functions and classes */
+/* 
+dependencies: 
+- D3 
+*/
+
+
+// visualisation (SVG) container (base object)
+class CanvasObj {
+
+    constructor ( width, height, margin, id, xRange, yRange, parentId=NaN){
+
+        this.ID = id;
+        this.parentId; // div container for svg
+
+        this.svg = NaN;
+
+        this.width = width;     // svg height (pixels)
+        this.height = height;   // svg width  (pixels)
+        this.margin = margin;   // svg margins (pixels); top, bottom, left, right
+
+        this.xRange = xRange;   // x value range
+        this.yRange = yRange;   // y value range
+
+        this.xScale;
+        this.yScale;
+
+        this.set_dependent_params();
+
+        if(parentId !== NaN ){
+            this.assign_to_div( parentId );
+        }
+
+    }
+
+    set_dependent_params(){
+
+        this.xScale = d3.scaleLinear( this.xRange, [0, this.width] );
+        this.yScale = d3.scaleLinear( this.xRange, [this.height] );
+
+    }
+
+    assign_to_div ( targetDivId ){
+
+        this.parentId = targetDivId;
+
+        this.svg = d3.select("#"+targetDivId)
+            .append("svg")
+                .attr("id", this.ID)
+                .attr("width", this.width + this.margin.left + this.margin.right)
+                .attr("height", this.height + this.margin.top + this.margin.bottom)
+            .append("g")
+                .attr("transform", "translate("+ this.margin.left + "," + this.margin.top +")");
+
+    }
+
+
+    remove_from_div (){
+
+        let container = document.getElementById(this.parentId);   // get conatining div
+        let element = document.getElementById(this.ID);         // get svg element
+
+        container.removeChild(element);             
+
+        this.parent = NaN;
+        this.svg = NaN;
+
+    }
+
+    update_canvas(){
+
+    }
+
+}
 
 
 class ChartObj {
@@ -151,4 +224,17 @@ chart2 = new ChartObj( width, height, margin, 4, 4, "tan-chart2", NaN, -4, -4);
 
 }
 
-test_chart();
+function test_canvas(){
+
+    const margin = { top: 60, right: 60, bottom: 50, left: 60 },
+        width = 450 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+    let canvas = new CanvasObj(width, height, margin, "canvas1", [0,5], [0,5], "viz1");
+    canvas.remove_from_div();
+    canvas.assign_to_div("viz1");
+
+}
+
+
+test_canvas();
