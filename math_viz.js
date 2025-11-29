@@ -287,6 +287,16 @@ class GraphObj{
 
     }
 
+    update_graph_function( fx=this.fx, xRange=this.xRange ){
+
+        this.fx = fx;
+        this.xRange =xRange;
+
+        this.get_data();
+        this.svg_init();
+
+    }
+
 
     get_data(){
 
@@ -346,7 +356,8 @@ class GraphObj{
             .append("path")
             .attr("class", this.id)
         .merge(u)
-            .transition(1000)
+            .transition()
+            .duration(500)
             .attr("d", line)
                 .attr("fill", "none")
                 .attr("stroke", "black")
@@ -392,11 +403,14 @@ function test_graph(){
         width = 450 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
 
-    let canvas = new CanvasObj(width, height, margin, "canvas1", [-5, 5], [-6, 6], "viz1");
-    let graph = new GraphObj("graph1", (x)=>{ return x**2 }, [-2, 2], canvas);
+    let canvas = new CanvasObj(width, height, margin, "canvas1", [-6, 6], [-6, 6]);
+    let graph = new GraphObj("graph1", (x)=>{ return Math.sin(x) }, [-4, 4], canvas);
     let chart = new ChartObj("chart1", canvas);
 
-    graph.remove_from_canvas();
+    //graph.update_graph_function(graph.fx, [-4, 4]);
+
+    let btn = document.getElementById("testBtn");
+    btn.addEventListener("click", ()=>{graph.update_graph_function((x)=>{return 3*Math.sin(x)}); canvas.assign_to_div("viz1");})
 
 }
 
