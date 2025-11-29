@@ -6,13 +6,13 @@ dependencies:
 */
 
 
-// visualisation (SVG) container (base object)
+// Visualization object: holds common parameters and svg element
 class CanvasObj {
 
     constructor ( width, height, margin, id, xRange, yRange, parentId=null){
 
-        this.ID = id;
-        this.parentId; // div container for svg
+        this.ID = id;           // canvas id; also used as svg id
+        this.parentId;          // div container for svg
         this.children = [];     // canvas child objects / elements [ class-objet, callback]
 
         this.svg = null; 
@@ -104,6 +104,7 @@ class CanvasObj {
 }
 
 
+// kdrdinate system (axis)
 class ChartObj {
 
     constructor ( id, parentCanvas=null, xRange = null, yRange = null){
@@ -114,12 +115,8 @@ class ChartObj {
         this.xRange = xRange; // chart x value range; if null, use canvas x-Range
         this.yRange = yRange; // chart y value range; if null, use canvas y-range
 
-        this.xScale;    // chart x scale; set as dependent parameter
-        this.yScale;    // chart y scale; set as dependent parameter
-
         this.xAxisOfset;  // chart x (botom) axis ofset (from top)
         this.yAxisOfset;            // chart y (left) axis ofset (from left edge)
-
 
         this.canvas = null;                   // chart visual (svg) object
         if (parentCanvas !== null){     // create svg if target div is specified
@@ -263,6 +260,95 @@ class ChartObj {
 }
 
 
+class GraphObj{
+
+    constructor( id, fx, xRange, canvas=null, defines=(x)=>{ return x !== NaN } ){ 
+
+        this.id = id;
+        this.canvas;
+
+        this.fx = fx;           // graph function
+        this.xRange = xRange;   // graph value (x) range
+        this.data;
+        this.defines = defines;           // function specifing when graph is defined
+
+        this.get_data();
+
+        if (canvas !== null){
+            this.assigne_to_canvas(canvas);
+        }
+
+    }
+
+
+    get_data(){
+
+        this.data = []; // remove stored data
+        let y;
+
+        for( let x=this.xRange[0]; x <= this.xRange[1]; x+=0.1){
+
+            y = this.fx( x );
+            this.data.push( [x, y] );
+
+        }
+
+    }
+
+
+    assigne_to_canvas(canvas){
+
+        this.canvas = canvas;
+        canvas.add_child(this, (id, msg) => { this.svg_init() });
+
+        this.svg_init();
+
+    }
+
+
+    remove_from_canvas(){
+
+        if(this.canvas === null){
+            return
+        }
+
+        this.canvas.svg.selectAll("."+this.id).remove();
+        this.canvas.removeChild(this);
+        this.canvas = null;
+
+    }
+
+
+    svg_init(){
+
+        if(this.canvas === null || this.canvas.svg === null){
+            return
+        }
+
+        let u = this.canvas.svg.selectAll("."+this.id)
+            .data([this.data], (d)=>{return d.ser1});
+
+        let line = d3.line()
+            .x( (d) => {return this.canvas.xScale(d[0])} )
+            .y( (d) => {return this.canvas.yScale(d[1])} );
+
+        u.enter()
+            .append("path")
+            .attr("class", "."+this.id)
+        .merge(u)
+            .transition(1000)
+            .attr("d", line)
+                .attr("fill", "none")
+                .attr("stroke", "black")
+                .attr("stroke-width", 2.5);
+
+    }
+
+}
+
+
+
+
 function test_chart(){
 
 const margin = { top: 60, right: 60, bottom: 50, left: 60 },
@@ -284,12 +370,24 @@ function test_canvas(){
         height = 400 - margin.top - margin.bottom;
 
     let canvas = new CanvasObj(width, height, margin, "canvas1", [-6,6], [-6,6]);
-
     let chart = new ChartObj( "chart1", canvas);
-
     canvas.assign_to_div("viz1");
 
 }
 
 
-test_canvas();
+function test_graph(){
+
+    const margin = { top: 60, right: 60, bottom: 60, left: 60 },
+        width = 450 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+    let canvas = new CanvasObj(width, height, margin, "canvas1", [-5, 5], [-6, 6], "viz1");
+    let graph = new GraphObj("graph1", (x)=>{ return x**2 }, [-2, 2], canvas);
+    let chart = new ChartObj("chart1", canvas);
+
+
+}
+
+
+test_graph();
