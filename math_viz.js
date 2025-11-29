@@ -96,7 +96,7 @@ class CanvasObj {
     // notify change to canvas (ex assignment to div)
     notify_children(){
 
-        this.children.forEach( (c) => { c.callback();} );
+        this.children.forEach( (c) => { c.callback( this, "" );} );
 
     }
 
@@ -117,9 +117,6 @@ class ChartObj {
         this.xScale;    // chart x scale; set as dependent parameter
         this.yScale;    // chart y scale; set as dependent parameter
 
-        this.xAxis;     // chart x axis; set as dependent parameter
-        this.yAxis;     // chart y axis: set as dependent parameter
-
         this.xAxisOfset;  // chart x (botom) axis ofset (from top)
         this.yAxisOfset;            // chart y (left) axis ofset (from left edge)
 
@@ -129,37 +126,36 @@ class ChartObj {
             this.assigne_to_canvas( parentCanvas );
         }
 
-        this.set_dependents();
+    }
+
+    // get x & y scales based on value range and canvas size
+    get_scale(){
+
+        let xScale;
+        let yScale;
+
+        // if no value range specified, use canvas scale
+        if(this.xRange === null){   
+            this.xRange = this.canvas.xRange;
+        } 
+        if(this.yRange === null){
+            this.yRange = this.canvas.yRange;
+        }
+
+        xScale = d3.scaleLinear( this.xRange, [0, this.canvas.width] );
+        yScale = d3.scaleLinear( this.yRange, [this.canvas.height, 0]);
+
+        return {"x": xScale, "y": yScale};
 
     }
 
-    // set dependent parameter values
-    set_dependents(){
+    // get svg axis based on scale
+    get_axis( scale ){
 
+        let xAxis = d3.axisBottom(scale.x); 
+        let yAxis = d3.axisLeft(scale.y); 
 
-        if (this.canvas !== null){
-
-            if(this.xRange === null){  
-                this.xRange = this.canvas.xRange;
-            } 
-            if(this.yRange === null){
-                this.yRange = this.canvas.yRange;
-            }
-
-            this.xScale = d3.scaleLinear( this.xRange, [0, this.canvas.width] );
-            this.yScale = d3.scaleLinear( this.yRange, [this.canvas.height, 0]);
-
-            this.get_axis_ofset();
-
-        }   else{
-
-            this.xScale = null;
-            this.yScale = null;
-            this.xAxis = null;
-            this.yAxis = null;
-
-        }
-
+        return {"x": xAxis, "y": yAxis};
 
     }
 
@@ -170,19 +166,27 @@ class ChartObj {
         let xStep = this.canvas.width / (this.xRange[1] - this.xRange[0]);
         let yStep = (this.canvas.height) / (this.yRange[1] - this.yRange[0]);
 
+        let xAxisOfset;
+        let yAxisOfset;
+
 
         if(this.yRange[0] < 0){     // if min y value is negative, move x-axis up 
             this.xAxisOfset = this.canvas.height + yStep * this.yRange[0];
+            xAxisOfset = this.canvas.height + yStep * this.yRange[0];
         } else{
             this.xAxisOfset = this.canvas.height; 
+            xAxisOfset = this.canvas.height; 
         }
 
         if(this.xRange[0] < 0){     // if min x is negative, move y-axis to right
             this.yAxisOfset = xStep * -this.xRange[0];
+            yAxisOfset = xStep * -this.xRange[0];
         } else{
             this.yAxisOfset = 0;
+            yAxisOfset = 0;
         }
 
+        return {"x": xAxisOfset, "y": yAxisOfset};
 
     }
 
@@ -199,10 +203,7 @@ class ChartObj {
     assigne_to_canvas( targetCanvas ){
 
         this.canvas = targetCanvas;
-        this.set_dependents();
-        this.xAxis = d3.axisBottom(this.xScale); 
-        this.yAxis = d3.axisLeft(this.yScale); 
-        this.canvas.add_child( this, () => { this.set_dependents(); this.svg_init() } );
+        this.canvas.add_child( this, (id, msg) => { this.svg_init() } );
         this.svg_init();
 
     }
@@ -214,29 +215,35 @@ class ChartObj {
             return;
         }
 
-        this.canvas.svg.append("g")
-            .attr("transform", `translate(0,${this.xAxisOfset})`)
-            .call(this.xAxis);
+        let scale = this.get_scale();
+        let axis = this.get_axis( scale );
+        let AxisOfset = this.get_axis_ofset();
 
         this.canvas.svg.append("g")
-            .attr("transform", `translate(${this.yAxisOfset},0)`)
-            .call(this.yAxis);
+            .attr("transform", `translate(0,${AxisOfset.x})`)
+            .attr("class", this.id)
+            .call(axis.x);
+
+        this.canvas.svg.append("g")
+            .attr("transform", `translate(${AxisOfset.y},0)`)
+            .attr("class", this.id)
+            .call(axis.y);
 
         // Axes label
 
         // x label
         this.canvas.svg.append("text")
-            .attr("class", `x-label`)
+            .attr("class", `x-label ${this.id}`)
             .attr("text-anchor", "end")
             .attr("x",  -15)
-            .attr("y", this.xAxisOfset)
+            .attr("y", AxisOfset.x)
             .text("x");
 
         // y label
         this.canvas.svg.append("text")  
-            .attr("class", "y-label")
+            .attr("class", `y-label ${this.id}`)
             .attr("text-anchor", "end")
-            .attr("x", this.yAxisOfset)
+            .attr("x", AxisOfset.y)
             .attr("y", -15)
             .html("y");
 
@@ -246,8 +253,9 @@ class ChartObj {
     // remove from canvas (svg)
     remove_from_canvas(){
 
-        this.canvas.svg.remove(d3.selectAll("."+this.id));
+        this.canvas.svg.selectAll("."+this.id).remove();
         this.canvas.removeChild(this);
+        this.canvas = null;
 
     }
 
@@ -275,10 +283,10 @@ function test_canvas(){
         width = 450 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
 
-    let canvas = new CanvasObj(width, height, margin, "canvas1", [-6,6], [-6,6], "viz1");
-    let chart = new ChartObj( "chart1", canvas );
+    let canvas = new CanvasObj(width, height, margin, "canvas1", [-6,6], [-6,6]);
 
-    canvas.remove_from_div();
+    let chart = new ChartObj( "chart1", canvas);
+
     canvas.assign_to_div("viz1");
 
 }
