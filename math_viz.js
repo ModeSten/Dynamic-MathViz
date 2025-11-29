@@ -89,7 +89,7 @@ class CanvasObj {
 
     removeChild( obj ){
 
-        this.children = this.children.filter( (e) => {e.element === obj} );
+        this.children = this.children.filter( (e) => {return e.element.id !== obj.id} );
 
     }
 
@@ -250,9 +250,16 @@ class ChartObj {
     // remove from canvas (svg)
     remove_from_canvas(){
 
-        this.canvas.svg.selectAll("."+this.id).remove();
-        this.canvas.removeChild(this);
-        this.canvas = null;
+        if (this.canvas === null){
+            return
+        }
+
+        if(this.canvas !== null){   
+            this.canvas.svg.selectAll("."+this.id).remove();    // remove svg elements
+        }
+
+        this.canvas.removeChild(this);  // remove from canvas child list
+        this.canvas = null;            
 
     }
 
@@ -312,8 +319,11 @@ class GraphObj{
             return
         }
 
-        this.canvas.svg.selectAll("."+this.id).remove();
-        this.canvas.removeChild(this);
+        if(this.canvas.svg !== null){
+            this.canvas.svg.selectAll("path."+this.id).remove();    // remove svg elements
+        }
+
+        this.canvas.removeChild(this);      // remove from canvas child list
         this.canvas = null;
 
     }
@@ -334,7 +344,7 @@ class GraphObj{
 
         u.enter()
             .append("path")
-            .attr("class", "."+this.id)
+            .attr("class", this.id)
         .merge(u)
             .transition(1000)
             .attr("d", line)
@@ -386,6 +396,7 @@ function test_graph(){
     let graph = new GraphObj("graph1", (x)=>{ return x**2 }, [-2, 2], canvas);
     let chart = new ChartObj("chart1", canvas);
 
+    graph.remove_from_canvas();
 
 }
 
