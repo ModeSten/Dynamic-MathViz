@@ -56,6 +56,14 @@ class CanvasObj {
             .append("g")
                 .attr("transform", "translate("+ this.margin.left + "," + this.margin.top +")");
 
+        this.svg.append("clipPath")
+                .attr("id", "clip")
+            .append("rect")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", this.width)
+                .attr("height", this.height);
+
         this.notify_children();
 
     }
@@ -355,6 +363,7 @@ class GraphObj{
         u.enter()
             .append("path")
             .attr("class", this.id)
+            .attr("clip-path", "url(#clip)")
         .merge(u)
             .transition()
             .duration(500)
@@ -403,14 +412,27 @@ function test_graph(){
         width = 450 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
 
-    let canvas = new CanvasObj(width, height, margin, "canvas1", [-6, 6], [-6, 6]);
-    let graph = new GraphObj("graph1", (x)=>{ return Math.sin(x) }, [-4, 4], canvas);
-    let chart = new ChartObj("chart1", canvas);
 
-    //graph.update_graph_function(graph.fx, [-4, 4]);
+    let fx1 = [(x)=>{return x**2/10}, (x)=>{return x**3/10}, (x)=>{return x**4/10}, (x)=>{return x**5/10}];
+    let fx2 = [ (x)=>{return 3*Math.sin(x)}, (x)=>{return 3*Math.cos(x)}, (x)=>{return Math.tan(x)} ]
+    let fI = 0;
+    
+
+    let canvas = new CanvasObj(width, height, margin, "canvas1", [-6, 6], [-6, 6], "viz1");
+    let chart = new ChartObj("chart1", canvas);
+    let graph1 = new GraphObj("graph1", fx1[0], [-6, 6], canvas);
+    //let graph2 = new GraphObj("graph2", fx2[0], [-4, 4], canvas);
 
     let btn = document.getElementById("testBtn");
-    btn.addEventListener("click", ()=>{graph.update_graph_function((x)=>{return 3*Math.sin(x)}); canvas.assign_to_div("viz1");})
+    let uppdate = () => {
+
+        fI += 1;
+
+        graph1.update_graph_function( fx1[ fI % fx1.length ] );
+        //graph2.update_graph_function( fx2[ fI % fx2.length ] );
+
+    }
+    btn.addEventListener( "click",  uppdate );
 
 }
 
