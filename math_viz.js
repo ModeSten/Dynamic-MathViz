@@ -381,14 +381,24 @@ class GraphObj{
 
 class LineObj{
 
-    constructor( id, points , canvas=null){
+    constructor( id, points, params, canvas=null){
 
         this.id = id;
         this.canvas;
 
-        this.params = {};
-        this.params.data = points;
-        this.params.data = points;
+        this.params = {
+        "data": points,
+        "duration": 1000,
+        "delay": 0,
+        "width": 2.5,
+        "color": "black"
+        };
+
+        for (let [key, val] of Object.entries(this.params)){
+            if( params[key] !== undefined ){
+                this.params[key] = params[key];
+            }
+        }
 
         this.assigne_to_canvas(canvas);
     
@@ -445,11 +455,12 @@ class LineObj{
                 .attr("class", this.id)
         .merge(u)
             .transition()
-                .duration(1000)
+                .duration(this.params.duration)
                 .attr("d", line)
                 .attr("fill", "none")
-                .attr("stroke", "black")
-                .attr("stroke-widht", 2.5)
+                .attr("stroke", this.params.color)
+                .attr("stroke-width", this.params.width)
+                .delay(0)
             .on("end", callback);
 
     }
@@ -473,12 +484,9 @@ class LineObj{
         }
 
         for (let [key, val] of Object.entries(this.params)){
-            if( state.params[key] === undefined ){
-                state.params[key] = this.params[key];
-            } else{
+            if( state.params[key] !== undefined ){
                 this.params[key] = state.params[key];
-            }
-
+            } 
         }
 
         this.svg_init(()=>{ this.update(state.next) });
@@ -500,7 +508,7 @@ class LineObj{
 
 /* other classes */
 
-class UpdateNode{
+class UpdateNode{   // use for updating visualisation classes parameters
 
     constructor( params, delay=10, duration=1000, next=null ){
 
@@ -515,21 +523,36 @@ class UpdateNode{
 
 class TnagentObj{   // tangent line
 
-    constructor(id, fx, center=0, canvas=null, length=3, graph=null){
+    constructor(id, fx, params={}, canvas=null, graph=null){
 
         this.id = id;
         this.canvas;
         this.graph;                    // optional GraphObj: track to update tangent on graph change
         
-        this.params = {};              // input parameters
-        this.params.fx = fx;           // tangent  
-        this.params.center = center;   // tangent line center x value
-        this.params.length = length;   // lenght of tangent line
+        this.params = {
+            "fx": fx,
+             "center":0 , 
+             "length":3 , 
+             "width":3 , 
+             "color":"red", 
+             "duration":10 , 
+             "delay":0, 
+            };    
+
+        for (let [key, val] of Object.entries(this.params)){    // read optional parameters
+
+            if( params[key] !== undefined ){
+                this.params[key] = params[key];
+            }
+
+        }
 
         this.data;
         this.get_data();
 
-        this.line = new LineObj( id, this.data );
+
+        let lineParams = {...this.params}
+        this.line = new LineObj( id, this.data, lineParams );
 
         this.assigne_to_canvas(canvas)
 
@@ -567,8 +590,10 @@ class TnagentObj{   // tangent line
         }
         this.get_data();
 
+        let lineParams = {...this.params}
+        lineParams.data = this.data;
         
-        let root = new UpdateNode({"data": this.data})
+        let root = new UpdateNode(lineParams);
         let node = root;
 
         while( state.next !== null){
@@ -584,7 +609,12 @@ class TnagentObj{   // tangent line
             }
             this.get_data();
 
-            node.next = new UpdateNode({"data": this.data})
+            lineParams = {...this.params};
+            lineParams.data = this.data;
+
+            console.log(this.params.data);
+
+            node.next = new UpdateNode(lineParams);
             node = node.next;
 
             state = state.next;
@@ -626,6 +656,8 @@ class TnagentObj{   // tangent line
 
 
     get_data(){
+
+    
 
         let func = get_tangent(this.params.fx, this.params.center);     // tangent-line function
         this.data = get_points_from_lenght(func, this.params.center, this.params.length);
@@ -726,10 +758,17 @@ function test_tangent(){
     let canvas = new CanvasObj(width, height, margin, "canvas1", [-6, 6], [-6, 6], "viz1");
     let chart = new ChartObj("chart1", canvas);
     let graph = new GraphObj("graph1", fx, [-6, 6], canvas);
-    let tangent = new TnagentObj("tangent", fx, 2, canvas);
+    let tangent = new TnagentObj("tangent", fx,{"center":2}, canvas);
 
-    let tanUpate = new UpdateNode( {"center": -2} );
-    tangent.translate_center(-2);
+    var slider = document.getElementById("xSlider");
+
+    slider.oninput = function(){
+
+    let val = this.value / 1000;
+    let xVal = -6 * (1-val) + 6*val;
+    tangent.translate_center(xVal);
+
+    }
 
 }
 
