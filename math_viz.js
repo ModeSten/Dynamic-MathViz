@@ -385,7 +385,10 @@ class LineObj{
 
         this.id = id;
         this.canvas;
-        this.data = points;
+
+        this.params = {};
+        this.params.data = points;
+        this.params.data = points;
 
         this.assigne_to_canvas(canvas);
     
@@ -402,7 +405,7 @@ class LineObj{
 
         let callback = (obj, msg) => { this.svg_init() };
         this.canvas.add_child( this, callback );
-        this.svg_init();
+        this.svg_init( );
 
     }
 
@@ -422,20 +425,20 @@ class LineObj{
     }
 
 
-    svg_init(){
+    svg_init(callback = ()=>{return}){
 
         if(this.canvas === null || this.canvas.svg === null){
             return
         }
 
         let u = this.canvas.svg.selectAll("."+this.id)
-            .data( [this.data], (d)=>{return d.ser1} );
+            .data( [this.params.data], (d)=>{return d.ser1} );
             
 
         let line = d3.line()
             .x( (d)=>{return this.canvas.xScale(d[0])} )
             .y( (d)=>{return this.canvas.yScale(d[1])} );
-            
+
 
         u.enter()
             .append("path")
@@ -446,47 +449,39 @@ class LineObj{
                 .attr("d", line)
                 .attr("fill", "none")
                 .attr("stroke", "black")
-                .attr("stroke-widht", 2.5);
-
-        
-        /*
-        let u = this.canvas.svg.selectAll("."+this.id)
-            .data([this.data], (d)=>{return d.ser1});
-
-        let line = d3.line()
-            .x( (d) => {return this.canvas.xScale(d[0])} )
-            .y( (d) => {return this.canvas.yScale(d[1])} );
-
-        u.enter()
-            .append("path")
-            .attr("class", this.id)
-            .attr("clip-path", "url(#clip)")
-        .merge(u)
-            .transition()
-            .duration(1000)
-            .attr("d", line)
-                .attr("fill", "none")
-                .attr("stroke", "black")
-                .attr("stroke-width", 2.5);
-        */
-
+                .attr("stroke-widht", 2.5)
+            .on("end", callback);
 
     }
 
 
     update_svg(state){
 
-        if(this.canvas === null || this.canvas.svg === null){
+        if(this.canvas === null || this.canvas.svg === null || state){
             return
         }
+
+
 
     }
 
 
     update( state ){
 
-        this.data = points;
-        this.svg_init();
+        if(state === null){
+            return
+        }
+
+        for (let [key, val] of Object.entries(this.params)){
+            if( state.params[key] === undefined ){
+                state.params[key] = this.params[key];
+            } else{
+                this.params[key] = state.params[key];
+            }
+
+        }
+
+        this.svg_init(()=>{ this.update(state.next) });
 
     }
 
@@ -503,18 +498,33 @@ class LineObj{
 }
 
 
+/* other classes */
+
+class UpdateNode{
+
+    constructor( params, delay=10, duration=1000, next=null ){
+
+        this.params = params;       // parameters to be updated; ex {"data": data, "color": color}
+        this.duration = delay;      // delya before next chained update
+        this.next = next;           // next (chained) update node
+
+    }
+
+}
+
+
 class TnagentObj{   // tangent line
 
     constructor(id, fx, center=0, canvas=null, length=3, graph=null){
 
         this.id = id;
         this.canvas;
-        this.graph;             // optional GraphObj: track to update tangent on graph change
+        this.graph;                    // optional GraphObj: track to update tangent on graph change
         
-        this.fx = fx;           // tangent  
-        this.center = center;   // tangent line center x value
-
-        this.length = length;   // lenght of tangent line
+        this.params = {};              // input parameters
+        this.params.fx = fx;           // tangent  
+        this.params.center = center;   // tangent line center x value
+        this.params.length = length;   // lenght of tangent line
 
         this.data;
         this.get_data();
@@ -546,14 +556,79 @@ class TnagentObj{   // tangent line
     update(state){  
 
 
+        for (let [key, val] of Object.entries(this.params)){
+
+            if( state.params[key] === undefined ){
+                state.params[key] = this.params[key];
+            } else{
+                this.params[key] = state.params[key];
+            }
+
+        }
+        this.get_data();
+
+        
+        let root = new UpdateNode({"data": this.data})
+        let node = root;
+
+        while( state.next !== null){
+
+            for (let [key, val] of Object.entries(this.params)){
+
+                if( state.params[key] === undefined ){
+                    state.params[key] = this.params[key];
+                } else{
+                    this.params[key] = state.params[key];
+                }
+
+            }
+            this.get_data();
+
+            node.next = new UpdateNode({"data": this.data})
+            node = node.next;
+
+            state = state.next;
+
+        }
+        
+
+        this.line.update(root);
+
+    }
+
+
+    translate_center(center, stepSize=0.2){
+
+        let direction = Math.sign( center - this.params.center );
+        let x = this.params.center + direction * stepSize;
+
+
+        let root = new UpdateNode({"center": x});
+        let node = root
+        x +=  direction * stepSize;
+
+        while ( Math.abs(center-x) > 0.1 ){
+
+
+            node.next = new UpdateNode({"center": x});
+            node = node.next;
+
+            x +=  direction * stepSize;
+            if( (x > center && center > this.params.center) || (x < center && center < this.params.center) ){
+                x = center;
+            }
+
+        }
+
+        this.update(root);
 
     }
 
 
     get_data(){
 
-        let func = get_tangent(this.fx, this.center);     // tangent-line function
-        this.data = get_points_from_lenght(func, this.center, this.length);
+        let func = get_tangent(this.params.fx, this.params.center);     // tangent-line function
+        this.data = get_points_from_lenght(func, this.params.center, this.params.length);
 
     }
 
@@ -652,6 +727,9 @@ function test_tangent(){
     let chart = new ChartObj("chart1", canvas);
     let graph = new GraphObj("graph1", fx, [-6, 6], canvas);
     let tangent = new TnagentObj("tangent", fx, 2, canvas);
+
+    let tanUpate = new UpdateNode( {"center": -2} );
+    tangent.translate_center(-2);
 
 }
 
