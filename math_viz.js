@@ -6,6 +6,8 @@ dependencies:
 */
 
 
+/* math (elements) visualiazation classes */
+
 // Visualization object: holds common parameters and svg element
 class CanvasObj {
 
@@ -112,7 +114,7 @@ class CanvasObj {
 }
 
 
-// kdrdinate system (axis)
+// kordinate system (axis)
 class ChartObj {
 
     constructor ( id, parentCanvas=null, xRange = null, yRange = null){
@@ -366,7 +368,7 @@ class GraphObj{
             .attr("clip-path", "url(#clip)")
         .merge(u)
             .transition()
-            .duration(500)
+            .duration(1000)
             .attr("d", line)
                 .attr("fill", "none")
                 .attr("stroke", "black")
@@ -377,7 +379,223 @@ class GraphObj{
 }
 
 
+class LineObj{
 
+    constructor( id, points , canvas=null){
+
+        this.id = id;
+        this.canvas;
+        this.data = points;
+
+        this.assigne_to_canvas(canvas);
+    
+    }
+
+
+    assigne_to_canvas(canvas){
+
+        if(canvas === null){
+            return
+        }
+
+        this.canvas = canvas;
+
+        let callback = (obj, msg) => { this.svg_init() };
+        this.canvas.add_child( this, callback );
+        this.svg_init();
+
+    }
+
+    remove_from_canvas(){
+
+        if(this.canvas === null){
+            return
+        }
+
+        if(this.canvas.svg !== null){   // remove svg elements
+
+        }
+
+        this.canvas.removeChild(this);
+        this.canvas = null;
+
+    }
+
+
+    svg_init(){
+
+        if(this.canvas === null || this.canvas.svg === null){
+            return
+        }
+
+        let u = this.canvas.svg.selectAll("."+this.id)
+            .data( [this.data], (d)=>{return d.ser1} );
+            
+
+        let line = d3.line()
+            .x( (d)=>{return this.canvas.xScale(d[0])} )
+            .y( (d)=>{return this.canvas.yScale(d[1])} );
+            
+
+        u.enter()
+            .append("path")
+                .attr("class", this.id)
+        .merge(u)
+            .transition()
+                .duration(1000)
+                .attr("d", line)
+                .attr("fill", "none")
+                .attr("stroke", "black")
+                .attr("stroke-widht", 2.5);
+
+        
+        /*
+        let u = this.canvas.svg.selectAll("."+this.id)
+            .data([this.data], (d)=>{return d.ser1});
+
+        let line = d3.line()
+            .x( (d) => {return this.canvas.xScale(d[0])} )
+            .y( (d) => {return this.canvas.yScale(d[1])} );
+
+        u.enter()
+            .append("path")
+            .attr("class", this.id)
+            .attr("clip-path", "url(#clip)")
+        .merge(u)
+            .transition()
+            .duration(1000)
+            .attr("d", line)
+                .attr("fill", "none")
+                .attr("stroke", "black")
+                .attr("stroke-width", 2.5);
+        */
+
+
+    }
+
+
+    update_svg(state){
+
+        if(this.canvas === null || this.canvas.svg === null){
+            return
+        }
+
+    }
+
+
+    update( state ){
+
+        this.data = points;
+        this.svg_init();
+
+    }
+
+
+    step_update( state ){   // update by steps
+
+        if(this.canvas === null || this.canvas.svg === null){
+            return
+        }
+
+    }
+    
+
+}
+
+
+class TnagentObj{   // tangent line
+
+    constructor(id, fx, center=0, canvas=null, length=3, graph=null){
+
+        this.id = id;
+        this.canvas;
+        this.graph;             // optional GraphObj: track to update tangent on graph change
+        
+        this.fx = fx;           // tangent  
+        this.center = center;   // tangent line center x value
+
+        this.length = length;   // lenght of tangent line
+
+        this.data;
+        this.get_data();
+
+        this.line = new LineObj( id, this.data );
+
+        this.assigne_to_canvas(canvas)
+
+    }
+
+
+    assign_graph(){
+
+    }
+
+
+    assigne_to_canvas(canvas){
+
+        if(canvas === null){
+            return
+        }
+
+        this.canvas = canvas;
+        this.line.assigne_to_canvas(canvas);
+
+    }
+
+
+    update(state){  
+
+
+
+    }
+
+
+    get_data(){
+
+        let func = get_tangent(this.fx, this.center);     // tangent-line function
+        this.data = get_points_from_lenght(func, this.center, this.length);
+
+    }
+
+}
+
+
+    
+/*  suport functions  */
+
+function get_points_from_lenght(fx, center, lenght){ // get line start and end values from target lenght
+
+    let deltaX = (lenght / (1+Math.abs(get_slope(fx, center)))) / 2;
+    let points = [];
+    points.push( [ center-deltaX, fx(center-deltaX) ] );
+    points.push( [ center+deltaX, fx(center+deltaX) ] );
+
+    return points;
+
+}
+
+
+
+function get_slope(fx, x){  // get graph slope at x
+
+    let h = 0.001;
+    return ( fx(x+h) - fx(x) ) / h;
+
+}
+
+
+function get_tangent(fx, x){    // get tangent-line function
+
+    let k = get_slope(fx, x);
+    let m = fx(x) - k*x;
+
+    return (x) => { return k*x + m };
+
+}
+
+
+
+/* Test functions */
 
 function test_chart(){
 
@@ -414,27 +632,28 @@ function test_graph(){
 
 
     let fx1 = [(x)=>{return x**2/10}, (x)=>{return x**3/10}, (x)=>{return x**4/10}, (x)=>{return x**5/10}];
-    let fx2 = [ (x)=>{return 3*Math.sin(x)}, (x)=>{return 3*Math.cos(x)}, (x)=>{return Math.tan(x)} ]
-    let fI = 0;
-    
 
     let canvas = new CanvasObj(width, height, margin, "canvas1", [-6, 6], [-6, 6], "viz1");
     let chart = new ChartObj("chart1", canvas);
     let graph1 = new GraphObj("graph1", fx1[0], [-6, 6], canvas);
-    //let graph2 = new GraphObj("graph2", fx2[0], [-4, 4], canvas);
 
-    let btn = document.getElementById("testBtn");
-    let uppdate = () => {
 
-        fI += 1;
+}
 
-        graph1.update_graph_function( fx1[ fI % fx1.length ] );
-        //graph2.update_graph_function( fx2[ fI % fx2.length ] );
+function test_tangent(){
 
-    }
-    btn.addEventListener( "click",  uppdate );
+    const margin = { top: 60, right: 60, bottom: 60, left: 60 },
+        width = 450 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+    let fx = (x)=>{return x**2/5};
+
+    let canvas = new CanvasObj(width, height, margin, "canvas1", [-6, 6], [-6, 6], "viz1");
+    let chart = new ChartObj("chart1", canvas);
+    let graph = new GraphObj("graph1", fx, [-6, 6], canvas);
+    let tangent = new TnagentObj("tangent", fx, 2, canvas);
 
 }
 
 
-test_graph();
+test_tangent();
