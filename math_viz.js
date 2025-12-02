@@ -434,12 +434,11 @@ class GraphObj extends VisualObj{
 }
 
 
-class LineObj{
+class LineObj extends VisualObj{
 
     constructor( id, points, params, canvas=null){
 
-        this.id = id;
-        this.canvas;
+        super(id);
 
         this.params = {
         "data": points,
@@ -449,46 +448,10 @@ class LineObj{
         "color": "black"
         };
 
-        for (let [key, val] of Object.entries(this.params)){
-            if( params[key] !== undefined ){
-                this.params[key] = params[key];
-            }
-        }
-
+        this.parse_params(params);
         this.assigne_to_canvas(canvas);
     
     }
-
-
-    assigne_to_canvas(canvas){
-
-        if(canvas === null){
-            return
-        }
-
-        this.canvas = canvas;
-
-        let callback = (obj, msg) => { this.svg_init() };
-        this.canvas.add_child( this, callback );
-        this.svg_init( );
-
-    }
-
-    remove_from_canvas(){
-
-        if(this.canvas === null){
-            return
-        }
-
-        if(this.canvas.svg !== null){   // remove svg elements
-            this.canvas.svg.selectAll("."+this.id).remove();
-        }
-
-        this.canvas.removeChild(this);
-        this.canvas = null;
-
-    }
-
 
     svg_init(callback = ()=>{return}){
 
@@ -521,17 +484,6 @@ class LineObj{
     }
 
 
-    update_svg(state){
-
-        if(this.canvas === null || this.canvas.svg === null || state){
-            return
-        }
-
-
-
-    }
-
-
     update( state ){
 
         if(state === null){
@@ -545,15 +497,6 @@ class LineObj{
         }
 
         this.svg_init(()=>{ this.update(state.next) });
-
-    }
-
-
-    step_update( state ){   // update by steps
-
-        if(this.canvas === null || this.canvas.svg === null){
-            return
-        }
 
     }
     
