@@ -497,6 +497,7 @@ class TnagentObj{   // tangent line
              "width":2.5 , 
              "color":"red", 
              "duration":5 , 
+             "translateT": 5,
              "delay":0, 
             };    
 
@@ -568,8 +569,10 @@ class TnagentObj{   // tangent line
         let root = new UpdateNode(lineParams);
         let node = root;
 
-        while( state.next !== null){
+        state = state.next;
 
+        while( state !== null){
+    
             for (let [key, val] of Object.entries(this.params)){
 
                 if( state.params[key] === undefined ){
@@ -597,18 +600,19 @@ class TnagentObj{   // tangent line
     }
 
 
-    translate_center(center, stepSize=0.1){
+    translate_center(center, stepSize=0.05){
+
+        this.params.duration = this.params.translateT;
 
         let direction = Math.sign( center - this.params.center );
         let x = this.params.center + direction * stepSize;
 
 
         let root = new UpdateNode({"center": x});
-        let node = root
+        let node = root;
         x +=  direction * stepSize;
 
-        while ( Math.abs(center-x) > 0.1 ){
-
+        while ( Math.abs(center-x) > 0.05 ){
 
             node.next = new UpdateNode({"center": x});
             node = node.next;
@@ -616,6 +620,8 @@ class TnagentObj{   // tangent line
             x +=  direction * stepSize;
             if( (x > center && center > this.params.center) || (x < center && center < this.params.center) ){
                 x = center;
+                node.next = new UpdateNode({"center": x});
+                break;
             }
 
         }
@@ -715,12 +721,22 @@ function test_graph(){
     let btn = document.getElementById("testBtn");
     btn.onclick = ()=>{
 
+        /*
         if(graph1.canvas === null){
             graph1.assigne_to_canvas(canvas);
         } else{
             console.log("remove");
             graph1.remove_from_canvas();
         }
+            */
+
+        let update = new UpdateNode({"color": "red", "duration": 1000, "width":5});
+        update.next = new UpdateNode({"color": "green", "duration": 1000, "width":10});
+        update.next.next = new UpdateNode({"color": "blue", "duration": 1500, "width":5});
+        update.next.next.next = new UpdateNode({"color": "black", "duration": 1500, "width":2.5});
+        graph1.update(update);
+
+
     }
 
 }
@@ -753,15 +769,22 @@ function test_tangent(){
     let btn = document.getElementById("testBtn");
     btn.onclick = ()=>{
 
+        /*
         if(tangent.canvas === null){
             tangent.assigne_to_canvas(canvas);
         } else{
             tangent.remove_from_canvas();
         }
+        */
+
+        let update = new UpdateNode({"color": "green", "duration": 1000, "width":5});
+        update.next = new UpdateNode({"color": "blue", "duration": 1000, "width":10});
+        update.next.next = new UpdateNode({"color": "red", "duration": 1500, "width":2.5});
+        tangent.update(update);
 
     }
 
 }
 
 
-test_tangent();
+test_graph();
