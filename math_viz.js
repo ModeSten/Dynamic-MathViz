@@ -374,11 +374,7 @@ class GraphObj extends VisualObj{
             return
         }
 
-        for (let [key, val] of Object.entries(this.params)){
-            if( state.params[key] !== undefined ){
-                this.params[key] = state.params[key];
-            }
-        }
+        this.parse_params(state.params);
 
         this.get_data();
         this.svg_init( ()=>{ this.update(state.next) } );
@@ -448,10 +444,16 @@ class LineObj extends VisualObj{
         "color": "black"
         };
 
-        this.parse_params(params);
+        for (let [key, val] of Object.entries(this.params)){
+            if( params[key] !== undefined ){
+                this.params[key] = params[key];
+            }
+        }
+
         this.assigne_to_canvas(canvas);
     
     }
+
 
     svg_init(callback = ()=>{return}){
 
@@ -490,11 +492,7 @@ class LineObj extends VisualObj{
             return
         }
 
-        for (let [key, val] of Object.entries(this.params)){
-            if( state.params[key] !== undefined ){
-                this.params[key] = state.params[key];
-            } 
-        }
+        this.parse_params(state.params);
 
         this.svg_init(()=>{ this.update(state.next) });
 
@@ -750,6 +748,13 @@ function test_graph(){
     let canvas = new CanvasObj(width, height, margin, "canvas1", [-6, 6], [-6, 6], "viz1");
     let chart = new ChartObj("chart1", canvas);
     let graph1 = new GraphObj("graph1", fx, [-6, 6],{}, canvas);
+
+    let btn = document.getElementById("testBtn");
+    btn.onclick = ()=>{
+
+        graph1.update(new UpdateNode({"fx": (x)=>{return x**3/10}}));
+
+    }
 
 }
 
