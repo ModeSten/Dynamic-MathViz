@@ -279,7 +279,7 @@ class ChartObj {
 
 class GraphObj{
 
-    constructor( id, fx, xRange, canvas=null, defines=(x)=>{ return x !== NaN } ){ 
+    constructor( id, fx, xRange, params, canvas=null ){ 
 
         this.id = id;
         this.canvas;
@@ -287,23 +287,46 @@ class GraphObj{
         this.fx = fx;           // graph function
         this.xRange = xRange;   // graph value (x) range
         this.data;
-        this.defines = defines;           // function specifing when graph is defined
+
+        this.params = {
+            "fx": fx,           // function: (x)=>{ returne f(x) }
+            "xRange": xRange,   // x bounds: [x0, x1]
+            "step": 0.1,        // stepsize (x) between ploted points 
+            "color": "black",   // stroke color
+            "width": 2.5,       // stroke widght
+            "duration": 1000,   // transition duration
+            "delay": 0          // transition delay
+        };
+
+        for (let [key, val] of Object.entries(this.params)){
+            if( params[key] !== undefined ){
+                this.params[key] = params[key];
+            }
+        }
+
 
         this.get_data();
-
+        
         if (canvas !== null){
             this.assigne_to_canvas(canvas);
         }
 
     }
 
-    update_graph_function( fx=this.fx, xRange=this.xRange ){
+    update( state ){
 
-        this.fx = fx;
-        this.xRange =xRange;
+        if(state === null){
+            return
+        }
+
+        for (let [key, val] of Object.entries(this.params)){
+            if( state.params[key] !== undefined ){
+                this.params[key] = state.params[key];
+            }
+        }
 
         this.get_data();
-        this.svg_init();
+        this.svg_init( ()=>{ this.update(state.next) } );
 
     }
 
@@ -313,9 +336,9 @@ class GraphObj{
         this.data = []; // remove stored data
         let y;
 
-        for( let x=this.xRange[0]; x <= this.xRange[1]; x+=0.1){
+        for( let x=this.params.xRange[0]; x <= this.params.xRange[1]; x+=this.params.step){
 
-            y = this.fx( x );
+            y = this.params.fx( x );
             this.data.push( [x, y] );
 
         }
@@ -349,11 +372,12 @@ class GraphObj{
     }
 
 
-    svg_init(){
+    svg_init(callback=()=>{return}){
 
         if(this.canvas === null || this.canvas.svg === null){
             return
         }
+
 
         let u = this.canvas.svg.selectAll("."+this.id)
             .data([this.data], (d)=>{return d.ser1});
@@ -368,11 +392,13 @@ class GraphObj{
             .attr("clip-path", "url(#clip)")
         .merge(u)
             .transition()
-            .duration(1000)
+            .delay(this.params.delay)
+            .duration(this.params.duration)
             .attr("d", line)
                 .attr("fill", "none")
-                .attr("stroke", "black")
-                .attr("stroke-width", 2.5);
+                .attr("stroke", this.params.color)
+                .attr("stroke-width", this.params.width)
+            .on("end", callback);
 
     }
 
@@ -748,11 +774,17 @@ function test_graph(){
         height = 400 - margin.top - margin.bottom;
 
 
-    let fx1 = [(x)=>{return x**2/10}, (x)=>{return x**3/10}, (x)=>{return x**4/10}, (x)=>{return x**5/10}];
+    let fx = (x)=>{return 3*Math.sin(x)};
 
     let canvas = new CanvasObj(width, height, margin, "canvas1", [-6, 6], [-6, 6], "viz1");
     let chart = new ChartObj("chart1", canvas);
-    let graph1 = new GraphObj("graph1", fx1[0], [-6, 6], canvas);
+    let graph1 = new GraphObj("graph1", fx, [-6, 6],{}, canvas);
+
+    let update = new UpdateNode( {"fx": (x)=>{return 2*Math.cos(x)}, "color": "red" } );
+    update.next = new UpdateNode( {"fx": (x)=>{return Math.tan(x)}, "color": "green"} );
+    update.next.next = new UpdateNode( {"fx": fx} );
+    graph1.update( update );
+
 
 
 }
@@ -767,7 +799,7 @@ function test_tangent(){
 
     let canvas = new CanvasObj(width, height, margin, "canvas1", [-6, 6], [-6, 6], "viz1");
     let chart = new ChartObj("chart1", canvas);
-    let graph = new GraphObj("graph1", fx, [-6, 6], canvas);
+    let graph = new GraphObj("graph1", fx, [-6, 6], {}, canvas);
     let tangent = new TnagentObj("tangent", fx,{"center":2}, canvas);
 
     var slider = document.getElementById("xSlider");
@@ -783,4 +815,4 @@ function test_tangent(){
 }
 
 
-test_tangent();
+test_graph();
