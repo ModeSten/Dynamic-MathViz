@@ -426,7 +426,7 @@ class LineObj{
         }
 
         if(this.canvas.svg !== null){   // remove svg elements
-
+            this.canvas.svg.selectAll("."+this.id).remove();
         }
 
         this.canvas.removeChild(this);
@@ -532,10 +532,10 @@ class TnagentObj{   // tangent line
         this.params = {
             "fx": fx,
              "center":0 , 
-             "length":3 , 
-             "width":3 , 
+             "length":5 , 
+             "width":2.5 , 
              "color":"red", 
-             "duration":10 , 
+             "duration":5 , 
              "delay":0, 
             };    
 
@@ -576,6 +576,18 @@ class TnagentObj{   // tangent line
     }
 
 
+    remove_from_canvas(){
+
+        if(this.canvas === null){
+            return
+        }
+        if(this.canvas.svg !== null){
+            this.line.remove_from_canvas();
+        }
+
+    }
+
+
     update(state){  
 
 
@@ -612,8 +624,6 @@ class TnagentObj{   // tangent line
             lineParams = {...this.params};
             lineParams.data = this.data;
 
-            console.log(this.params.data);
-
             node.next = new UpdateNode(lineParams);
             node = node.next;
 
@@ -627,7 +637,7 @@ class TnagentObj{   // tangent line
     }
 
 
-    translate_center(center, stepSize=0.2){
+    translate_center(center, stepSize=0.1){
 
         let direction = Math.sign( center - this.params.center );
         let x = this.params.center + direction * stepSize;
@@ -753,7 +763,7 @@ function test_tangent(){
         width = 450 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
 
-    let fx = (x)=>{return x**2/5};
+    let fx = (x)=>{return 3*Math.sin(x)};
 
     let canvas = new CanvasObj(width, height, margin, "canvas1", [-6, 6], [-6, 6], "viz1");
     let chart = new ChartObj("chart1", canvas);
