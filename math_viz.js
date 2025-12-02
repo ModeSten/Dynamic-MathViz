@@ -277,12 +277,72 @@ class ChartObj {
 }
 
 
-class GraphObj{
+
+class VisualObj{
+
+    constructor(id){
+
+        this.id = id;
+        this.canvas = null;
+        this.params = {};
+
+    }
+
+
+    parse_params( params ){
+
+        for (let [key, val] of Object.entries(this.params)){
+            if( params[key] !== undefined ){
+                this.params[key] = params[key];
+            }
+        }
+
+    }
+
+    assigne_to_canvas(canvas){
+
+        if(canvas === null ){
+            return
+        }
+
+        this.canvas = canvas;
+        canvas.add_child(this, (id, msg) => { this.svg_init() });
+
+        this.svg_init();
+
+    }
+
+
+    remove_from_canvas(){
+
+        if(this.canvas === null){
+            return
+        }
+
+        if(this.canvas.svg !== null){
+            this.canvas.svg.selectAll("path."+this.id).remove();    // remove svg elements
+        }
+
+        this.canvas.removeChild(this);      // remove from canvas child list
+        this.canvas = null;
+
+    }
+
+
+    svg_init(callback=()=>{return}){
+        /* placeholder for child obj init */
+    }
+
+    
+
+}
+
+
+class GraphObj extends VisualObj{
 
     constructor( id, fx, xRange, params, canvas=null ){ 
 
-        this.id = id;
-        this.canvas;
+        super(id);
 
         this.fx = fx;           // graph function
         this.xRange = xRange;   // graph value (x) range
@@ -298,19 +358,14 @@ class GraphObj{
             "delay": 0          // transition delay
         };
 
-        for (let [key, val] of Object.entries(this.params)){
-            if( params[key] !== undefined ){
-                this.params[key] = params[key];
-            }
-        }
-
+        this.parse_params(params);
 
         this.get_data();
         
-        if (canvas !== null){
+        if(canvas !== null){
             this.assigne_to_canvas(canvas);
         }
-
+        
     }
 
     update( state ){
@@ -342,32 +397,6 @@ class GraphObj{
             this.data.push( [x, y] );
 
         }
-
-    }
-
-
-    assigne_to_canvas(canvas){
-
-        this.canvas = canvas;
-        canvas.add_child(this, (id, msg) => { this.svg_init() });
-
-        this.svg_init();
-
-    }
-
-
-    remove_from_canvas(){
-
-        if(this.canvas === null){
-            return
-        }
-
-        if(this.canvas.svg !== null){
-            this.canvas.svg.selectAll("path."+this.id).remove();    // remove svg elements
-        }
-
-        this.canvas.removeChild(this);      // remove from canvas child list
-        this.canvas = null;
 
     }
 
@@ -584,7 +613,6 @@ class TnagentObj{   // tangent line
 
     }
 
-
     assign_graph(){
 
     }
@@ -607,9 +635,9 @@ class TnagentObj{   // tangent line
         if(this.canvas === null){
             return
         }
-        if(this.canvas.svg !== null){
-            this.line.remove_from_canvas();
-        }
+       
+        this.line.remove_from_canvas();
+        this.canvas = null;
 
     }
 
@@ -780,13 +808,6 @@ function test_graph(){
     let chart = new ChartObj("chart1", canvas);
     let graph1 = new GraphObj("graph1", fx, [-6, 6],{}, canvas);
 
-    let update = new UpdateNode( {"fx": (x)=>{return 2*Math.cos(x)}, "color": "red" } );
-    update.next = new UpdateNode( {"fx": (x)=>{return Math.tan(x)}, "color": "green"} );
-    update.next.next = new UpdateNode( {"fx": fx} );
-    graph1.update( update );
-
-
-
 }
 
 function test_tangent(){
@@ -802,6 +823,7 @@ function test_tangent(){
     let graph = new GraphObj("graph1", fx, [-6, 6], {}, canvas);
     let tangent = new TnagentObj("tangent", fx,{"center":2}, canvas);
 
+
     var slider = document.getElementById("xSlider");
 
     slider.oninput = function(){
@@ -812,7 +834,19 @@ function test_tangent(){
 
     }
 
+
+    let btn = document.getElementById("testBtn");
+    btn.onclick = ()=>{
+
+        if(tangent.canvas === null){
+            tangent.assigne_to_canvas(canvas);
+        } else{
+            tangent.remove_from_canvas();
+        }
+
+    }
+
 }
 
 
-test_graph();
+test_tangent();
