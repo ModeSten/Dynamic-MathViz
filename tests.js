@@ -56,10 +56,10 @@ function test_graph(){
             */
 
         ///*
-        let update = new UpdateNode({"color": "red",  "width":5});
-        update.next = new UpdateNode({"color": "green", "width":10});
-        update.next.next = new UpdateNode({"color": "blue", "width":5});
-        update.next.next.next = new UpdateNode({"color": "black",  "width":2.5});
+        let update = new UpdateNode({"color": "red",  "width":5}, 1000, 10);
+        update.next = new UpdateNode({"color": "green", "width":10}, 1500, 15);
+        update.next.next = new UpdateNode({"color": "blue", "width":5}, 2000, 20);
+        update.next.next.next = new UpdateNode({"color": "black",  "width":2.5}, 2500, 30);
         graph1.update(update);
         //*/
 
@@ -124,4 +124,4 @@ function test_tangent(){
 }
 
 
-test_graph();
+test_tangent();

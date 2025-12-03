@@ -35,7 +35,6 @@ class CanvasObj {
             this.assign_to_div( parentId );
         }
 
-
     }
 
     set_dependent_params(){
@@ -169,8 +168,27 @@ class VisualObj{
     }
 
 
+    update(state){
+
+        if(state === null){
+            return
+        }
+
+        this.parse_params(state.params);
+        this.resolve_update();
+
+        this.svg_init( state.duration, state.delay, ()=>{ this.update(state.next) } );
+
+    }
+
+
     svg_init(callback=()=>{return}){
         /* placeholder for child obj init */
+    }
+
+
+    resolve_update(){
+        /* placeholder for child override */
     }
 
     
@@ -334,16 +352,10 @@ class GraphObj extends VisualObj{
         
     }
 
-    update( state ){
 
-        if(state === null){
-            return
-        }
-
-        this.parse_params(state.params);
+    resolve_update(){
 
         this.get_data();
-        this.svg_init(state.duration, state.delay, ()=>{ this.update(state.next) } );
 
     }
 
@@ -448,19 +460,6 @@ class LineObj extends VisualObj{
                 .attr("stroke-width", this.params.width)
                 .delay(delay)
             .on("end", callback);
-
-    }
-
-
-    update( state ){
-
-        if(state === null){
-            return
-        }
-
-        this.parse_params(state.params);
-
-        this.svg_init(state.duration, state.delay,  ()=>{ this.update(state.next) });
 
     }
     
