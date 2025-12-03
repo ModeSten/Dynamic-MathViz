@@ -123,7 +123,7 @@ class VisualObj{
 
         this.duration = 1000;   // transition dration (default)
         this.delay = 0;         // transition delay (default)
-        this.isDefined = (d, i) => { return ( d[0] !== NaN )  && ( d[1] !== NaN ) };
+        this.isDefined = (d, i) => { return ( d[0] !== null )  && ( d[1] !== null ) };
 
         this.children = [];
 
@@ -469,7 +469,7 @@ class LineObj extends VisualObj{
 
         let u = this.canvas.svg.selectAll("."+this.id)
             .data( [this.params.data], (d)=>{return d.ser1} );
-            
+
 
         let line = d3.line()
             .x( (d)=>{return this.canvas.xScale(d[0])} )
@@ -511,177 +511,6 @@ class UpdateNode{   // use for updating visualisation classes parameters
 
 }
 
-
-class TnagentObj{   // tangent line
-
-    constructor(id, fx, params={}, canvas=null, graph=null){
-
-        this.id = id;
-        this.canvas;
-        this.graph;                    // optional GraphObj: track to update tangent on graph change
-        
-        this.params = {
-            "fx": fx,
-             "center":0 , 
-             "length":5 , 
-             "width":2.5 , 
-             "color":"red", 
-             "duration":5 , 
-             "translateT": 5,
-             "delay":0, 
-            };    
-
-        for (let [key, val] of Object.entries(this.params)){    // read optional parameters
-
-            if( params[key] !== undefined ){
-                this.params[key] = params[key];
-            }
-
-        }
-
-        this.data;
-        this.get_data();
-
-
-        let lineParams = {...this.params}
-        this.line = new LineObj( id, this.data, lineParams );
-
-        this.assigne_to_canvas(canvas)
-
-    }
-
-    assign_graph(graph){
-
-        this.graph = graph;
-        this.update( new UpdateNode({"fx": graph.params.fx}) );
-
-        graph.add_child(this, (obj, msg)=>{ this.update(new UpdateNode({"fx": graph.params.fx})) });
-
-    }
-
-    remove_graph(){
-
-        this.graph.removeChild(this);
-        this.graph = null;
-
-    }
-
-
-    assigne_to_canvas(canvas){
-
-        if(canvas === null){
-            return
-        }
-
-        this.canvas = canvas;
-        this.line.assigne_to_canvas(canvas);
-
-    }
-
-
-    remove_from_canvas(){
-
-        if(this.canvas === null){
-            return
-        }
-       
-        this.line.remove_from_canvas();
-        this.canvas = null;
-
-    }
-
-
-    update(state){  
-
-        for (let [key, val] of Object.entries(this.params)){
-
-            if( state.params[key] === undefined ){
-                state.params[key] = this.params[key];
-            } else{
-                this.params[key] = state.params[key];
-            }
-
-        }
-        this.get_data();
-
-        let lineParams = {...this.params}
-        lineParams.data = this.data;
-        
-        let root = new UpdateNode(lineParams, state.duration, state.delay);
-        let node = root;
-
-        state = state.next;
-
-        while( state !== null){
-    
-            for (let [key, val] of Object.entries(this.params)){
-
-                if( state.params[key] === undefined ){
-                    state.params[key] = this.params[key];
-                } else{
-                    this.params[key] = state.params[key];
-                }
-
-            }
-            this.get_data();
-
-            lineParams = {...this.params};
-            lineParams.data = this.data;
-
-            node.next = new UpdateNode(lineParams, state.duration, state.delay);
-            node = node.next;
-
-            state = state.next;
-
-        }
-        
-
-        this.line.update(root);
-
-    }
-
-
-    translate_center(center, stepSize=0.05){
-
-        let direction = Math.sign( center - this.params.center );
-        let x = this.params.center + direction * stepSize;
-
-
-        let root = new UpdateNode({"center": x}, 5);
-        let node = root;
-        x +=  direction * stepSize;
-
-        while ( Math.abs(center-x) > 0.05 ){
-
-            node.next = new UpdateNode({"center": x}, 5);
-            node = node.next;
-
-            x +=  direction * stepSize;
-            if( (x > center && center > this.params.center) || (x < center && center < this.params.center) ){
-                x = center;
-                node.next = new UpdateNode({"center": x}, 5);
-                break;
-            }
-
-        }
-
-        this.update(root);
-
-    }
-
-
-    get_data(){
-
-    
-
-        let func = get_tangent(this.params.fx, this.params.center);     // tangent-line function
-        this.data = get_points_from_lenght(func, this.params.center, this.params.length);
-
-    }
-
-}
-
-
     
 /*  suport functions  */
 
@@ -706,7 +535,7 @@ function get_slope(fx, x){  // get graph slope at x
 }
 
 
-function get_tangent(fx, x){    // get tangent-line function
+function get_tangent_function(fx, x){    // get tangent-line function
 
     let k = get_slope(fx, x);
     let m = fx(x) - k*x;

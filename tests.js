@@ -79,7 +79,7 @@ function test_tangent(){
     let canvas = new CanvasObj(width, height, margin, "canvas1", [-6, 6], [-6, 6], "viz1");
     let chart = new ChartObj("chart1", {}, canvas);
     let graph = new GraphObj("graph1", fx[fI], [-6, 6], {}, canvas);
-    let tangent = new TnagentObj("tangent", fx[fI],{"center":2}, canvas);
+    let tangent = new TangentObj("tangent", fx[fI],{"center":2}, canvas);
     tangent.assign_graph(graph);
 
 
@@ -106,4 +106,46 @@ function test_tangent(){
 }
 
 
-test_tangent();
+function test_chain(){
+
+    const margin = { top: 60, right: 60, bottom: 60, left: 60 },
+    width = 450 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+    let fx = [ (x)=>{return Math.sin(x)}, (x)=>{return 2*Math.cos(x)}, (x)=>{return 3*Math.sin(x)}, (x)=>{return 2*Math.cos(x)} ];
+    let fI = 0;
+
+    let canvas = new CanvasObj(width, height, margin, "canvas1", [-6, 6], [-6, 6], "viz1");
+    let chart = new ChartObj("chart1", {}, canvas);
+    let graph = new GraphObj("graph1", fx[fI], [-6, 6], {}, canvas);
+
+    let tanChain = new TangentChainObj("tanchain", fx[fI], [-6, 6], {}, canvas);
+    tanChain.assign_graph(graph);
+
+
+
+    var slider = document.getElementById("xSlider");
+
+    slider.oninput = function(){
+
+        let val = Math.round(this.value / 100);
+        let update = new UpdateNode( {"n": val}, 1000 );
+        tanChain.update(update);
+
+    }
+
+
+    let btn = document.getElementById("testBtn");
+    btn.onclick = ()=>{
+
+        fI ++;
+        let update = new UpdateNode( {"fx": fx[fI%fx.length]} );
+        graph.update(update);
+
+    }
+
+
+}
+
+//test_tangent();
+test_chain();
