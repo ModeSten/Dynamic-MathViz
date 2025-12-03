@@ -125,6 +125,8 @@ class VisualObj{
         this.duration = 1000;   // transition dration (default)
         this.delay = 0;         // transition delay (default)
 
+        this.children = [];
+
     }
 
 
@@ -137,6 +139,28 @@ class VisualObj{
         }
 
     }
+
+
+    add_child( obj, func){
+
+        this.removeChild(obj); 
+        this.children.push( {element: obj, callback: func} )
+
+    }
+
+    removeChild( obj ){
+
+        this.children = this.children.filter( (e) => {return e.element.id !== obj.id} );
+
+    }
+
+
+    notify_children(){
+
+        this.children.forEach( (c) => { c.callback( this, "" );} );
+
+    }
+
 
     assigne_to_canvas(canvas){
 
@@ -176,6 +200,7 @@ class VisualObj{
 
         this.parse_params(state.params);
         this.resolve_update();
+        this.notify_children();
 
         this.svg_init( state.duration, state.delay, ()=>{ this.update(state.next) } );
 
@@ -405,6 +430,7 @@ class GraphObj extends VisualObj{
 
     }
 
+
 }
 
 
@@ -521,7 +547,19 @@ class TnagentObj{   // tangent line
 
     }
 
-    assign_graph(){
+    assign_graph(graph){
+
+        this.graph = graph;
+        this.update( new UpdateNode({"fx": graph.params.fx}) );
+
+        graph.add_child(this, (obj, msg)=>{ this.update(new UpdateNode({"fx": graph.params.fx})) });
+
+    }
+
+    remove_graph(){
+
+        this.graph.removeChild(this);
+        this.graph = null;
 
     }
 

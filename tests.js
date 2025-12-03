@@ -73,12 +73,14 @@ function test_tangent(){
         width = 450 - margin.left - margin.right,
         height = 400 - margin.top - margin.bottom;
 
-    let fx = (x)=>{return 3*Math.sin(x)};
+    let fx = [ (x)=>{return Math.sin(x)}, (x)=>{return 2*Math.cos(x)}, (x)=>{return 3*Math.sin(x)}, (x)=>{return 2*Math.cos(x)} ];
+    let fI = 0;
 
     let canvas = new CanvasObj(width, height, margin, "canvas1", [-6, 6], [-6, 6], "viz1");
     let chart = new ChartObj("chart1", {}, canvas);
-    let graph = new GraphObj("graph1", fx, [-6, 6], {}, canvas);
-    let tangent = new TnagentObj("tangent", fx,{"center":2}, canvas);
+    let graph = new GraphObj("graph1", fx[fI], [-6, 6], {}, canvas);
+    let tangent = new TnagentObj("tangent", fx[fI],{"center":2}, canvas);
+    tangent.assign_graph(graph);
 
 
     var slider = document.getElementById("xSlider");
@@ -95,30 +97,10 @@ function test_tangent(){
     let btn = document.getElementById("testBtn");
     btn.onclick = ()=>{
 
-       /*
-        if(tangent.canvas === null){
-            console.log("assign");
-            tangent.assigne_to_canvas(canvas);
-        } else{
-            tangent.remove_from_canvas();
-        }
-        //*/
+        fI ++;
+        let update = new UpdateNode( {"fx": fx[fI%fx.length]} );
+        graph.update(update);
 
-        /*
-        if(canvas.parentId===null){
-            console.log("assign");
-            canvas.assign_to_div("viz1")
-        } else{
-            canvas.remove_from_div();
-        }
-        //*/
-
-        ///*
-        let update = new UpdateNode({"color": "green", "width":5});
-        update.next = new UpdateNode({"color": "blue", "width":10});
-        update.next.next = new UpdateNode({"color": "red", "width":2.5}, 1500);
-        tangent.update(update);
-        //*/
     }
 
 }
