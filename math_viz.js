@@ -123,6 +123,9 @@ class VisualObj{
         this.canvas = null;
         this.params = {};
 
+        this.duration = 1000;   // transition dration (default)
+        this.delay = 0;         // transition delay (default)
+
     }
 
 
@@ -319,8 +322,6 @@ class GraphObj extends VisualObj{
             "step": 0.1,        // stepsize (x) between ploted points 
             "color": "black",   // stroke color
             "width": 2.5,       // stroke widght
-            "duration": 1000,   // transition duration
-            "delay": 0          // transition delay
         };
 
         this.parse_params(params);
@@ -342,7 +343,7 @@ class GraphObj extends VisualObj{
         this.parse_params(state.params);
 
         this.get_data();
-        this.svg_init( ()=>{ this.update(state.next) } );
+        this.svg_init(state.duration, state.delay, ()=>{ this.update(state.next) } );
 
     }
 
@@ -362,7 +363,7 @@ class GraphObj extends VisualObj{
     }
 
 
-    svg_init(callback=()=>{return}){
+    svg_init(duration=this.duration, delay=this.delay, callback=()=>{return}){
 
         if(this.canvas === null || this.canvas.svg === null){
             return
@@ -382,8 +383,8 @@ class GraphObj extends VisualObj{
             .attr("clip-path", "url(#clip)")
         .merge(u)
             .transition()
-            .delay(this.params.delay)
-            .duration(this.params.duration)
+            .delay(delay)
+            .duration(duration)
             .attr("d", line)
                 .attr("fill", "none")
                 .attr("stroke", this.params.color)
@@ -403,11 +404,10 @@ class LineObj extends VisualObj{
 
         this.params = {
         "data": points,
-        "duration": 1000,
-        "delay": 0,
         "width": 2.5,
         "color": "black"
         };
+
 
         for (let [key, val] of Object.entries(this.params)){
             if( params[key] !== undefined ){
@@ -420,7 +420,8 @@ class LineObj extends VisualObj{
     }
 
 
-    svg_init(callback = ()=>{return}){
+    svg_init(duration=this.duration, delay=this.delay, callback = ()=>{return}){
+
 
         if(this.canvas === null || this.canvas.svg === null){
             return
@@ -440,12 +441,12 @@ class LineObj extends VisualObj{
                 .attr("class", this.id)
         .merge(u)
             .transition()
-                .duration(this.params.duration)
+                .duration(duration)
                 .attr("d", line)
                 .attr("fill", "none")
                 .attr("stroke", this.params.color)
                 .attr("stroke-width", this.params.width)
-                .delay(0)
+                .delay(delay)
             .on("end", callback);
 
     }
@@ -459,7 +460,7 @@ class LineObj extends VisualObj{
 
         this.parse_params(state.params);
 
-        this.svg_init(()=>{ this.update(state.next) });
+        this.svg_init(state.duration, state.delay,  ()=>{ this.update(state.next) });
 
     }
     
@@ -471,10 +472,11 @@ class LineObj extends VisualObj{
 
 class UpdateNode{   // use for updating visualisation classes parameters
 
-    constructor( params, delay=10, duration=1000, next=null ){
+    constructor( params, duration=1000, delay=0,  next=null ){
 
         this.params = params;       // parameters to be updated; ex {"data": data, "color": color}
-        this.duration = delay;      // delya before next chained update
+        this.duration = duration;      // delya before next chained update
+        this.delay = delay;
         this.next = next;           // next (chained) update node
 
     }
@@ -551,7 +553,6 @@ class TnagentObj{   // tangent line
 
     update(state){  
 
-
         for (let [key, val] of Object.entries(this.params)){
 
             if( state.params[key] === undefined ){
@@ -566,7 +567,7 @@ class TnagentObj{   // tangent line
         let lineParams = {...this.params}
         lineParams.data = this.data;
         
-        let root = new UpdateNode(lineParams);
+        let root = new UpdateNode(lineParams, state.duration, state.delay);
         let node = root;
 
         state = state.next;
@@ -587,7 +588,7 @@ class TnagentObj{   // tangent line
             lineParams = {...this.params};
             lineParams.data = this.data;
 
-            node.next = new UpdateNode(lineParams);
+            node.next = new UpdateNode(lineParams, state.duration, state.delay);
             node = node.next;
 
             state = state.next;
@@ -602,25 +603,23 @@ class TnagentObj{   // tangent line
 
     translate_center(center, stepSize=0.05){
 
-        this.params.duration = this.params.translateT;
-
         let direction = Math.sign( center - this.params.center );
         let x = this.params.center + direction * stepSize;
 
 
-        let root = new UpdateNode({"center": x});
+        let root = new UpdateNode({"center": x}, 5);
         let node = root;
         x +=  direction * stepSize;
 
         while ( Math.abs(center-x) > 0.05 ){
 
-            node.next = new UpdateNode({"center": x});
+            node.next = new UpdateNode({"center": x}, 5);
             node = node.next;
 
             x +=  direction * stepSize;
             if( (x > center && center > this.params.center) || (x < center && center < this.params.center) ){
                 x = center;
-                node.next = new UpdateNode({"center": x});
+                node.next = new UpdateNode({"center": x}, 5);
                 break;
             }
 

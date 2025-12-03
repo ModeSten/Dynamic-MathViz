@@ -11,10 +11,8 @@ function test_chart(){
     btn.onclick = ()=>{
 
         if(chart.canvas === null){
-            console.log("assign");
             chart.assigne_to_canvas("viz1");
         } else{
-            console.log("remove");
             chart.remove_from_canvas();
         }
 
@@ -49,20 +47,21 @@ function test_graph(){
         }
           //  */
 
+        /*
         if(canvas.parentId===null){
-            console.log("assign");
             canvas.assign_to_div("viz1")
         } else{
             canvas.remove_from_div();
         }
+            */
 
-        /*
-        let update = new UpdateNode({"color": "red", "duration": 1000, "width":5});
-        update.next = new UpdateNode({"color": "green", "duration": 1000, "width":10});
-        update.next.next = new UpdateNode({"color": "blue", "duration": 1500, "width":5});
-        update.next.next.next = new UpdateNode({"color": "black", "duration": 1500, "width":2.5});
+        ///*
+        let update = new UpdateNode({"color": "red",  "width":5});
+        update.next = new UpdateNode({"color": "green", "width":10});
+        update.next.next = new UpdateNode({"color": "blue", "width":5});
+        update.next.next.next = new UpdateNode({"color": "black",  "width":2.5});
         graph1.update(update);
-    */
+        //*/
 
     }
 
@@ -115,9 +114,9 @@ function test_tangent(){
         //*/
 
         ///*
-        let update = new UpdateNode({"color": "green", "duration": 1000, "width":5});
-        update.next = new UpdateNode({"color": "blue", "duration": 1000, "width":10});
-        update.next.next = new UpdateNode({"color": "red", "duration": 1500, "width":2.5});
+        let update = new UpdateNode({"color": "green", "width":5});
+        update.next = new UpdateNode({"color": "blue", "width":10});
+        update.next.next = new UpdateNode({"color": "red", "width":2.5}, 1500);
         tangent.update(update);
         //*/
     }
@@ -125,4 +124,4 @@ function test_tangent(){
 }
 
 
-test_tangent();
+test_graph();
