@@ -11,7 +11,8 @@ function test_chart(){
     btn.onclick = ()=>{
 
         if(chart.canvas === null){
-            chart.assigne_to_canvas(canvas);
+            console.log("assign");
+            chart.assigne_to_canvas("viz1");
         } else{
             console.log("remove");
             chart.remove_from_canvas();
@@ -46,14 +47,22 @@ function test_graph(){
             console.log("remove");
             graph1.remove_from_canvas();
         }
-            */
+          //  */
 
+        if(canvas.parentId===null){
+            console.log("assign");
+            canvas.assign_to_div("viz1")
+        } else{
+            canvas.remove_from_div();
+        }
+
+        /*
         let update = new UpdateNode({"color": "red", "duration": 1000, "width":5});
         update.next = new UpdateNode({"color": "green", "duration": 1000, "width":10});
         update.next.next = new UpdateNode({"color": "blue", "duration": 1500, "width":5});
         update.next.next.next = new UpdateNode({"color": "black", "duration": 1500, "width":2.5});
         graph1.update(update);
-
+    */
 
     }
 
@@ -87,22 +96,33 @@ function test_tangent(){
     let btn = document.getElementById("testBtn");
     btn.onclick = ()=>{
 
-        /*
+       /*
         if(tangent.canvas === null){
+            console.log("assign");
             tangent.assigne_to_canvas(canvas);
         } else{
             tangent.remove_from_canvas();
         }
-        */
+        //*/
 
+        /*
+        if(canvas.parentId===null){
+            console.log("assign");
+            canvas.assign_to_div("viz1")
+        } else{
+            canvas.remove_from_div();
+        }
+        //*/
+
+        ///*
         let update = new UpdateNode({"color": "green", "duration": 1000, "width":5});
         update.next = new UpdateNode({"color": "blue", "duration": 1000, "width":10});
         update.next.next = new UpdateNode({"color": "red", "duration": 1500, "width":2.5});
         tangent.update(update);
-
+        //*/
     }
 
 }
 
 
-test_graph();
+test_tangent();

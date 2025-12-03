@@ -78,7 +78,7 @@ class CanvasObj {
 
         container.removeChild(element);             
 
-        this.parent = null;
+        this.parentId = null;
         this.svg = null;
 
         this.notify_children();
