@@ -14,7 +14,7 @@ class CanvasObj {
     constructor ( width, height, margin, id, xRange, yRange, parentId=null){
 
         this.ID = id;           // canvas id; also used as svg id
-        this.parentId;          // div container for svg
+        this.parentId;          // id of div container; svg parent div 
         this.children = [];     // canvas child objects / elements [ class-objet, callback]
 
         this.svg = null; 
@@ -44,7 +44,7 @@ class CanvasObj {
 
     }
 
-    // assign canvas to div and create svg element
+    // assign canvas to html div and create svg element
     assign_to_div ( targetDivId ){
 
         this.parentId = targetDivId;
@@ -109,27 +109,28 @@ class CanvasObj {
 
     }
 
-
 }
 
 
-
+// parent class for math visualisation classes; implements common parameters and methods
 class VisualObj{
 
     constructor(id){
 
         this.id = id;
-        this.canvas = null;
-        this.params = {};
+        this.canvas = null;     // assigned canvas element
+        this.params = {};       
 
         this.duration = 1000;   // transition dration (default)
         this.delay = 0;         // transition delay (default)
+        this.isDefined = (d, i) => { return ( d[0] !== NaN )  && ( d[1] !== NaN ) };
 
         this.children = [];
 
     }
 
 
+    // Read input parameters and overide stored values
     parse_params( params ){
 
         for (let [key, val] of Object.entries(this.params)){
@@ -143,12 +144,12 @@ class VisualObj{
 
     add_child( obj, func){
 
-        this.removeChild(obj); 
+        this.remove_child(obj);     // remove child if already exists; avoid duplicates
         this.children.push( {element: obj, callback: func} )
 
     }
 
-    removeChild( obj ){
+    remove_child( obj ){
 
         this.children = this.children.filter( (e) => {return e.element.id !== obj.id} );
 
@@ -199,7 +200,7 @@ class VisualObj{
         }
 
         this.parse_params(state.params);
-        this.resolve_update();
+        this.resolve_update();              // resolve update 'side-efects'; Custome for each child class (ex update data)
         this.notify_children();
 
         this.svg_init( state.duration, state.delay, ()=>{ this.update(state.next) } );
@@ -278,11 +279,11 @@ class ChartObj extends VisualObj{
     // get axis ofset based on x and y range 
     get_axis_ofset(){
 
-        let xStep = this.canvas.width / (this.params.xRange[1] - this.params.xRange[0]);
-        let yStep = (this.canvas.height) / (this.params.yRange[1] - this.params.yRange[0]);
+        let xStep = this.canvas.width / (this.params.xRange[1] - this.params.xRange[0]);    // distance coresponding to each x value step
+        let yStep = (this.canvas.height) / (this.params.yRange[1] - this.params.yRange[0]); // distance coresponding to each y value step
 
-        let xAxisOfset;
-        let yAxisOfset;
+        let xAxisOfset;     // x Axis ofset from top
+        let yAxisOfset;     // y axis ofset from left side
 
 
         if(this.params.yRange[0] < 0){     // if min y value is negative, move x-axis up 
@@ -412,7 +413,8 @@ class GraphObj extends VisualObj{
 
         let line = d3.line()
             .x( (d) => {return this.canvas.xScale(d[0])} )
-            .y( (d) => {return this.canvas.yScale(d[1])} );
+            .y( (d) => {return this.canvas.yScale(d[1])} )
+            .defined(  (d, i)=>{ return this.isDefined(d, i) } );
 
         u.enter()
             .append("path")
@@ -471,7 +473,8 @@ class LineObj extends VisualObj{
 
         let line = d3.line()
             .x( (d)=>{return this.canvas.xScale(d[0])} )
-            .y( (d)=>{return this.canvas.yScale(d[1])} );
+            .y( (d)=>{return this.canvas.yScale(d[1])} )
+            .defined( (d, i) => { return this.isDefined(d, i) } );
 
 
         u.enter()
