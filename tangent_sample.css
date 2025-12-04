@@ -1,0 +1,47 @@
+
+
+body{
+
+    background-color: whitesmoke;
+
+}
+
+
+.viz_container{
+
+    display: inline-block;
+    position: relative;
+    width: fit-content;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+    margin-left: 15px;
+    
+}
+
+
+.viz_svg{
+
+     border: 3px solid gray;
+    background-color: aliceblue;
+
+}
+
+.slidercontainer{
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+}
+
+.slider{
+    width: 50%;
+}
+
+
+.steps{
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+}
