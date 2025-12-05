@@ -325,11 +325,14 @@ class TangentChainObj extends TangentBaseObj{
              "length":5 , 
              "width":2.5 , 
              "color":"red",
-             "xRange": xRange
+             "xRange": xRange,
+             "h": 0.01
             };    
         this.parse_params(params);
 
-        this.get_data();
+        if(graph == null){
+            this.get_data();
+        }
 
         this.line = new LineObj( this.id, this.data, this.params );
         this.line.isDefined = this.isDefined;
@@ -365,6 +368,41 @@ class TangentChainObj extends TangentBaseObj{
     resolve_update(){
 
         this.get_data();
+
+    }
+
+}
+
+
+
+class TangenHChainObj extends TangentChainObj{
+
+    constructor(id, fx, xRange, params={}, canvas=null, graph=null, h=5){
+
+        params.h = h;
+        super(id, fx, xRange, params, canvas, graph );
+
+    }
+
+
+    get_data(){
+
+        this.data = [];
+
+        let xStart = this.params.xRange[0];
+        let xEnd = this.params.xRange[1];
+        let h = this.params.h;
+
+        for(let x=xStart; x<xEnd; x+=h){
+
+            let x0 = x + h/2;
+            let k = get_slope(this.params.fx, x0);
+
+            this.data.push([x, k]);
+            this.data.push([x+h, k]);
+            this.data.push([x+h, null]);
+
+        }
 
     }
 
