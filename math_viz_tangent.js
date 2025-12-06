@@ -137,10 +137,10 @@ class TangentObj extends TangentBaseObj{   // tangent line
         this.params = {
             "fx": fx,
              "center":0 , 
-             "length":5 , 
+             "length": 25 , 
              "width":2.5 , 
              "color":"red", 
-             "translateT": 5,
+             "h": 0.01
             };    
 
         for (let [key, val] of Object.entries(this.params)){    // read optional parameters
@@ -250,7 +250,7 @@ class TangentObj extends TangentBaseObj{   // tangent line
 
     get_data(){
 
-        let func = get_tangent_function(this.params.fx, this.params.center);     // tangent-line function
+        let func = get_tangent_function(this.params.fx, this.params.center, this.params.h);     // tangent-line function
         this.data = get_points_from_lenght(func, this.params.center, this.params.length);
 
     }
@@ -340,8 +340,7 @@ class TangenHChainObj extends TangentChainObj{
 
         for(let x=xStart; x<xEnd; x+=h){
 
-            let x0 = x + h/2;
-            let k = get_slope(this.params.fx, x0);
+            let k = get_slope(this.params.fx, x, h);
 
             this.data.push([x, k]);
             this.data.push([x+h, k]);
