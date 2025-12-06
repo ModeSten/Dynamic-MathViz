@@ -93,6 +93,7 @@ class TangentBaseObj{
 
     update(state){  
 
+
         this.parse_params(state.params);
         this.resolve_update();
 
@@ -124,11 +125,12 @@ class TangentBaseObj{
 
 
 
-class TangentObj{   // tangent line
+class TangentObj extends TangentBaseObj{   // tangent line
 
     constructor(id, fx, params={}, canvas=null, graph=null){
 
-        this.id = id;
+        super(id, fx);
+
         this.canvas;
         this.graph;                    // optional GraphObj: track to update tangent on graph change
         
@@ -138,9 +140,7 @@ class TangentObj{   // tangent line
              "length":5 , 
              "width":2.5 , 
              "color":"red", 
-             "duration":5 , 
              "translateT": 5,
-             "delay":0, 
             };    
 
         for (let [key, val] of Object.entries(this.params)){    // read optional parameters
@@ -151,12 +151,9 @@ class TangentObj{   // tangent line
 
         }
 
-        this.data;
         this.get_data();
 
-
-        let lineParams = {...this.params}
-        this.line = new LineObj( id, this.data, lineParams );
+        this.line = new LineObj( id, this.data, this.params );
 
         this.assigne_to_canvas(canvas)
 
@@ -215,74 +212,27 @@ class TangentObj{   // tangent line
     }
 
 
-    update(state){  
-
-        for (let [key, val] of Object.entries(this.params)){
-
-            if( state.params[key] === undefined ){
-                state.params[key] = this.params[key];
-            } else{
-                this.params[key] = state.params[key];
-            }
-
-        }
-        this.get_data();
-
-        let lineParams = {...this.params}
-        lineParams.data = this.data;
-        
-        let root = new UpdateNode(lineParams, state.duration, state.delay);
-        let node = root;
-
-        state = state.next;
-
-        while( state !== null){
-    
-            for (let [key, val] of Object.entries(this.params)){
-
-                if( state.params[key] === undefined ){
-                    state.params[key] = this.params[key];
-                } else{
-                    this.params[key] = state.params[key];
-                }
-
-            }
-            this.get_data();
-
-            lineParams = {...this.params};
-            lineParams.data = this.data;
-
-            node.next = new UpdateNode(lineParams, state.duration, state.delay);
-            node = node.next;
-
-            state = state.next;
-
-        }
-        
-        this.line.update(root);
-
-    }
-
-
     translate_center(center, stepSize=0.05){
 
         let direction = Math.sign( center - this.params.center );
         let x = this.params.center + direction * stepSize;
 
+        let T = 5; // transition duration 
 
-        let root = new UpdateNode({"center": x}, 5);
+
+        let root = new UpdateNode({"center": x}, T);
         let node = root;
         x +=  direction * stepSize;
 
         while ( Math.abs(center-x) > 0.05 ){
 
-            node.next = new UpdateNode({"center": x}, 5);
+            node.next = new UpdateNode({"center": x}, T);
             node = node.next;
 
             x +=  direction * stepSize;
             if( (x > center && center > this.params.center) || (x < center && center < this.params.center) ){
                 x = center;
-                node.next = new UpdateNode({"center": x}, 5);
+                node.next = new UpdateNode({"center": x}, T);
                 break;
             }
 
@@ -290,6 +240,11 @@ class TangentObj{   // tangent line
 
         this.update(root);
 
+    }
+
+
+    resolve_update(){
+        this.get_data();
     }
 
 
