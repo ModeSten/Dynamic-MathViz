@@ -4,9 +4,13 @@ width = 500 - margin.left - margin.right,
 height = 450 - margin.top - margin.bottom;
 
 
+//var fx = (x)=>{ return x**3 / 30 };
+var fx = (x)=>{ return x**2 / 10 };
+
+
 function get_fx_string(fx){
       
-    let rawStr = fx.toString();
+    //let rawStr = fx.toString();
     let leftBracket = false;
     let fxStr = "";
 
@@ -33,7 +37,7 @@ function get_fx_string(fx){
 function tangent1(){
 
     let divId = "tan_viz1";
-    let fx = (x)=>{ return 5*Math.sin(x/2) };
+    //let fx = (x)=>{ return 5*Math.sin(x/2) };
 
 
     let canvas = new CanvasObj( width, height, margin, "canvas1", [-10, 10], [-10, 10], divId );
@@ -67,7 +71,7 @@ function tangent1(){
 function tangent2(){
 
     let divId= "tan_viz2";
-    let fx = (x)=>{ return 5*Math.sin(x/2) };
+    //let fx = (x)=>{ return 5*Math.sin(x/2) };
     let n = 3;
 
     let canvas = new CanvasObj( width, height, margin, "canvas2", [-10, 10], [-10, 10], divId );
@@ -107,7 +111,7 @@ function tangent2(){
 function tangent3(){
 
     let divId= "tan_viz3";
-    let fx = (x)=>{ return 5*Math.sin(x/2) };
+    //let fx = (x)=>{ return 5*Math.sin(x/2) };
     let h0 = 0.5;
 
     let canvas = new CanvasObj( width, height, margin, "canvas3", [-10, 10], [-10, 10], divId );
