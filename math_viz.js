@@ -52,6 +52,7 @@ class CanvasObj {
         this.svg = d3.select("#"+targetDivId)
             .append("svg")
                 .attr("id", this.ID)
+                .attr("class", "viz_svg")
                 .attr("width", this.width + this.margin.left + this.margin.right)
                 .attr("height", this.height + this.margin.top + this.margin.bottom)
             .append("g")

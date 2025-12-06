@@ -92,10 +92,12 @@ function tangent2(){
 
     let BckBtn = document.getElementById("n-");
     BckBtn.onclick = () => {
-        n--;
-        let update = new UpdateNode({"n": n});
-        tanChain.update(update);
-        txt.innerHTML = `n=${n}`;
+        if(n>0){
+            n--;
+            let update = new UpdateNode({"n": n});
+            tanChain.update(update);
+            txt.innerHTML = `n=${n}`;
+        }
     }
 
 
