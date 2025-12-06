@@ -96,30 +96,20 @@ class TangentBaseObj{
         this.parse_params(state.params);
         this.resolve_update();
 
-        let lineParams = {...this.params}
-        lineParams.data = this.data;
-        
-        let root = new UpdateNode(lineParams, state.duration, state.delay);
-        let node = root;
+        state.params.data = this.data;
+        let node = state.next;
 
-        state = state.next;
-
-        while( state !== null){
+        while( node !== null){
     
-            this.parse_params(state.params);
+            this.parse_params(node.params);
             this.resolve_update();
+            node.params.data = this.data;
 
-            lineParams = {...this.params};
-            lineParams.data = this.data;
-
-            node.next = new UpdateNode(lineParams, state.duration, state.delay);
             node = node.next;
-
-            state = state.next;
 
         }
         
-        this.line.update(root);
+        this.line.update(state);
 
     }
 
