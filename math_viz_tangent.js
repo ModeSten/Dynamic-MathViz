@@ -270,6 +270,7 @@ class TangentObj extends TangentBaseObj{   // tangent line
 
     resolve_update(){
         this.get_data();
+        this.fx = this.params.fx;
     }
 
 

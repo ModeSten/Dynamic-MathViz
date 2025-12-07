@@ -15,7 +15,7 @@ function main(){
     let tangent = new TangentObj("tangent1", fx[fI], {"length": 15, "center": 3}, canvas, graph);
 
     let markers = new MarkerObj("marker1", {}, canvas, graph);
-    //markers.set_parent( tangent, markers.center_marker);
+    markers.set_parent( tangent, markers.center_marker);
 
     let testBtn = document.getElementById("testBtn");
     testBtn.onclick = ()=>{
