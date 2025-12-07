@@ -74,7 +74,7 @@ class CanvasObj {
     remove_from_div (){
 
         let container = document.getElementById(this.parentId);   // get conatining div
-        let element = document.getElementById(this.ID);         // get svg element
+        let element = document.getElementById(this.ID);         // get svg element (as node)
 
         container.removeChild(element);             
 
@@ -93,6 +93,7 @@ class CanvasObj {
 
     add_child( obj, func){
 
+        this.removeChild(obj)   // remove to avoid duplicates
         this.children.push( {element: obj, callback: func} )
 
     }
@@ -120,14 +121,14 @@ class VisualObj{
 
         this.id = id;
         this.canvas = null;     // assigned canvas element
-        this.params = {};       
+        this.params = {};       // parameters placeholder for child class overrride
 
         this.duration = 1000;   // transition dration (default)
         this.delay = 0;         // transition delay (default)
-        this.isDefined = (d, i) => { return ( d[0] !== null )  && ( d[1] !== null ) };
+        this.isDefined = (d, i) => { return ( d[0] !== null )  && ( d[1] !== null ) };      // specify for whath values element should be rendered
 
         this.data = [];
-        this.children = [];
+        this.children = [];     // child objects; updating with parent
 
     }
 
@@ -135,9 +136,9 @@ class VisualObj{
     // Read input parameters and overide stored values
     parse_params( params ){
 
-        for (let [key, val] of Object.entries(this.params)){
-            if( params[key] !== undefined ){
-                this.params[key] = params[key];
+        for (let [key, val] of Object.entries(params)){
+            if( this.params[key] !== undefined ){       // if provided parameter is part of class, override curent value
+                this.params[key] = val;
             }
         }
 
@@ -146,7 +147,7 @@ class VisualObj{
 
     add_child( obj, func){
 
-        this.remove_child(obj);     // remove child if already exists; avoid duplicates
+        this.remove_child(obj);     // remove child if already exists; to avoid duplicates
         this.children.push( {element: obj, callback: func} )
 
     }
@@ -165,6 +166,7 @@ class VisualObj{
     }
 
 
+    // assign to canvas (class) object 
     assigne_to_canvas(canvas){
 
         if(canvas === null ){
@@ -174,7 +176,7 @@ class VisualObj{
         this.canvas = canvas;
         canvas.add_child(this, (id, msg) => { this.svg_init() });
 
-        this.svg_init();
+        this.svg_init();    // create svg elements (if canvas svg has been created)
 
     }
 
@@ -186,7 +188,7 @@ class VisualObj{
         }
 
         if(this.canvas.svg !== null){
-            this.canvas.svg.selectAll("."+this.id).remove();    // remove svg elements
+            this.canvas.svg.selectAll("."+this.id).remove();    // remove svg elements if canvas svg exists (canvas is assigned to div)
         }
 
         this.canvas.removeChild(this);      // remove from canvas child list
@@ -231,8 +233,8 @@ class ChartObj extends VisualObj{
         super(id);
 
         this.params = {
-            "xRange": null,
-            "yRange": null
+            "xRange": null,     // range of x axis values
+            "yRange": null      // range of y axis values
         };
 
         this.parse_params(params);
@@ -246,7 +248,7 @@ class ChartObj extends VisualObj{
 
     }
 
-    // get x & y scales based on value range and canvas size
+    // get x & y (D3) scales based on value range and canvas size
     get_scale(){
 
         let xScale;
@@ -267,7 +269,7 @@ class ChartObj extends VisualObj{
 
     }
 
-    // get svg axis based on scale
+    // get svg (D3) axis based on scale
     get_axis( scale ){
 
         let xAxis = d3.axisBottom(scale.x); 
@@ -309,9 +311,10 @@ class ChartObj extends VisualObj{
     }
 
 
+    // create / update svg elements
     svg_init(callback=()=>{return}){
 
-        if (this.canvas.svg === null){
+        if (this.canvas === null || this.canvas.svg === null){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
             return;
         }
 
@@ -329,7 +332,8 @@ class ChartObj extends VisualObj{
             .attr("class", this.id)
             .call(axis.y);
 
-        // Axes label
+
+        // Axis labels
 
         // x label
         this.canvas.svg.append("text")
@@ -352,6 +356,7 @@ class ChartObj extends VisualObj{
 }
 
 
+// Graph class: Draw graph based on function
 class GraphObj extends VisualObj{
 
     constructor( id, fx, xRange, params, canvas=null ){ 
@@ -363,23 +368,20 @@ class GraphObj extends VisualObj{
 
         this.params = {
             "fx": fx,           // function: (x)=>{ returne f(x) }
-            "xRange": xRange,   // x bounds: [x0, x1]
-            "step": 0.1,        // stepsize (x) between ploted points 
+            "xRange": xRange,   // x value range
+            "step": 0.1,        // stepsize (x) between value pairs [x, y]
             "color": "black",   // stroke color
             "width": 2.5,       // stroke widght
         };
 
         this.parse_params(params);
-
         this.get_data();
+        this.assigne_to_canvas(canvas);
         
-        if(canvas !== null){
-            this.assigne_to_canvas(canvas);
-        }
         
     }
 
-
+    // update side efects; not shared by sibling classes
     resolve_update(){
 
         this.get_data();
@@ -387,9 +389,10 @@ class GraphObj extends VisualObj{
     }
 
 
+    // get graph value paris [x, y]
     get_data(){
 
-        this.data = []; // remove stored data
+        this.data = []; // remove stored (old) data
         let y;
 
         for( let x=this.params.xRange[0]; x <= this.params.xRange[1]; x+=this.params.step){
@@ -404,7 +407,7 @@ class GraphObj extends VisualObj{
 
     svg_init(duration=this.duration, delay=this.delay, callback=()=>{return}){
 
-        if(this.canvas === null || this.canvas.svg === null){
+        if(this.canvas === null || this.canvas.svg === null){   // no canvas assigned or no canvas svg (canvas not assigned to div) exists
             return
         }
 
@@ -437,19 +440,20 @@ class GraphObj extends VisualObj{
 }
 
 
+// Line class: plot line (graph) based on list of data values
 class LineObj extends VisualObj{
 
-    constructor( id, points, params, canvas=null){
+    constructor( id, points, params, canvas=null){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
 
         super(id);
 
         this.params = {
-        "data": points,
-        "width": 2.5,
-        "color": "black"
+        "data": points,     // data value pairs; to plot
+        "width": 2.5,       // line (stroke) width
+        "color": "black"    // lien (stroke) color
         };
 
-        this.data = this.params.data;
+        this.data = this.params.data;   // used to maintain comonolity with sibling classes: main data variable stored in parameters
 
         this.parse_params(params);
         this.assigne_to_canvas(canvas);
@@ -460,7 +464,7 @@ class LineObj extends VisualObj{
     svg_init(duration=this.duration, delay=this.delay, callback = ()=>{return}){
 
 
-        if(this.canvas === null || this.canvas.svg === null){
+        if(this.canvas === null || this.canvas.svg === null){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
             return
         }
 
@@ -493,6 +497,7 @@ class LineObj extends VisualObj{
 }
 
 
+// data markers class; create circular markers based on data value paris
 class MarkerObj extends VisualObj{
 
     constructor( id, params, canvas=null, parent=null){
@@ -500,15 +505,15 @@ class MarkerObj extends VisualObj{
         super(id);
 
         this.params = {
-            "data":[],
-            "color": "red",
-            "r": "3",
-            "space": 5
+            "data":[],      // data value pairs
+            "color": "red", 
+            "r": "3",       // marker (circle) radius
+            "space": 5      // space between markers; if placed uniformly
         };
 
         this.parse_params(params);
         this.parent = null;
-        this.on_paren_update;
+        this.on_paren_update;   // function defining behaviour on parent object (ex graph) updating
 
         this.set_parent(parent);
         this.assigne_to_canvas(canvas);
@@ -519,6 +524,7 @@ class MarkerObj extends VisualObj{
     }
 
 
+    // set parent object: update markers on parent update
     set_parent(parent, callback=this.space_marker){
 
         if(parent === null){
@@ -542,6 +548,7 @@ class MarkerObj extends VisualObj{
     }
 
 
+    // uniformly place markers along graph (default update behavior when parent object is assigned)
     space_marker(){
 
         if( this.parent === null){
@@ -549,7 +556,7 @@ class MarkerObj extends VisualObj{
         }
 
         let data = [];
-        let len = Object.keys(this.parent.data).length
+        let len = Object.keys(this.parent.data).length;
         let space = this.params.space;
 
         let d0 = this.parent.data[0];
@@ -561,7 +568,7 @@ class MarkerObj extends VisualObj{
             
             d1 = this.parent.data[i];
             L += Math.sqrt( (d1[0]-d0[0])**2 + (d1[1]-d0[1])**2 );
-            if(L >= space){
+            if(L >= space){ 
                 data.push(d1);
                 L=0;
             }
@@ -574,6 +581,7 @@ class MarkerObj extends VisualObj{
     }
 
 
+    // place marker at center of graph; based on graph function
     center_marker(){
 
         if(this.parent === null){
