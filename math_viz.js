@@ -126,6 +126,7 @@ class VisualObj{
         this.delay = 0;         // transition delay (default)
         this.isDefined = (d, i) => { return ( d[0] !== null )  && ( d[1] !== null ) };
 
+        this.data = [];
         this.children = [];
 
     }
@@ -359,7 +360,6 @@ class GraphObj extends VisualObj{
 
         this.fx = fx;           // graph function
         this.xRange = xRange;   // graph value (x) range
-        this.data;
 
         this.params = {
             "fx": fx,           // function: (x)=>{ returne f(x) }
@@ -449,13 +449,9 @@ class LineObj extends VisualObj{
         "color": "black"
         };
 
+        this.data = this.params.data;
 
-        for (let [key, val] of Object.entries(this.params)){
-            if( params[key] !== undefined ){
-                this.params[key] = params[key];
-            }
-        }
-
+        this.parse_params(params);
         this.assigne_to_canvas(canvas);
     
     }
@@ -495,6 +491,125 @@ class LineObj extends VisualObj{
     
 
 }
+
+
+class MarkerObj extends VisualObj{
+
+    constructor( id, params, canvas=null, parent=null){
+
+        super(id);
+
+        this.params = {
+            "data":[],
+            "color": "red",
+            "r": "3",
+            "space": 5
+        };
+
+        this.parse_params(params);
+        this.parent = null;
+        this.on_paren_update;
+
+        this.set_parent(parent);
+        this.assigne_to_canvas(canvas);
+
+        this.resolve_update();
+        this.svg_init();
+
+    }
+
+
+    set_parent(parent, callback=this.space_marker){
+
+        if(parent === null){
+            return
+        }
+
+        this.on_paren_update = callback;
+        parent.add_child(this, (obj, msg)=>{callback(); this.svg_init() });
+        this.parent = parent;
+
+    }
+
+
+    remove_parent(){
+
+        this.parent.remove_child(this);
+
+    }
+
+
+    space_marker(){
+
+        if( this.parent === null){
+            return
+        }
+
+        this.data = [];
+        let len = Object.keys(this.parent.data).length
+        let space = this.params.space;
+
+        let d0 = this.parent.data[0];
+        //this.data.push(d0);
+
+        let d1;
+        let L = 0;
+        for(let i=1; i<len; i++){
+            
+            d1 = this.parent.data[i];
+            L += Math.sqrt( (d1[0]-d0[0])**2 + (d1[1]-d0[1])**2 );
+            if(L >= space){
+                this.data.push(d1);
+                L=0;
+            }
+            d0 = d1;
+
+        }
+
+    }
+
+
+    resolve_update(){
+
+        if(this.parent !== null){
+            this.on_paren_update();
+        } else{
+            this.data = [];
+            for (let x = -10; x < 10; x++){
+                this.data.push( [x, 2*x] );
+            }
+        }
+
+    }
+
+
+    svg_init(duration=this.duration, delay=this.delay, callback = ()=>{return}){
+
+        if(this.canvas === null){
+            return
+        }
+
+        let u = this.canvas.svg.selectAll("."+this.id)
+            .data( this.data, (d)=>{return d.ser1});
+
+        console.log(this.data);
+
+        u.join("circle")
+            .attr("class", this.id)
+            .attr("r", this.params.r)
+            .attr("fill", this.params.color)
+            .attr("cx", (d)=>{ return this.canvas.xScale(d[0]) })
+            .attr("cy", (d)=>{ return this.canvas.yScale(d[1]) });
+
+
+    }
+
+
+
+
+
+}
+
 
 
 /* other classes */

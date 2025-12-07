@@ -1,151 +1,23 @@
-function test_chart(){
+const margin = { top: 60, right: 60, bottom: 50, left: 60 },
+width = 500 - margin.left - margin.right,
+height = 450 - margin.top - margin.bottom;
 
-    const margin = { top: 60, right: 60, bottom: 50, left: 60 },
-    width = 450 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
-
-    canvas = new CanvasObj(width, height, margin, "viz_canvas", [-6,6], [-6,6], "viz1");
-    chart = new ChartObj("chart1", {}, canvas);
-
-    let btn = document.getElementById("testBtn");
-    btn.onclick = ()=>{
-
-        if(chart.canvas === null){
-            chart.assigne_to_canvas("viz1");
-        } else{
-            chart.remove_from_canvas();
-        }
-
-    }
-
-}
+var fx = [ (x)=>{return 2*x} , (x)=>{return x**2/5}, (x)=>{return x**3/100}];
+let fI = 2;
 
 
 
-function test_graph(){
+function main(){
 
-    const margin = { top: 60, right: 60, bottom: 60, left: 60 },
-        width = 450 - margin.left - margin.right,
-        height = 400 - margin.top - margin.bottom;
-
-
-    let fx = (x)=>{return 3*Math.sin(x)};
-
-    let canvas = new CanvasObj(width, height, margin, "canvas1", [-6, 6], [-6, 6], "viz1");
-    chart = new ChartObj("chart1", {}, canvas);
-    let graph1 = new GraphObj("graph1", fx, [-6, 6],{}, canvas);
-
-    let btn = document.getElementById("testBtn");
-    btn.onclick = ()=>{
-
-        /*
-        if(graph1.canvas === null){
-            graph1.assigne_to_canvas(canvas);
-        } else{
-            console.log("remove");
-            graph1.remove_from_canvas();
-        }
-          //  */
-
-        /*
-        if(canvas.parentId===null){
-            canvas.assign_to_div("viz1")
-        } else{
-            canvas.remove_from_div();
-        }
-            */
-
-        ///*
-        let update = new UpdateNode({"color": "red",  "width":5}, 1000, 10);
-        update.next = new UpdateNode({"color": "green", "width":10}, 1500, 15);
-        update.next.next = new UpdateNode({"color": "blue", "width":5}, 2000, 20);
-        update.next.next.next = new UpdateNode({"color": "black",  "width":2.5}, 2500, 30);
-        graph1.update(update);
-        //*/
-
-    }
-
-}
-
-function test_tangent(){
-
-    const margin = { top: 60, right: 60, bottom: 60, left: 60 },
-        width = 450 - margin.left - margin.right,
-        height = 400 - margin.top - margin.bottom;
-
-    let fx = [ (x)=>{return Math.sin(x)}, (x)=>{return 2*Math.cos(x)}, (x)=>{return 3*Math.sin(x)}, (x)=>{return 2*Math.cos(x)} ];
-    let fI = 0;
-
-    let canvas = new CanvasObj(width, height, margin, "canvas1", [-6, 6], [-6, 6], "viz1");
+    let canvas = new CanvasObj(width, height, margin, "testcanvas1", [-10, 10], [-10, 10], "test_viz1");
     let chart = new ChartObj("chart1", {}, canvas);
-    let graph = new GraphObj("graph1", fx[fI], [-6, 6], {}, canvas);
-    let tangent = new TangentObj("tangent", fx[fI],{"center":2}, canvas);
-    tangent.assign_graph(graph);
+    let graph = new GraphObj("graph1", fx[fI], [-10, 10], {}, canvas);
+    //let tangent = new TangentObj("tangent1", fx[fI], {"length": 15, "center": 3}, canvas, graph);
 
-
-    var slider = document.getElementById("xSlider");
-
-    slider.oninput = function(){
-
-    let val = this.value / 1000;
-    let xVal = -6 * (1-val) + 6*val;
-    tangent.translate_center(xVal);
-
-    }
-
-
-    let btn = document.getElementById("testBtn");
-    btn.onclick = ()=>{
-
-        fI ++;
-        let update = new UpdateNode( {"fx": fx[fI%fx.length]} );
-        graph.update(update);
-
-    }
+    let markers = new MarkerObj("marker1", {}, canvas, graph);
 
 }
 
 
-function test_chain(){
 
-    const margin = { top: 60, right: 60, bottom: 60, left: 60 },
-    width = 450 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
-
-    let fx = [ (x)=>{return Math.sin(x)}, (x)=>{return 2*Math.cos(x)}, (x)=>{return 3*Math.sin(x)}, (x)=>{return 2*Math.cos(x)} ];
-    let fI = 0;
-
-    let canvas = new CanvasObj(width, height, margin, "canvas1", [-6, 6], [-6, 6], "viz1");
-    let chart = new ChartObj("chart1", {}, canvas);
-    let graph = new GraphObj("graph1", fx[fI], [-6, 6], {}, canvas);
-
-    let tanChain = new TangentChainObj("tanchain", fx[fI], [-6, 6], {}, canvas);
-    tanChain.assign_graph(graph);
-
-
-
-    var slider = document.getElementById("xSlider");
-
-    slider.oninput = function(){
-
-        let val = Math.round(this.value / 100);
-        let update = new UpdateNode( {"n": val}, 1000 );
-        tanChain.update(update);
-
-    }
-
-
-    let btn = document.getElementById("testBtn");
-    btn.onclick = ()=>{
-
-        fI ++;
-        let update = new UpdateNode( {"fx": fx[fI%fx.length]} );
-        graph.update(update);
-
-    }
-
-
-}
-
-//test_tangent();
-test_chain();
+main();
