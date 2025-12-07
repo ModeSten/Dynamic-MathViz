@@ -526,8 +526,11 @@ class MarkerObj extends VisualObj{
         }
 
         this.on_paren_update = callback;
-        parent.add_child(this, (obj, msg)=>{callback(); this.svg_init() });
+        parent.add_child(this, (obj, msg)=>{this.data = this.on_paren_update(); this.svg_init(obj.duration) });
         this.parent = parent;
+
+        this.resolve_update();
+        this.svg_init();
 
     }
 
@@ -545,12 +548,12 @@ class MarkerObj extends VisualObj{
             return
         }
 
-        this.data = [];
+        let data = [];
         let len = Object.keys(this.parent.data).length
         let space = this.params.space;
 
         let d0 = this.parent.data[0];
-        //this.data.push(d0);
+        data.push(d0);
 
         let d1;
         let L = 0;
@@ -559,12 +562,32 @@ class MarkerObj extends VisualObj{
             d1 = this.parent.data[i];
             L += Math.sqrt( (d1[0]-d0[0])**2 + (d1[1]-d0[1])**2 );
             if(L >= space){
-                this.data.push(d1);
+                data.push(d1);
                 L=0;
             }
             d0 = d1;
 
         }
+
+        return data;
+
+    }
+
+
+    center_marker(){
+
+        if(this.parent === null){
+            return
+        }
+
+        
+        let x0 = this.parent.data[0][0];
+        let x1 = this.parent.data[ Object.keys(this.parent.data).length-1 ][0];
+
+        let xc = x0 + (x1-x0)/2;
+        let yc = this.parent.fx(xc);
+
+        return [[xc, yc]];
 
     }
 
@@ -572,13 +595,8 @@ class MarkerObj extends VisualObj{
     resolve_update(){
 
         if(this.parent !== null){
-            this.on_paren_update();
-        } else{
-            this.data = [];
-            for (let x = -10; x < 10; x++){
-                this.data.push( [x, 2*x] );
-            }
-        }
+            this.data = this.on_paren_update();
+        } 
 
     }
 
@@ -592,14 +610,14 @@ class MarkerObj extends VisualObj{
         let u = this.canvas.svg.selectAll("."+this.id)
             .data( this.data, (d)=>{return d.ser1});
 
-        console.log(this.data);
-
         u.join("circle")
-            .attr("class", this.id)
-            .attr("r", this.params.r)
-            .attr("fill", this.params.color)
-            .attr("cx", (d)=>{ return this.canvas.xScale(d[0]) })
-            .attr("cy", (d)=>{ return this.canvas.yScale(d[1]) });
+                .attr("class", this.id)
+                .transition()
+                .duration(duration)
+                    .attr("r", this.params.r)
+                    .attr("fill", this.params.color)
+                    .attr("cx", (d)=>{ return this.canvas.xScale(d[0]) })
+                    .attr("cy", (d)=>{ return this.canvas.yScale(d[1]) });
 
 
     }

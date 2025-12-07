@@ -20,8 +20,31 @@ class TangentBaseObj{
         this.duration = 10;
         this.delay = 0;
 
+        this.children = [];
+
         this.isDefined = (d, i)=>{return (d[0]!==null) && (d[1]!==null)};
         
+    }
+
+
+    add_child( obj, func){
+
+        this.remove_child(obj);     // remove child if already exists; avoid duplicates
+        this.children.push( {element: obj, callback: func} )
+
+    }
+
+    remove_child( obj ){
+
+        this.children = this.children.filter( (e) => {return e.element.id !== obj.id} );
+
+    }
+
+
+    notify_children(){
+
+        this.children.forEach( (c) => { c.callback( this, "" );} );
+
     }
 
 
@@ -111,6 +134,7 @@ class TangentBaseObj{
         }
         
         this.line.update(state);
+        this.notify_children();
 
     }
 
@@ -156,6 +180,7 @@ class TangentObj extends TangentBaseObj{   // tangent line
         this.line = new LineObj( id, this.data, this.params );
 
         this.assigne_to_canvas(canvas)
+        this.assign_graph(graph);
 
     }
 
@@ -315,6 +340,7 @@ class TangentChainObj extends TangentBaseObj{
         this.get_data();
 
     }
+
 
 }
 
