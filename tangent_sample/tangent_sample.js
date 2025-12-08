@@ -5,7 +5,13 @@ height = 450 - margin.top - margin.bottom;
 
 
 //var fx = (x)=>{ return x**3 / 30 };
-var fx = (x)=>{ return x**2 / 10 };
+//var fx = (x)=>{ return x**2 / 10 };
+//var fx = (x)=>{ return x**4.5 / 10 };
+var fx = (x)=>{ return 5*Math.sin(x/1.5) };
+
+
+var xRange = [-10, 10];
+var yRange = [-10, 10];
 
 
 function get_fx_string(fx){
@@ -40,9 +46,9 @@ function tangent1(){
     //let fx = (x)=>{ return 5*Math.sin(x/2) };
 
 
-    let canvas = new CanvasObj( width, height, margin, "canvas1", [-10, 10], [-10, 10], divId );
+    let canvas = new CanvasObj( width, height, margin, "canvas1", xRange, yRange, divId );
     let chart = new ChartObj( "chart1", {}, canvas );
-    let graph = new GraphObj( "graph1", fx, [-10, 10], {}, canvas );
+    let graph = new GraphObj( "graph1", fx, xRange, {}, canvas );
     let tangent = new TangentObj( "tangent1", fx, {"center": 3}, canvas, graph );
 
     let container = document.getElementById(divId);
@@ -74,10 +80,10 @@ function tangent2(){
     //let fx = (x)=>{ return 5*Math.sin(x/2) };
     let n = 3;
 
-    let canvas = new CanvasObj( width, height, margin, "canvas2", [-10, 10], [-10, 10], divId );
+    let canvas = new CanvasObj( width, height, margin, "canvas2", xRange, yRange, divId );
     let chart = new ChartObj( "chart2", {}, canvas );
-    let graph = new GraphObj( "graph2", fx, [-10, 10], {}, canvas );
-    let tanChain = new TangentChainObj( "tan_chain1", fx, [-10, 10], {"n":n}, canvas, graph);
+    let graph = new GraphObj( "graph2", fx, xRange, {}, canvas );
+    let tanChain = new TangentChainObj( "tan_chain1", fx, xRange, {"n":n}, canvas, graph);
 
     let container = document.getElementById(divId);
     let viz = document.getElementById("canvas2");
@@ -114,10 +120,10 @@ function tangent3(){
     //let fx = (x)=>{ return 5*Math.sin(x/2) };
     let h0 = 0.5;
 
-    let canvas = new CanvasObj( width, height, margin, "canvas3", [-10, 10], [-10, 10], divId );
+    let canvas = new CanvasObj( width, height, margin, "canvas3", xRange, yRange, divId );
     let chart = new ChartObj( "chart3", {}, canvas );
-    let graph = new GraphObj( "graph3", fx, [-10, 10], {}, canvas );
-    let tanChain = new TangenHChainObj( "tan_hchain1", fx, [-10, 10], {}, canvas, graph, h0);
+    let graph = new GraphObj( "graph3", fx, yRange, {}, canvas );
+    let tanChain = new TangenHChainObj( "tan_hchain1", fx, xRange, {}, canvas, graph, h0);
 
     let container = document.getElementById(divId);
     let viz = document.getElementById("canvas3");

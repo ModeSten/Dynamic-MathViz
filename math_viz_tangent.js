@@ -9,16 +9,16 @@ class TangentBaseObj{
 
         this.id = id;
 
-        this.line;
+        this.line;          // line object for svg elements
 
-        this.fx = fx;
-        this.params = {};
-        this.data = [];
+        this.fx = fx;       // tangent reference function
+        this.params = {};   // 
+        this.data = [];     // data points for plotting
 
-        this.canvas;
-        this.graph;
-        this.duration = 10;
-        this.delay = 0;
+        this.canvas;        // canvas (class) object
+        this.graph;         // reference graph object
+        this.duration = 10; // transition (default) duration
+        this.delay = 0;     // transition (default) delay
 
         this.children = [];
 
@@ -48,6 +48,7 @@ class TangentBaseObj{
     }
 
 
+    // get optional parameter values from input
     parse_params(params){
 
             for (let [key, val] of Object.entries(this.params)){
@@ -74,6 +75,7 @@ class TangentBaseObj{
 
     }
 
+    // dereference graph
     remove_graph(){
 
         if(this.graph === null){
@@ -120,20 +122,20 @@ class TangentBaseObj{
         this.parse_params(state.params);
         this.resolve_update();
 
-        state.params.data = this.data;
-        let node = state.next;
+        state.params.data = this.data;      // add tangent lien data to root update node
+        let node = state.next;      
 
-        while( node !== null){
+        while( node !== null){              // loop through update nodes
     
             this.parse_params(node.params);
             this.resolve_update();
-            node.params.data = this.data;
+            node.params.data = this.data;   // add tangent line data to update node
 
             node = node.next;
 
         }
         
-        this.line.update(state);
+        this.line.update(state);            // update child line object; pass root update node
         this.notify_children();
 
     }
@@ -159,21 +161,15 @@ class TangentObj extends TangentBaseObj{   // tangent line
         this.graph;                    // optional GraphObj: track to update tangent on graph change
         
         this.params = {
-            "fx": fx,
-             "center":0 , 
-             "length": 25 , 
-             "width":2.5 , 
-             "color":"red", 
-             "h": 0.01
+            "fx": fx,                  // reference function 
+             "center":0 ,              // tangent 'origin' x value
+             "length": 25 ,            // tangent line lenght
+             "width":2.5 ,             
+             "color":"red",            // tangent line (stroke) color
+             "h": 0.01                 // h value for calculating tangent slope (k)
             };    
 
-        for (let [key, val] of Object.entries(this.params)){    // read optional parameters
-
-            if( params[key] !== undefined ){
-                this.params[key] = params[key];
-            }
-
-        }
+        this.parse_params(params);      // read optional parameters from input
 
         this.get_data();
 
@@ -270,7 +266,7 @@ class TangentObj extends TangentBaseObj{   // tangent line
 
     resolve_update(){
         this.get_data();
-        this.fx = this.params.fx;
+        this.fx = this.params.fx;   // fx duplicated to maintain consitency between classes
     }
 
 
@@ -291,9 +287,9 @@ class TangentChainObj extends TangentBaseObj{
         super(id);
 
         this.params = {
-            "fx": fx,
-             "n": 5 , 
-             "length":5 , 
+            "fx": fx,           // reference function
+             "n": 5 ,           // number of tangent (lines)
+             "length":5 ,       
              "width":2.5 , 
              "color":"red",
              "xRange": xRange,
@@ -327,9 +323,9 @@ class TangentChainObj extends TangentBaseObj{
 
             let func = get_tangent_function(this.params.fx, i);
 
-            this.data.push( [ i-half, null ] );
             this.data.push( [ i-half, func(i-half) ] );
             this.data.push( [ i+half, func(i+half) ] );
+            this.data.push( [ i-half, null ] );
 
         }
 
@@ -339,6 +335,7 @@ class TangentChainObj extends TangentBaseObj{
     resolve_update(){
 
         this.get_data();
+        this.fx = this.params.fx;
 
     }
 

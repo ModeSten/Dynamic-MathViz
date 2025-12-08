@@ -481,6 +481,7 @@ class LineObj extends VisualObj{
         u.enter()
             .append("path")
                 .attr("class", this.id)
+                .attr("clip-path", "url(#clip)")
         .merge(u)
             .transition()
                 .duration(duration)
@@ -498,41 +499,36 @@ class LineObj extends VisualObj{
 
 
 // data markers class; create circular markers based on data value paris
-class MarkerObj extends VisualObj{
+class MarkerBaseObj extends VisualObj{
 
-    constructor( id, params, canvas=null, parent=null){
+
+    constructor( id,  data, params={}, canvas=null, parent=null){
 
         super(id);
 
-        this.params = {
-            "data":[],      // data value pairs
-            "color": "red", 
-            "r": "3",       // marker (circle) radius
-            "space": 5      // space between markers; if placed uniformly
-        };
+        this.params={
+            "data": data,       // marker locations
+            "color": "red",     // marker color
+            "r": "3",           // marker (circle) radius 
+        }
 
-        this.parse_params(params);
+        this.data = data;
         this.parent = null;
-        this.on_paren_update;   // function defining behaviour on parent object (ex graph) updating
 
-        this.set_parent(parent);
         this.assigne_to_canvas(canvas);
-
-        this.resolve_update();
         this.svg_init();
 
     }
 
 
     // set parent object: update markers on parent update
-    set_parent(parent, callback=this.space_marker){
+    set_parent(parent){
 
         if(parent === null){
             return
         }
 
-        this.on_paren_update = callback;
-        parent.add_child(this, (obj, msg)=>{this.data = this.on_paren_update(); this.svg_init(obj.duration) });
+        parent.add_child(this, (obj, msg)=>{ this.on_parent_update() });
         this.parent = parent;
 
         this.resolve_update();
@@ -548,65 +544,24 @@ class MarkerObj extends VisualObj{
     }
 
 
-    // uniformly place markers along graph (default update behavior when parent object is assigned)
-    space_marker(){
-
-        if( this.parent === null){
-            return
-        }
-
-        let data = [];
-        let len = Object.keys(this.parent.data).length;
-        let space = this.params.space;
-
-        let d0 = this.parent.data[0];
-        data.push(d0);
-
-        let d1;
-        let L = 0;
-        for(let i=1; i<len; i++){
-            
-            d1 = this.parent.data[i];
-            L += Math.sqrt( (d1[0]-d0[0])**2 + (d1[1]-d0[1])**2 );
-            if(L >= space){ 
-                data.push(d1);
-                L=0;
-            }
-            d0 = d1;
-
-        }
-
-        return data;
-
-    }
-
-
-    // place marker at center of graph; based on graph function
-    center_marker(){
-
-        if(this.parent === null){
-            return
-        }
-
+    on_parent_update(){
         
-        let x0 = this.parent.data[0][0];
-        let x1 = this.parent.data[ Object.keys(this.parent.data).length-1 ][0];
-
-        let xc = x0 + (x1-x0)/2;
-        let yc = this.parent.fx(xc);
-
-        return [[xc, yc]];
-
     }
 
 
     resolve_update(){
+        this.data = this.params.data;
+    }
 
-        if(this.parent !== null){
-            this.data = this.on_paren_update();
-        } 
+
+    join_params(params){
+
+        for (let [key, val] of Object.entries(params)){
+            this.params[key] = val;
+        }
 
     }
+
 
 
     svg_init(duration=this.duration, delay=this.delay, callback = ()=>{return}){
@@ -627,12 +582,77 @@ class MarkerObj extends VisualObj{
                     .attr("cx", (d)=>{ return this.canvas.xScale(d[0]) })
                     .attr("cy", (d)=>{ return this.canvas.yScale(d[1]) });
 
+    }
+
+}
+
+
+
+
+class SpacedMarkerObj extends MarkerBaseObj{
+
+    constructor(id, params, parent=null, canvas=null){
+
+        super( id );
+
+        let childParams = {
+            "space": 3,
+        };
+
+        this.join_params(childParams);  
+        this.parse_params(params);
+
+        this.set_parent(parent);
+        this.assigne_to_canvas(canvas);
+        this.svg_init();
 
     }
 
 
+    on_parent_update(){
+
+        this.get_data();
+        this.svg_init();
+
+    }
 
 
+    resolve_update(){
+
+        this.get_data();
+
+    }
+
+
+    get_data(){
+
+
+        if( this.parent === null){
+            return
+        }
+
+        this.data = [];
+        let len = Object.keys(this.parent.data).length;
+        let space = this.params.space;
+
+        let d0 = this.parent.data[0];
+        this.data.push(d0);
+
+        let d1;
+        let L = 0;
+        for(let i=1; i<len; i++){
+            
+            d1 = this.parent.data[i];
+            L += Math.sqrt( (d1[0]-d0[0])**2 + (d1[1]-d0[1])**2 );
+            if(L >= space){ 
+                this.data.push(d1);
+                L=0;
+            }
+            d0 = d1;
+
+        }
+
+    }
 
 }
 

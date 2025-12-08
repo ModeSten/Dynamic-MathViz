@@ -14,8 +14,7 @@ function main(){
     let graph = new GraphObj("graph1", fx[fI], [-10, 10], {}, canvas);
     let tangent = new TangentObj("tangent1", fx[fI], {"length": 15, "center": 3}, canvas, graph);
 
-    let markers = new MarkerObj("marker1", {}, canvas, graph);
-    markers.set_parent( tangent, markers.center_marker);
+    let markers = new SpacedMarkerObj("marker1", {}, graph, canvas);
 
     let testBtn = document.getElementById("testBtn");
     testBtn.onclick = ()=>{
