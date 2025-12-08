@@ -12,9 +12,11 @@ function main(){
     let canvas = new CanvasObj(width, height, margin, "testcanvas1", [-10, 10], [-10, 10], "test_viz1");
     let chart = new ChartObj("chart1", {}, canvas);
     let graph = new GraphObj("graph1", fx[fI], [-10, 10], {}, canvas);
-    let tangent = new TangentObj("tangent1", fx[fI], {"length": 15, "center": 3}, canvas, graph);
+    let tangent = new TangentObj("tangent1", fx[fI], {}, canvas, graph);
 
-    let markers = new SpacedMarkerObj("marker1", {}, graph, canvas);
+    //let markers = new SpacedMarkerObj("marker1", {}, graph, canvas);
+    let marker = new SegmentMarkerFxObj("marker1", {"p": 0.5}, tangent, canvas);
+    marker.duration = 5;
 
     let testBtn = document.getElementById("testBtn");
     testBtn.onclick = ()=>{
@@ -24,11 +26,6 @@ function main(){
         let update = new UpdateNode({"fx": fx[fI%fx.length]});
         graph.update(update);
         //*/
-
-        /*
-        let update = new UpdateNode({ "r": "10" });
-        markers.update(update);
-        */
 
     }
 

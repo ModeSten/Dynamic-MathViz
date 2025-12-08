@@ -499,7 +499,7 @@ class LineObj extends VisualObj{
 
 
 // data markers class; create circular markers based on data value paris
-class MarkerBaseObj extends VisualObj{
+class MarkerObj extends VisualObj{
 
 
     constructor( id,  data, params={}, canvas=null, parent=null){
@@ -586,12 +586,10 @@ class MarkerBaseObj extends VisualObj{
 
 }
 
+// uniformly place marker along graph
+class SpacedMarkerObj extends MarkerObj{
 
-
-
-class SpacedMarkerObj extends MarkerBaseObj{
-
-    constructor(id, params, parent=null, canvas=null){
+    constructor(id, params={}, parent=null, canvas=null){
 
         super( id );
 
@@ -653,6 +651,120 @@ class SpacedMarkerObj extends MarkerBaseObj{
         }
 
     }
+
+}
+
+
+class SegmentMarkerObj extends MarkerObj{
+
+    constructor(id, params={}, parent=null, canvas=null){
+
+        super(id);
+
+        let childParams = {
+            "p": 0.5
+        }
+        this.join_params(childParams);
+        this.parse_params(params);
+
+        this.set_parent(parent);
+        this.assigne_to_canvas(canvas);
+
+    }
+
+
+    on_parent_update(){
+
+        this.get_data();
+        this.svg_init();
+
+    }
+
+
+    resolve_update(){
+
+        this.get_data();
+
+    }
+
+
+    get_data(){
+
+        if(this.parent === null){
+            return
+        }
+
+        this.data = [];
+
+        let len = Object.keys(this.parent.data).length;
+
+        let d0;
+        let d1;
+        let d;
+        let p = this.params.p;
+
+        for(let i=0; i<len-1; i+=2){
+
+            if(this.parent.data[i][1] == null){
+                i++;
+            }
+
+            d0 = this.parent.data[i];
+            d1 = this.parent.data[i+1];
+
+            d = [ p*d1[0]+(1-p)*d0[0], p*d1[1]+(1-p)*d0[1] ];
+            this.data.push(d);
+
+        }
+
+    }
+
+
+}
+
+
+class SegmentMarkerFxObj extends SegmentMarkerObj{
+
+    constructor( id, params={}, parent=null, canvas=null){
+
+        super(id, params, parent, canvas);
+
+    }
+
+
+ get_data(){
+
+        if(this.parent === null){
+            return
+        }
+
+        this.data = [];
+
+        let len = Object.keys(this.parent.data).length;
+
+        let x0;
+        let x1;
+        let x;
+        let y;
+        let p = this.params.p;
+
+        for(let i=0; i<len-1; i+=2){
+
+            if(this.parent.data[i][1] == null){
+                i++;
+            }
+
+            x0 = this.parent.data[i][0];
+            x1 = this.parent.data[i+1][0];
+
+            x = p*x1 + (1-p)*x0;
+            y = this.parent.fx(x);
+            this.data.push([x, y]);
+
+        }
+
+    }
+
 
 }
 
