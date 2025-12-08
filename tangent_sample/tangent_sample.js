@@ -50,7 +50,7 @@ function tangent1(){
     let chart = new ChartObj( "chart1", {}, canvas );
     let graph = new GraphObj( "graph1", fx, xRange, {}, canvas );
     let tangent = new TangentObj( "tangent1", fx, {"center": 0, "lengt": 35}, canvas, graph );
-    let marker = new SegmentMarkerFxObj( "marker1", {"p": 0.5, "r": 3}, tangent, canvas);
+    let marker = new SegmentMarkerFxObj( "marker1", { "r": 3.5}, tangent, canvas);
     marker.duration =5;
 
     let container = document.getElementById(divId);
@@ -86,7 +86,7 @@ function tangent2(){
     let chart = new ChartObj( "chart2", {}, canvas );
     let graph = new GraphObj( "graph2", fx, xRange, {}, canvas );
     let tanChain = new TangentChainObj( "tan_chain1", fx, xRange, {"n":n}, canvas, graph);
-    let marker = new SegmentMarkerFxObj( "marker2", {"p": 0.5, "r": 2}, tanChain, canvas);
+    let marker = new SegmentMarkerFxObj( "marker2", { "r": 3.5}, tanChain, canvas);
     marker.duration =5;
 
     let container = document.getElementById(divId);
@@ -128,7 +128,7 @@ function tangent3(){
     let chart = new ChartObj( "chart3", {}, canvas );
     let graph = new GraphObj( "graph3", fx, yRange, {}, canvas );
     let tanChain = new TangenHChainObj( "tan_hchain1", fx, xRange, {}, canvas, graph, h0);
-    let marker = new SegmentMarkerFxObj( "marker3", {"p": 0, "r": 2}, tanChain, canvas);
+    let marker = new SegmentMarkerFxObj( "marker3", {"p": [0, 1], "r": 2}, tanChain, canvas);
     marker.duration =5;
 
 

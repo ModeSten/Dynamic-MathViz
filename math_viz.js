@@ -662,7 +662,7 @@ class SegmentMarkerObj extends MarkerObj{
         super(id);
 
         let childParams = {
-            "p": 0.5
+            "p": [0.5]
         }
         this.join_params(childParams);
         this.parse_params(params);
@@ -712,8 +712,11 @@ class SegmentMarkerObj extends MarkerObj{
             d0 = this.parent.data[i];
             d1 = this.parent.data[i+1];
 
-            d = [ p*d1[0]+(1-p)*d0[0], p*d1[1]+(1-p)*d0[1] ];
-            this.data.push(d);
+            this.params.p.forEach((p, i)=>{
+                    d = [ p*d1[0]+(1-p)*d0[0], p*d1[1]+(1-p)*d0[1] ];
+                    this.data.push(d);
+                }
+            );
 
         }
 
@@ -746,7 +749,6 @@ class SegmentMarkerFxObj extends SegmentMarkerObj{
         let x1;
         let x;
         let y;
-        let p = this.params.p;
 
         for(let i=0; i<len-1; i+=2){
 
@@ -757,9 +759,13 @@ class SegmentMarkerFxObj extends SegmentMarkerObj{
             x0 = this.parent.data[i][0];
             x1 = this.parent.data[i+1][0];
 
-            x = p*x1 + (1-p)*x0;
-            y = this.parent.fx(x);
-            this.data.push([x, y]);
+            this.params.p.forEach (  (p, i)=>{
+                x = p*x1 + (1-p)*x0;
+                y = this.parent.fx(x);
+                this.data.push([x, y]);
+                }
+            );
+            
 
         }
 
@@ -801,17 +807,16 @@ function get_points_from_lenght(fx, center, lenght){ // get line start and end v
 
 
 
-function get_slope(fx, x){  // get graph slope at x
+function get_slope(fx, x, h=0.001){  // get graph slope at x
 
-    let h = 0.001;
     return ( fx(x+h) - fx(x) ) / h;
 
 }
 
 
-function get_tangent_function(fx, x){    // get tangent-line function
+function get_tangent_function(fx, x, h=0.001){    // get tangent-line function
 
-    let k = get_slope(fx, x);
+    let k = get_slope(fx, x, h);
     let m = fx(x) - k*x;
 
     return (x) => { return k*x + m };
