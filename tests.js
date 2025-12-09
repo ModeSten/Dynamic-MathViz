@@ -9,8 +9,8 @@ let fI = 2;
 
 function main(){
 
-    let canvas = new CanvasObj("testcanvas1", width, height, margin, [-10, 10], [-10, 10], "test_viz1");
-    //let chart = new ChartObj("chart1", {}, canvas);
+    let canvas = new CanvasObj("testcanvas1", width, height, margin, [0, 10], [0, 10], "test_viz1");
+    let chart = new ChartObj("chart1", {}, canvas);
     let graph = new GraphObj("graph1", fx[fI], [-10, 10], {}, canvas);
     let tangent = new TangentObj("tangent1", fx[fI], {}, canvas, graph);
 
@@ -21,7 +21,7 @@ function main(){
     let testBtn = document.getElementById("testBtn");
     testBtn.onclick = ()=>{
 
-        canvas.update({"yRange": [-20, 20], "xRange": [-20, 20]});
+        canvas.update({"yRange": [-10, 10], "xRange": [-10, 10]});
 
     }
 

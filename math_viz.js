@@ -264,8 +264,12 @@ class ChartObj extends VisualObj{
 
         this.parse_params(params);
 
-        this.xAxisOfset;            // chart x (botom) axis ofset (from top)
-        this.yAxisOfset;            // chart y (left) axis ofset (from left edge)
+
+        this.xAxis = null;
+        this.yAxis = null;
+        this.xLabel = null;
+        this.yLabel = null;
+
 
         if (canvas !== null){       // create svg if target div is specified
             this.assigne_to_canvas( canvas );
@@ -279,16 +283,8 @@ class ChartObj extends VisualObj{
         let xScale;
         let yScale;
 
-        // if no value range specified, use canvas scale
-        if(this.params.xRange === null){   
-            this.params.xRange = this.canvas.params.xRange;
-        } 
-        if(this.params.yRange === null){
-            this.params.yRange = this.canvas.params.yRange;
-        }
-
-        xScale = d3.scaleLinear( this.params.xRange, [0, this.canvas.params.width] );
-        yScale = d3.scaleLinear( this.params.yRange, [this.canvas.params.height, 0]);
+        xScale = d3.scaleLinear( this.canvas.params.xRange, [0, this.canvas.params.width] );
+        yScale = d3.scaleLinear( this.canvas.params.yRange, [this.canvas.params.height, 0]);
 
         return {"x": xScale, "y": yScale};
 
@@ -308,29 +304,27 @@ class ChartObj extends VisualObj{
     // get axis ofset based on x and y range 
     get_axis_ofset(){
 
-        let xStep = this.canvas.params.width / (this.params.xRange[1] - this.params.xRange[0]);    // distance coresponding to each x value step
-        let yStep = (this.canvas.params.height) / (this.params.yRange[1] - this.params.yRange[0]); // distance coresponding to each y value step
+        let xStep = this.canvas.params.width / (this.canvas.params.xRange[1] - this.canvas.params.xRange[0]);    // distance coresponding to each x value step
+        let yStep = (this.canvas.params.height) / (this.canvas.params.yRange[1] - this.canvas.params.yRange[0]); // distance coresponding to each y value step
 
         let xAxisOfset;     // x Axis ofset from top
         let yAxisOfset;     // y axis ofset from left side
 
 
-        if(this.params.yRange[0] < 0){     // if min y value is negative, move x-axis up 
-            this.xAxisOfset = this.canvas.params.height + yStep * this.params.yRange[0];
-            xAxisOfset = this.canvas.params.height + yStep * this.params.yRange[0];
+        if(this.canvas.params.yRange[0] < 0){     // if min y value is negative, move x-axis up 
+            xAxisOfset = this.canvas.params.height + yStep * this.canvas.params.yRange[0];
         } else{
-            this.xAxisOfset = this.canvas.params.height; 
             xAxisOfset = this.canvas.params.height; 
         }
 
-        if(this.params.xRange[0] < 0){     // if min x is negative, move y-axis to right
-            this.yAxisOfset = xStep * -this.params.xRange[0];
-            yAxisOfset = xStep * -this.params.xRange[0];
+        if(this.canvas.params.xRange[0] < 0){     // if min x is negative, move y-axis to right
+            yAxisOfset = xStep * -this.canvas.params.xRange[0];
         } else{
             this.yAxisOfset = 0;
             yAxisOfset = 0;
         }
 
+        console.log(xAxisOfset, yAxisOfset);
         return {"x": xAxisOfset, "y": yAxisOfset};
 
     }
@@ -347,21 +341,21 @@ class ChartObj extends VisualObj{
         let axis = this.get_axis( scale );
         let AxisOfset = this.get_axis_ofset();
 
-        this.canvas.svg.append("g")
+        this.xAxis = this.canvas.svg.append("g")
+            .attr("class", `xOfset ${this.id}`)
             .attr("transform", `translate(0,${AxisOfset.x})`)
-            .attr("class", this.id)
             .call(axis.x);
 
-        this.canvas.svg.append("g")
+        this.yAxis = this.canvas.svg.append("g")
+            .attr("class", `yOfset ${this.id}`)
             .attr("transform", `translate(${AxisOfset.y},0)`)
-            .attr("class", this.id)
             .call(axis.y);
 
 
         // Axis labels
 
         // x label
-        this.canvas.svg.append("text")
+        this.xLabel = this.canvas.svg.append("text")
             .attr("class", `x-label ${this.id}`)
             .attr("text-anchor", "end")
             .attr("x",  -15)
@@ -369,7 +363,7 @@ class ChartObj extends VisualObj{
             .text("x");
 
         // y label
-        this.canvas.svg.append("text")  
+        this.yLabel = this.canvas.svg.append("text")  
             .attr("class", `y-label ${this.id}`)
             .attr("text-anchor", "end")
             .attr("x", AxisOfset.y)
@@ -379,15 +373,47 @@ class ChartObj extends VisualObj{
     }
 
 
-    update_svg(){
+    svg_update(){
 
+        if (this.canvas === null || this.canvas.svg === null){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
+            return;
+        }
+
+        let scale = this.get_scale();
+        let axis = this.get_axis( scale );
+        let AxisOfset = this.get_axis_ofset();
+
+        this.xAxis
+            .transition()
+            .duration(1000)
+            .attr("transform", `translate(0,${AxisOfset.x})`)
+            .call(axis.x);
+
+        this.yAxis
+            .transition()
+            .duration(1000)
+            .attr("transform", `translate(${AxisOfset.y},0)`)
+            .call(axis.y);  
+
+        this.xLabel
+            .attr("text-anchor", "end")
+            .attr("x",  -15)
+            .attr("y", AxisOfset.x)
+            .text("x");
+
+        this.yLabel
+            .attr("text-anchor", "end")
+            .attr("x", AxisOfset.y)
+            .attr("y", -15)
+            .html("y");
 
     }
 
 
+
     on_canvas_update(){
 
-        this.update_svg();
+        this.svg_update();
 
     }
 
