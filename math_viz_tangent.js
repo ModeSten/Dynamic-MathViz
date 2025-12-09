@@ -365,7 +365,6 @@ class TangenHChainObj extends TangentChainObj{
 
         for(let x=xStart; x<=xEnd; x+=h){
 
-            console.log(x);
             let k = get_slope(this.params.fx, x, h);
 
             this.data.push([x, k]);

@@ -46,10 +46,10 @@ function tangent1(){
     //let fx = (x)=>{ return 5*Math.sin(x/2) };
 
 
-    let canvas = new CanvasObj( width, height, margin, "canvas1", xRange, yRange, divId );
+    let canvas = new CanvasObj( "canvas1", width, height, margin, xRange, yRange, divId );
     let chart = new ChartObj( "chart1", {}, canvas );
     let graph = new GraphObj( "graph1", fx, xRange, {}, canvas );
-    let tangent = new TangentObj( "tangent1", fx, {"center": 0, "lengt": 35}, canvas, graph );
+    let tangent = new TangentObj( "tangent1", fx, {"center": 0, "lengt": 50}, canvas, graph );
     let marker = new SegmentMarkerFxObj( "marker1", { "r": 3.5}, tangent, canvas);
     marker.duration =5;
 
@@ -82,12 +82,11 @@ function tangent2(){
     //let fx = (x)=>{ return 5*Math.sin(x/2) };
     let n = 3;
 
-    let canvas = new CanvasObj( width, height, margin, "canvas2", xRange, yRange, divId );
+    let canvas = new CanvasObj( "canvas2", width, height, margin, xRange, yRange, divId );
     let chart = new ChartObj( "chart2", {}, canvas );
     let graph = new GraphObj( "graph2", fx, xRange, {}, canvas );
     let tanChain = new TangentChainObj( "tan_chain1", fx, xRange, {"n":n}, canvas, graph);
     let marker = new SegmentMarkerFxObj( "marker2", { "r": 3.5}, tanChain, canvas);
-    marker.duration =5;
 
     let container = document.getElementById(divId);
     let viz = document.getElementById("canvas2");
@@ -102,6 +101,7 @@ function tangent2(){
         let update = new UpdateNode({"n": n});
         tanChain.update(update);
         txt.innerHTML = `n=${n}`;
+
     }
 
     let BckBtn = document.getElementById("n-");
@@ -124,11 +124,11 @@ function tangent3(){
     //let fx = (x)=>{ return 5*Math.sin(x/2) };
     let h0 = 0.5;
 
-    let canvas = new CanvasObj( width, height, margin, "canvas3", xRange, yRange, divId );
+    let canvas = new CanvasObj( "canvas3", width, height, margin, xRange, yRange, divId );
     let chart = new ChartObj( "chart3", {}, canvas );
     let graph = new GraphObj( "graph3", fx, yRange, {}, canvas );
     let tanChain = new TangenHChainObj( "tan_hchain1", fx, xRange, {}, canvas, graph, h0);
-    let marker = new SegmentMarkerFxObj( "marker3", {"p": [0, 1], "r": 2}, tanChain, canvas);
+    let marker = new SegmentMarkerFxObj( "marker3", {"p": [0, 1], "r": 2.5}, tanChain, canvas);
     marker.duration =5;
 
 

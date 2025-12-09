@@ -11,7 +11,7 @@ dependencies:
 // Visualization object: holds common parameters and svg element
 class CanvasObj {
 
-    constructor ( width, height, margin, id, xRange, yRange, parentId=null){
+    constructor (id, width, height, margin, xRange, yRange, parentId=null){
 
         this.ID = id;           // canvas id; also used as svg id
         this.parentId;          // id of div container; svg parent div 
@@ -19,15 +19,19 @@ class CanvasObj {
 
         this.svg = null; 
 
-        this.width = width;     // svg height (pixels)
-        this.height = height;   // svg width  (pixels)
-        this.margin = margin;   // svg margins (pixels); top, bottom, left, right
 
-        this.xRange = xRange;   // x value, default range
-        this.yRange = yRange;   // y value, default range
 
         this.xScale;
         this.yScale;
+
+
+        this.params = {
+            "width": width,
+            "height": height,
+            "margin": margin,
+            "xRange": xRange,
+            "yRange": yRange
+        }
 
         this.set_dependent_params();
 
@@ -39,8 +43,8 @@ class CanvasObj {
 
     set_dependent_params(){
 
-        this.xScale = d3.scaleLinear( this.xRange, [0, this.width] );
-        this.yScale = d3.scaleLinear( this.yRange, [this.height, 0] );
+        this.xScale = d3.scaleLinear( this.params.xRange, [0, this.params.width] );
+        this.yScale = d3.scaleLinear( this.params.yRange, [this.params.height, 0] );
 
     }
 
@@ -53,20 +57,27 @@ class CanvasObj {
             .append("svg")
                 .attr("id", this.ID)
                 .attr("class", "viz_svg")
-                .attr("width", this.width + this.margin.left + this.margin.right)
-                .attr("height", this.height + this.margin.top + this.margin.bottom)
+                .attr("width", this.params.width + this.params.margin.left + this.params.margin.right)
+                .attr("height", this.params.height + this.params.margin.top + this.params.margin.bottom)
             .append("g")
-                .attr("transform", "translate("+ this.margin.left + "," + this.margin.top +")");
+                .attr("transform", "translate("+ this.params.margin.left + "," + this.params.margin.top +")");
 
         this.svg.append("clipPath")
                 .attr("id", "clip")
             .append("rect")
                 .attr("x", 0)
                 .attr("y", 0)
-                .attr("width", this.width)
-                .attr("height", this.height);
+                .attr("width", this.params.width)
+                .attr("height", this.params.height);
 
         this.notify_children();
+
+    }
+
+
+    update_svg(){
+
+   
 
     }
 
@@ -85,8 +96,17 @@ class CanvasObj {
 
     }
 
-    update_canvas(){
 
+    update(params){
+
+        for (let [key, val] of Object.entries(params)){
+            if( this.params[key] !== undefined ){       // if provided parameter is part of class, override curent value
+                this.params[key] = val;
+            }
+        }
+
+        this.set_dependent_params();
+        this.update_svg();
         this.notify_children();
 
     }
@@ -174,7 +194,7 @@ class VisualObj{
         }
 
         this.canvas = canvas;
-        canvas.add_child(this, (id, msg) => { this.svg_init() });
+        canvas.add_child(this, (id, msg) => { this.on_canvas_update(); });
 
         this.svg_init();    // create svg elements (if canvas svg has been created)
 
@@ -221,6 +241,11 @@ class VisualObj{
         /* placeholder for child override */
     }
 
+
+    on_canvas_update(){
+        /* placeholder for child override */
+    }
+
     
 }
 
@@ -239,10 +264,10 @@ class ChartObj extends VisualObj{
 
         this.parse_params(params);
 
-        this.xAxisOfset;  // chart x (botom) axis ofset (from top)
+        this.xAxisOfset;            // chart x (botom) axis ofset (from top)
         this.yAxisOfset;            // chart y (left) axis ofset (from left edge)
 
-        if (canvas !== null){     // create svg if target div is specified
+        if (canvas !== null){       // create svg if target div is specified
             this.assigne_to_canvas( canvas );
         }
 
@@ -256,14 +281,14 @@ class ChartObj extends VisualObj{
 
         // if no value range specified, use canvas scale
         if(this.params.xRange === null){   
-            this.params.xRange = this.canvas.xRange;
+            this.params.xRange = this.canvas.params.xRange;
         } 
         if(this.params.yRange === null){
-            this.params.yRange = this.canvas.yRange;
+            this.params.yRange = this.canvas.params.yRange;
         }
 
-        xScale = d3.scaleLinear( this.params.xRange, [0, this.canvas.width] );
-        yScale = d3.scaleLinear( this.params.yRange, [this.canvas.height, 0]);
+        xScale = d3.scaleLinear( this.params.xRange, [0, this.canvas.params.width] );
+        yScale = d3.scaleLinear( this.params.yRange, [this.canvas.params.height, 0]);
 
         return {"x": xScale, "y": yScale};
 
@@ -283,19 +308,19 @@ class ChartObj extends VisualObj{
     // get axis ofset based on x and y range 
     get_axis_ofset(){
 
-        let xStep = this.canvas.width / (this.params.xRange[1] - this.params.xRange[0]);    // distance coresponding to each x value step
-        let yStep = (this.canvas.height) / (this.params.yRange[1] - this.params.yRange[0]); // distance coresponding to each y value step
+        let xStep = this.canvas.params.width / (this.params.xRange[1] - this.params.xRange[0]);    // distance coresponding to each x value step
+        let yStep = (this.canvas.params.height) / (this.params.yRange[1] - this.params.yRange[0]); // distance coresponding to each y value step
 
         let xAxisOfset;     // x Axis ofset from top
         let yAxisOfset;     // y axis ofset from left side
 
 
         if(this.params.yRange[0] < 0){     // if min y value is negative, move x-axis up 
-            this.xAxisOfset = this.canvas.height + yStep * this.params.yRange[0];
-            xAxisOfset = this.canvas.height + yStep * this.params.yRange[0];
+            this.xAxisOfset = this.canvas.params.height + yStep * this.params.yRange[0];
+            xAxisOfset = this.canvas.params.height + yStep * this.params.yRange[0];
         } else{
-            this.xAxisOfset = this.canvas.height; 
-            xAxisOfset = this.canvas.height; 
+            this.xAxisOfset = this.canvas.params.height; 
+            xAxisOfset = this.canvas.params.height; 
         }
 
         if(this.params.xRange[0] < 0){     // if min x is negative, move y-axis to right
@@ -350,6 +375,19 @@ class ChartObj extends VisualObj{
             .attr("x", AxisOfset.y)
             .attr("y", -15)
             .html("y");
+
+    }
+
+
+    update_svg(){
+
+
+    }
+
+
+    on_canvas_update(){
+
+        this.update_svg();
 
     }
 
@@ -437,6 +475,13 @@ class GraphObj extends VisualObj{
     }
 
 
+    on_canvas_update(){
+
+        this.svg_init();
+
+    }
+
+
 }
 
 
@@ -493,6 +538,13 @@ class LineObj extends VisualObj{
             .on("end", callback);
 
     }
+
+
+    on_canvas_update(){
+
+        this.svg_init();
+
+    }
     
 
 }
@@ -512,7 +564,7 @@ class MarkerObj extends VisualObj{
             "r": "3",           // marker (circle) radius 
         }
 
-        this.data = data;
+        this.data = data;       
         this.parent = null;
 
         this.assigne_to_canvas(canvas);
@@ -549,11 +601,19 @@ class MarkerObj extends VisualObj{
     }
 
 
+    on_canvas_update(){
+
+        this.svg_init();
+
+    }
+
+
     resolve_update(){
         this.data = this.params.data;
     }
 
 
+    // combine base class parameter and child parameter objects
     join_params(params){
 
         for (let [key, val] of Object.entries(params)){
@@ -563,7 +623,7 @@ class MarkerObj extends VisualObj{
     }
 
 
-
+    // create / update svg elements
     svg_init(duration=this.duration, delay=this.delay, callback = ()=>{return}){
 
         if(this.canvas === null){
@@ -575,6 +635,7 @@ class MarkerObj extends VisualObj{
 
         u.join("circle")
                 .attr("class", this.id)
+                .attr("clip-path", "url(#clip)")
                 .transition()
                 .duration(duration)
                     .attr("r", this.params.r)
@@ -655,6 +716,7 @@ class SpacedMarkerObj extends MarkerObj{
 }
 
 
+// place markers at relative position of line segment (between data points): x and y interpolated
 class SegmentMarkerObj extends MarkerObj{
 
     constructor(id, params={}, parent=null, canvas=null){
@@ -662,7 +724,7 @@ class SegmentMarkerObj extends MarkerObj{
         super(id);
 
         let childParams = {
-            "p": [0.5]
+            "p": [0.5]      // relative position of marker: 0 >= p <= 1
         }
         this.join_params(childParams);
         this.parse_params(params);
@@ -686,6 +748,7 @@ class SegmentMarkerObj extends MarkerObj{
         this.get_data();
 
     }
+
 
 
     get_data(){
@@ -726,6 +789,7 @@ class SegmentMarkerObj extends MarkerObj{
 }
 
 
+// place markers at relativ position along line segment (between data points): x interpolated and y from function
 class SegmentMarkerFxObj extends SegmentMarkerObj{
 
     constructor( id, params={}, parent=null, canvas=null){
