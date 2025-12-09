@@ -1,6 +1,6 @@
 const margin = { top: 60, right: 60, bottom: 50, left: 60 },
-width = 500 - margin.left - margin.right,
-height = 450 - margin.top - margin.bottom;
+width = 1000 - margin.left - margin.right,
+height = 900 - margin.top - margin.bottom;
 
 var fx = [ (x)=>{return 2*x} , (x)=>{return x**2/5}, (x)=>{return x**3/100}];
 let fI = 2;
@@ -21,7 +21,7 @@ function main(){
     let testBtn = document.getElementById("testBtn");
     testBtn.onclick = ()=>{
 
-        canvas.update({"yRange": [-10, 10], "xRange": [-10, 10]});
+        canvas.update({"xRange": [-10, 10]});
 
     }
 

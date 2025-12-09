@@ -59,25 +59,32 @@ class CanvasObj {
                 .attr("class", "viz_svg")
                 .attr("width", this.params.width + this.params.margin.left + this.params.margin.right)
                 .attr("height", this.params.height + this.params.margin.top + this.params.margin.bottom)
-            .append("g")
-                .attr("transform", "translate("+ this.params.margin.left + "," + this.params.margin.top +")");
+                .append("g")
+                    .attr("class", "transform")
+                    .attr("transform", "translate("+ this.params.margin.left + "," + this.params.margin.top +")");
 
         this.svg.append("clipPath")
                 .attr("id", "clip")
-            .append("rect")
-                .attr("x", 0)
-                .attr("y", 0)
-                .attr("width", this.params.width)
-                .attr("height", this.params.height);
+                .append("rect")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("width", this.params.width)
+                    .attr("height", this.params.height);
 
         this.notify_children();
 
     }
 
 
-    update_svg(){
+    update_svg(rescale = false){
 
-   
+        console.log(rescale);
+
+        if(rescale){
+            let parent = this.parentId;
+            this.remove_from_div();
+            this.assign_to_div(parent);
+        }
 
     }
 
@@ -105,8 +112,12 @@ class CanvasObj {
             }
         }
 
+        console.log(params);
+        let keys = Object.keys(params);
+        let rescale = ("height" in params) || ("width" in params);
+
         this.set_dependent_params();
-        this.update_svg();
+        this.update_svg(rescale);
         this.notify_children();
 
     }
@@ -264,12 +275,12 @@ class ChartObj extends VisualObj{
 
         this.parse_params(params);
 
-
         this.xAxis = null;
         this.yAxis = null;
         this.xLabel = null;
         this.yLabel = null;
 
+        this.init = false;
 
         if (canvas !== null){       // create svg if target div is specified
             this.assigne_to_canvas( canvas );
@@ -334,6 +345,7 @@ class ChartObj extends VisualObj{
     svg_init(callback=()=>{return}){
 
         if (this.canvas === null || this.canvas.svg === null){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
+            this.init = false;
             return;
         }
 
@@ -370,6 +382,8 @@ class ChartObj extends VisualObj{
             .attr("y", -15)
             .html("y");
 
+        this.init = true;
+
     }
 
 
@@ -377,7 +391,7 @@ class ChartObj extends VisualObj{
 
         if (this.canvas === null || this.canvas.svg === null){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
             return;
-        }
+        } 
 
         let scale = this.get_scale();
         let axis = this.get_axis( scale );
@@ -413,9 +427,16 @@ class ChartObj extends VisualObj{
 
     on_canvas_update(){
 
-        this.svg_update();
+        if(this.canvas.svg === null){
+            this.init = false;
+        } else if(this.init){
+            this.svg_update();
+        } else{
+            this.svg_init();
+        }
 
     }
+
 
 }
 
@@ -652,7 +673,7 @@ class MarkerObj extends VisualObj{
     // create / update svg elements
     svg_init(duration=this.duration, delay=this.delay, callback = ()=>{return}){
 
-        if(this.canvas === null){
+        if(this.canvas === null || this.canvas.svg === null){
             return
         }
 
