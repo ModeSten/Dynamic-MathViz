@@ -78,8 +78,6 @@ class CanvasObj {
 
     update_svg(rescale = false){
 
-        console.log(rescale);
-
         if(rescale){
             let parent = this.parentId;
             this.remove_from_div();
@@ -112,7 +110,6 @@ class CanvasObj {
             }
         }
 
-        console.log(params);
         let keys = Object.keys(params);
         let rescale = ("height" in params) || ("width" in params);
 
@@ -224,10 +221,12 @@ class VisualObj{
 
         this.canvas.removeChild(this);      // remove from canvas child list
         this.canvas = null;
+        this.on_remove();
 
     }
 
 
+    // update element
     update(state){
 
         if(state === null){
@@ -243,17 +242,25 @@ class VisualObj{
     }
 
 
+    // create svg elements
     svg_init(callback=()=>{return}){
         /* placeholder for child obj init */
     }
 
 
+    // update side efects
     resolve_update(){
         /* placeholder for child override */
     }
 
-
+    // canvas update side efects 
     on_canvas_update(){
+        /* placeholder for child override */
+    }
+
+
+    // removal from canvas, side efects
+    on_remove(){
         /* placeholder for child override */
     }
 
@@ -335,7 +342,6 @@ class ChartObj extends VisualObj{
             yAxisOfset = 0;
         }
 
-        console.log(xAxisOfset, yAxisOfset);
         return {"x": xAxisOfset, "y": yAxisOfset};
 
     }
@@ -346,6 +352,9 @@ class ChartObj extends VisualObj{
 
         if (this.canvas === null || this.canvas.svg === null){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
             this.init = false;
+            return;
+        } else if(this.init){
+            this.svg_update();
             return;
         }
 
@@ -424,19 +433,21 @@ class ChartObj extends VisualObj{
     }
 
 
-
     on_canvas_update(){
 
         if(this.canvas.svg === null){
             this.init = false;
-        } else if(this.init){
-            this.svg_update();
         } else{
             this.svg_init();
         }
 
     }
 
+    on_remove(){
+
+        this.init = false;
+
+    }
 
 }
 

@@ -21,7 +21,7 @@ function main(){
     let testBtn = document.getElementById("testBtn");
     testBtn.onclick = ()=>{
 
-        canvas.update({"xRange": [-10, 10]});
+        canvas.update({"xRange": [-5, 5], "yRange": [-5, 5]});
 
     }
 
