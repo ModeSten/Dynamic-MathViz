@@ -12,7 +12,7 @@ class TangentBaseObj extends ExstensionObj{
         this.fx = fx;       // tangent reference function
         this.params = {
             "fx": fx,                  // reference function 
-             "x0":0 ,              // tangent 'origin' x value
+             "centerX":0 ,              // tangent 'origin' x value
              "length": 35 ,            // tangent line lenght
              "width":2.5 ,             
              "color":"red",            // tangent line (stroke) color
@@ -38,37 +38,42 @@ class TangentBaseObj extends ExstensionObj{
         this.update(update);
 
     }
+
+    resolve_update(){
+        this.get_data();
+    }
     
     get_data(){
 
-
-        let func = get_tangent_function(this.params.fx, this.params.x0, this.params.h);     // tangent-line function
-        this.data = get_points_from_lenght(func, this.params.x0, this.params.length);
+        let func = get_tangent_function(this.params.fx, this.params.centerX, this.params.h);     // tangent-line function
+        this.data = get_points_from_lenght(func, this.params.centerX, this.params.length);
 
     }
 
 
     translate_center(center, stepSize=0.05){
 
-        let direction = Math.sign( center - this.params.center );
-        let x = this.params.center + direction * stepSize;
+
+        let direction = Math.sign( center - this.params.centerX );
+        let x = this.params.centerX + direction * stepSize;
 
         let T = 5; // transition duration 
 
 
-        let root = new UpdateNode({"center": x}, T);
+        let root = new UpdateNode({"centerX": x}, T);
         let node = root;
         x +=  direction * stepSize;
 
+
         while ( Math.abs(center-x) > 0.05 ){
 
-            node.next = new UpdateNode({"center": x}, T);
+            node.next = new UpdateNode({"centerX": x}, T);
             node = node.next;
 
             x +=  direction * stepSize;
-            if( (x > center && center > this.params.center) || (x < center && center < this.params.center) ){
+            if( (x > center && center > this.params.centerX) || (x < center && center < this.params.centerX) ){
                 x = center;
-                node.next = new UpdateNode({"center": x}, T);
+                node.next = new UpdateNode({"centerX": x}, T);
                 break;
             }
 
