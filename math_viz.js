@@ -897,6 +897,157 @@ class SegmentMarkerFxObj extends SegmentMarkerObj{
 }
 
 
+class ExstensionObj{
+
+    constructor( id ){
+
+        this.id = id;
+        this.svgObj;
+        this.canvas;
+        this.params = {};
+        this.children = []
+        this.data = [];
+
+    }
+
+
+    parse_params(params){
+
+        for (let [key, val] of Object.entries(params)){
+            if( this.params[key] !== undefined ){       // if provided parameter is part of class, override curent value
+                this.params[key] = val;
+            }
+        }
+
+    }
+
+
+    join_params(params){
+
+        for (let [key, val] of Object.entries(params)){
+            this.params[key] = val;
+        }
+
+    }
+
+
+    update(state){
+
+        this.parse_params(state.params);
+        this.resolve_update();
+
+        state.params.data = this.data;      
+        let node = state.next;      
+
+        while( node !== null){              // loop through update nodes
+    
+            this.parse_params(node.params);
+            this.resolve_update();
+            node.params.data = this.data;   // add data to update node
+
+            node = node.next;
+
+        }
+        
+        this.svgObj.update(state);            // update child line object; pass root update node
+        this.notify_children();
+
+    }
+
+
+    assigne_to_canvas(canvas){
+
+        if(canvas == null){
+            return
+        } 
+
+        this.canvas = canvas;
+        this.svgObj.assigne_to_canvas(canvas);
+
+    }
+
+
+    remove_from_canvas(){
+
+        this.canvas = null;
+        this.svgObj.remove_from_canvas();
+
+    }
+
+
+    add_child(obj, callback){
+
+        this.remove_child(obj);     // remove child if already exists; avoid duplicates
+        this.children.push( {element: obj, callback: func} );
+
+    }
+
+
+    notify_children(){
+
+        this.children.forEach( (c) => { c.callback( this, "" );} );
+
+    }
+
+
+    resolve_update(){
+        /* placeholder for child override */
+    }
+
+
+    get_data(){
+        /* placeholder for child override */
+    }
+
+}
+
+
+class GraphN extends ExstensionObj{
+
+    constructor(id, fx, xRange, params, canvas){
+
+        super(id);
+        this.params = {
+            "fx": fx,
+            "xRange": xRange,
+            "color": "red",
+            "width": 2,
+            "step": 0.1
+        };
+        this.parse_params(params);
+
+        this.get_data();
+        this.svgObj = new LineObj(id, this.data, this.params);
+        this.assigne_to_canvas(canvas);
+
+
+    }
+
+
+    get_data(){
+
+        this.data = []; // remove stored (old) data
+        let y;
+
+        for( let x=this.params.xRange[0]; x <= this.params.xRange[1]; x+=this.params.step){
+
+            y = this.params.fx( x );
+            this.data.push( [x, y] );
+
+        }
+
+    }
+
+
+    resolve_update(){
+
+        this.get_data();
+
+    }
+
+}
+
+
 
 /* other classes */
 
