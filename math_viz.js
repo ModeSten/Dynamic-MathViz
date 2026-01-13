@@ -158,6 +158,8 @@ class VisualObj{
         this.data = [];
         this.children = [];     // child objects; updating with parent
 
+        this.parent = null;
+
     }
 
 
@@ -191,6 +193,34 @@ class VisualObj{
 
         this.children.forEach( (c) => { c.callback( this, "" );} );
 
+    }
+
+
+    // set parent object: update markers on parent update
+    set_parent(parent){
+
+        if(parent === null){
+            return
+        }
+
+        parent.add_child(this, (obj, msg)=>{ this.on_parent_update() });
+        this.parent = parent;
+
+        this.resolve_update();
+        this.svg_init();
+
+    }
+
+
+    remove_parent(){
+
+        this.parent.remove_child(this);
+
+    }
+
+
+    on_parent_update(){
+        /* placeholder for child class override */ 
     }
 
 
@@ -452,9 +482,6 @@ class ChartObj extends VisualObj{
 }
 
 
-
-
-
 // Line class: plot line (graph) based on list of data values
 class LineObj extends VisualObj{
 
@@ -542,33 +569,6 @@ class MarkerObj extends VisualObj{
 
     }
 
-
-    // set parent object: update markers on parent update
-    set_parent(parent){
-
-        if(parent === null){
-            return
-        }
-
-        parent.add_child(this, (obj, msg)=>{ this.on_parent_update() });
-        this.parent = parent;
-
-        this.resolve_update();
-        this.svg_init();
-
-    }
-
-
-    remove_parent(){
-
-        this.parent.remove_child(this);
-
-    }
-
-
-    on_parent_update(){
-        
-    }
 
 
     on_canvas_update(){
@@ -809,16 +809,21 @@ class SegmentMarkerFxObj extends SegmentMarkerObj{
 }
 
 
+// classes extending visual classes; cotnain visualObj (ex line) as parameter 
 class ExstensionObj{
 
     constructor( id ){
 
         this.id = id;
         this.svgObj;
-        this.canvas;
+        this.canvas = null;
         this.params = {};
         this.children = []
         this.data = [];
+        this.isDefined = (d, i)=>{return (d[0]!==null) && (d[1]!==null)};
+        this.duration = 10; // transition (default) duration
+        this.delay = 0;     // transition (default) delay
+        this.parent = null;
 
     }
 
@@ -909,6 +914,32 @@ class ExstensionObj{
     }
 
 
+    set_parent(parent){
+
+        if(parent === null){
+            return
+        }
+
+        this.parent = parent;
+        parent.add_child(this, this.on_parent_update);
+        this.on_parent_update();
+
+    }
+
+
+    on_parent_update(){
+        /* placeholder for child class override */
+    }
+
+
+    remove_parent(){
+
+        this.parent = null;
+        parent.remove_child(this);
+
+    }
+
+
     resolve_update(){
         /* placeholder for child override */
     }
@@ -921,7 +952,7 @@ class ExstensionObj{
 }
 
 
-class GraphN extends ExstensionObj{
+class GraphObj extends ExstensionObj{
 
     constructor(id, fx, xRange, params, canvas){
 
@@ -987,6 +1018,7 @@ class UpdateNode{   // use for updating visualisation classes parameters
 /*  suport functions  */
 
 function get_points_from_lenght(fx, center, lenght){ // get line start and end values from target lenght
+
 
     let deltaX = (lenght / (1+Math.abs(get_slope(fx, center)))) / 2;
     let points = [];

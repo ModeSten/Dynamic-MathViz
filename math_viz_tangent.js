@@ -2,147 +2,80 @@
 /* requires math_viz script */
 
 
-class TangentBaseObj{
+class TangentBaseObj extends ExstensionObj{
 
 
-    constructor(id, fx){
+    constructor(id, fx, params={}, canvas=null, graph=null){
 
-        this.id = id;
-
-        this.line;          // line object for svg elements
+        super(id);
 
         this.fx = fx;       // tangent reference function
-        this.params = {};   // 
-        this.data = [];     // data points for plotting
+        this.params = {
+            "fx": fx,                  // reference function 
+             "x0":0 ,              // tangent 'origin' x value
+             "length": 35 ,            // tangent line lenght
+             "width":2.5 ,             
+             "color":"red",            // tangent line (stroke) color
+             "h": 0.01                 // h value for calculating tangent slope (k)
+        };
+        this.parse_params(params);
 
-        this.canvas;        // canvas (class) object
+        this.get_data();
+
+        this.svgObj = new LineObj(this.id, this.data, this.params);
+
         this.graph;         // reference graph object
-        this.duration = 10; // transition (default) duration
-        this.delay = 0;     // transition (default) delay
 
-        this.children = [];
-
-        this.isDefined = (d, i)=>{return (d[0]!==null) && (d[1]!==null)};
+        this.set_parent(graph);
+        this.assigne_to_canvas(canvas);
         
     }
 
 
-    add_child( obj, func){
+    on_parent_update(){
 
-        this.remove_child(obj);     // remove child if already exists; avoid duplicates
-        this.children.push( {element: obj, callback: func} )
-
-    }
-
-    remove_child( obj ){
-
-        this.children = this.children.filter( (e) => {return e.element.id !== obj.id} );
+        let update = new UpdateNode({"fx": this.parent.params.fx});
+        this.update(update);
 
     }
-
-
-    notify_children(){
-
-        this.children.forEach( (c) => { c.callback( this, "" );} );
-
-    }
-
-
-    // get optional parameter values from input
-    parse_params(params){
-
-            for (let [key, val] of Object.entries(this.params)){
-
-                if( params[key] !== undefined ){
-                    this.params[key] = params[key];
-                } 
-
-            }
-        
-    }
-
-
-    assign_graph(graph){
-
-        if(graph === null){
-            return
-        }
-
-        this.graph = graph;
-        this.update( new UpdateNode({"fx": graph.params.fx}) );
-
-        graph.add_child(this, (obj, msg)=>{ this.update(new UpdateNode({"fx": graph.params.fx})) });
-
-    }
-
-    // dereference graph
-    remove_graph(){
-
-        if(this.graph === null){
-            return
-        }
-
-        this.graph.removeChild(this);
-        this.graph = null;
-
-    }
-
-
-    assigne_to_canvas(canvas){
-
-        if(canvas === null){
-            return
-        }
-
-        if(canvas === null){
-            return
-        }
-
-        this.canvas = canvas;
-        this.line.assigne_to_canvas(canvas);
-
-    }
-
-
-    remove_from_canvas(){
-
-        if(this.canvas === null){
-            return
-        }
-       
-        this.line.remove_from_canvas();
-        this.canvas = null;
-
-    }
-
-
-    update(state){  
-
-
-        this.parse_params(state.params);
-        this.resolve_update();
-
-        state.params.data = this.data;      // add tangent lien data to root update node
-        let node = state.next;      
-
-        while( node !== null){              // loop through update nodes
     
-            this.parse_params(node.params);
-            this.resolve_update();
-            node.params.data = this.data;   // add tangent line data to update node
+    get_data(){
 
+
+        let func = get_tangent_function(this.params.fx, this.params.x0, this.params.h);     // tangent-line function
+        this.data = get_points_from_lenght(func, this.params.x0, this.params.length);
+
+    }
+
+
+    translate_center(center, stepSize=0.05){
+
+        let direction = Math.sign( center - this.params.center );
+        let x = this.params.center + direction * stepSize;
+
+        let T = 5; // transition duration 
+
+
+        let root = new UpdateNode({"center": x}, T);
+        let node = root;
+        x +=  direction * stepSize;
+
+        while ( Math.abs(center-x) > 0.05 ){
+
+            node.next = new UpdateNode({"center": x}, T);
             node = node.next;
 
+            x +=  direction * stepSize;
+            if( (x > center && center > this.params.center) || (x < center && center < this.params.center) ){
+                x = center;
+                node.next = new UpdateNode({"center": x}, T);
+                break;
+            }
+
         }
-        
-        this.line.update(state);            // update child line object; pass root update node
-        this.notify_children();
 
-    }
+        this.update(root);
 
-
-    resolve_update(){
-        /* placeholder for child class override */
     }
 
 

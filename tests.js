@@ -11,7 +11,7 @@ function main(){
 
     let canvas = new CanvasObj("testcanvas1", width, height, margin, [-10, 10], [-10, 10], "test_viz1");
     let chart = new ChartObj("chart1", {}, canvas);
-    let graph = new GraphN("graph1", fx[fI], [-10, 10], {});
+    let graph = new GraphObj("graph1", fx[fI], [-10, 10], {});
 
     let testBtn = document.getElementById("testBtn");
     testBtn.onclick = ()=>{
