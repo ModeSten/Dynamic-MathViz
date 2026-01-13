@@ -48,7 +48,7 @@ function tangent1(){
 
     let canvas = new CanvasObj( "canvas1", width, height, margin, xRange, yRange, divId );
     let chart = new ChartObj( "chart1", {}, canvas );
-    let graph = new GraphObj( "graph1", fx, xRange, {}, canvas );
+    let graph = new GraphN( "graph1", fx, xRange, {}, canvas );
     let tangent = new TangentObj( "tangent1", fx, {"center": 0, "lengt": 50}, canvas, graph );
     let marker = new SegmentMarkerFxObj( "marker1", { "r": 3.5}, tangent, canvas);
     marker.duration =5;
@@ -65,7 +65,7 @@ function tangent1(){
     slider.oninput = function(){
 
         let val = this.value / 100;
-        let xVal = graph.xRange[0] * (1-val) + graph.xRange[1]*val;
+        let xVal = graph.params.xRange[0] * (1-val) + graph.params.xRange[1]*val;
         tangent.translate_center(xVal);
 
         txt.innerHTML = `x=${xVal.toFixed(1)}`;
@@ -84,7 +84,7 @@ function tangent2(){
 
     let canvas = new CanvasObj( "canvas2", width, height, margin, xRange, yRange, divId );
     let chart = new ChartObj( "chart2", {}, canvas );
-    let graph = new GraphObj( "graph2", fx, xRange, {}, canvas );
+    let graph = new GraphN( "graph2", fx, xRange, {}, canvas );
     let tanChain = new TangentChainObj( "tan_chain1", fx, xRange, {"n":n}, canvas, graph);
     let marker = new SegmentMarkerFxObj( "marker2", { "r": 3.5}, tanChain, canvas);
 
@@ -126,9 +126,9 @@ function tangent3(){
 
     let canvas = new CanvasObj( "canvas3", width, height, margin, xRange, yRange, divId );
     let chart = new ChartObj( "chart3", {}, canvas );
-    let graph = new GraphObj( "graph3", fx, yRange, {}, canvas );
+    let graph = new GraphN( "graph3", fx, yRange, {"color": "black"}, canvas );
     let tanChain = new TangenHChainObj( "tan_hchain1", fx, xRange, {}, canvas, graph, h0);
-    let marker = new SegmentMarkerFxObj( "marker3", {"p": [0, 1], "r": 2.5}, tanChain, canvas);
+    let marker = new SegmentMarkerFxObj( "marker3", {"p": [0, 1], "r": 2}, tanChain, canvas);
     marker.duration =5;
 
 

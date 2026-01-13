@@ -452,95 +452,7 @@ class ChartObj extends VisualObj{
 }
 
 
-// Graph class: Draw graph based on function
-class GraphObj extends VisualObj{
 
-    constructor( id, fx, xRange, params, canvas=null ){ 
-
-        super(id);
-
-        this.fx = fx;           // graph function
-        this.xRange = xRange;   // graph value (x) range
-
-        this.params = {
-            "fx": fx,           // function: (x)=>{ returne f(x) }
-            "xRange": xRange,   // x value range
-            "step": 0.1,        // stepsize (x) between value pairs [x, y]
-            "color": "black",   // stroke color
-            "width": 2.5,       // stroke widght
-        };
-
-        this.parse_params(params);
-        this.get_data();
-        this.assigne_to_canvas(canvas);
-        
-        
-    }
-
-    // update side efects; not shared by sibling classes
-    resolve_update(){
-
-        this.get_data();
-
-    }
-
-
-    // get graph value paris [x, y]
-    get_data(){
-
-        this.data = []; // remove stored (old) data
-        let y;
-
-        for( let x=this.params.xRange[0]; x <= this.params.xRange[1]; x+=this.params.step){
-
-            y = this.params.fx( x );
-            this.data.push( [x, y] );
-
-        }
-
-    }
-
-
-    svg_init(duration=this.duration, delay=this.delay, callback=()=>{return}){
-
-        if(this.canvas === null || this.canvas.svg === null){   // no canvas assigned or no canvas svg (canvas not assigned to div) exists
-            return
-        }
-
-
-        let u = this.canvas.svg.selectAll("."+this.id)
-            .data([this.data], (d)=>{return d.ser1});
-
-        let line = d3.line()
-            .x( (d) => {return this.canvas.xScale(d[0])} )
-            .y( (d) => {return this.canvas.yScale(d[1])} )
-            .defined(  (d, i)=>{ return this.isDefined(d, i) } );
-
-        u.enter()
-            .append("path")
-            .attr("class", this.id)
-            .attr("clip-path", "url(#clip)")
-        .merge(u)
-            .transition()
-            .delay(delay)
-            .duration(duration)
-            .attr("d", line)
-                .attr("fill", "none")
-                .attr("stroke", this.params.color)
-                .attr("stroke-width", this.params.width)
-            .on("end", callback);
-
-    }
-
-
-    on_canvas_update(){
-
-        this.svg_init();
-
-    }
-
-
-}
 
 
 // Line class: plot line (graph) based on list of data values
@@ -978,7 +890,14 @@ class ExstensionObj{
     add_child(obj, callback){
 
         this.remove_child(obj);     // remove child if already exists; avoid duplicates
-        this.children.push( {element: obj, callback: func} );
+        this.children.push( {element: obj, callback: callback} );
+
+    }
+
+
+    remove_child(obj){
+
+        this.children = this.children.filter( (e) => {return e.element.id !== obj.id} );
 
     }
 
