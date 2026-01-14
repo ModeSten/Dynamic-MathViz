@@ -20,7 +20,9 @@ class TangentBaseObj extends ExstensionObj{
         };
         this.parse_params(params);
 
-        this.get_data();
+        if(graph===null){
+            this.get_data();
+        }
 
         this.svgObj = new LineObj(this.id, this.data, this.params);
 
@@ -87,138 +89,7 @@ class TangentBaseObj extends ExstensionObj{
 }
 
 
-
-
-class TangentObj extends TangentBaseObj{   // tangent line
-
-    constructor(id, fx, params={}, canvas=null, graph=null){
-
-        super(id, fx);
-
-        this.canvas;
-        this.graph;                    // optional GraphObj: track to update tangent on graph change
-        
-        this.params = {
-            "fx": fx,                  // reference function 
-             "center":0 ,              // tangent 'origin' x value
-             "length": 35 ,            // tangent line lenght
-             "width":2.5 ,             
-             "color":"red",            // tangent line (stroke) color
-             "h": 0.01                 // h value for calculating tangent slope (k)
-            };    
-
-        this.parse_params(params);      // read optional parameters from input
-
-        this.get_data();
-
-        this.line = new LineObj( id, this.data, this.params );
-
-        this.assigne_to_canvas(canvas)
-        this.assign_graph(graph);
-
-    }
-
- assign_graph(graph){
-
-        if(graph === null){
-            return
-        }
-
-        this.graph = graph;
-        this.update( new UpdateNode({"fx": graph.params.fx}) );
-
-        graph.add_child(this, (obj, msg)=>{ this.update(new UpdateNode({"fx": graph.params.fx})) });
-
-    }
-
-    remove_graph(){
-
-        if(this.graph === null){
-            return
-        }
-
-        this.graph.removeChild(this);
-        this.graph = null;
-
-    }
-
-
-    assigne_to_canvas(canvas){
-
-        if(canvas === null){
-            return
-        }
-
-        if(canvas === null){
-            return
-        }
-
-        this.canvas = canvas;
-        this.line.assigne_to_canvas(canvas);
-
-    }
-
-
-    remove_from_canvas(){
-
-        if(this.canvas === null){
-            return
-        }
-       
-        this.line.remove_from_canvas();
-        this.canvas = null;
-
-    }
-
-
-    translate_center(center, stepSize=0.05){
-
-        let direction = Math.sign( center - this.params.center );
-        let x = this.params.center + direction * stepSize;
-
-        let T = 5; // transition duration 
-
-
-        let root = new UpdateNode({"center": x}, T);
-        let node = root;
-        x +=  direction * stepSize;
-
-        while ( Math.abs(center-x) > 0.05 ){
-
-            node.next = new UpdateNode({"center": x}, T);
-            node = node.next;
-
-            x +=  direction * stepSize;
-            if( (x > center && center > this.params.center) || (x < center && center < this.params.center) ){
-                x = center;
-                node.next = new UpdateNode({"center": x}, T);
-                break;
-            }
-
-        }
-
-        this.update(root);
-
-    }
-
-
-    resolve_update(){
-        this.get_data();
-        this.fx = this.params.fx;   // fx duplicated to maintain consitency between classes
-    }
-
-
-    get_data(){
-
-        let func = get_tangent_function(this.params.fx, this.params.center, this.params.h);     // tangent-line function
-        this.data = get_points_from_lenght(func, this.params.center, this.params.length);
-
-    }
-
-}
-
-
-class TangentChainObj extends TangentBaseObj{
+class TangentChainObj extends ExstensionObj{
 
     constructor(id, fx, xRange, params={}, canvas=null, graph=null){
 
@@ -235,15 +106,14 @@ class TangentChainObj extends TangentBaseObj{
             };    
         this.parse_params(params);
 
-        if(graph == null){
+        if(graph===null){
             this.get_data();
         }
 
-        this.line = new LineObj( this.id, this.data, this.params );
-        this.line.isDefined = this.isDefined;
+        this.svgObj = new LineObj( this.id, this.data, this.params );
 
+        this.set_parent(graph);
         this.assigne_to_canvas(canvas);
-        this.assign_graph(graph);
 
     }
 
@@ -273,7 +143,14 @@ class TangentChainObj extends TangentBaseObj{
     resolve_update(){
 
         this.get_data();
-        this.fx = this.params.fx;
+
+    }
+
+
+    on_parent_update(){
+
+        let update = new UpdateNode({"fx": this.parent.params.fx});
+        this.update(update);
 
     }
 
@@ -282,12 +159,30 @@ class TangentChainObj extends TangentBaseObj{
 
 
 
-class TangenHChainObj extends TangentChainObj{
+class TangenHChainObj extends ExstensionObj{
 
     constructor(id, fx, xRange, params={}, canvas=null, graph=null, h=5){
 
-        params.h = h;
-        super(id, fx, xRange, params, canvas, graph );
+        super(id);
+        this.params = {
+            "fx": fx,           // reference function
+             "n": 5 ,           // number of tangent (lines)
+             "length":5 ,       
+             "width":2.5 , 
+             "color":"red",
+             "xRange": xRange,
+             "h": 3
+            };   
+        this.parse_params(params); 
+
+        if(graph === null){
+            this.get_data();
+        }
+
+        this.svgObj = new LineObj( this.id, this.data, this.params );
+
+        this.set_parent(graph);
+        this.assigne_to_canvas(canvas);
 
     }
 
@@ -310,6 +205,19 @@ class TangenHChainObj extends TangentChainObj{
             this.data.push([x+h, null]);
 
         }
+
+    }
+
+
+    resolve_update(){
+        this.get_data();
+    }
+
+
+    on_parent_update(){
+
+        let update = new UpdateNode({"fx": this.parent.params.fx});
+        this.update(update);
 
     }
 
