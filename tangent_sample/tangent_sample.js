@@ -145,7 +145,7 @@ function tangent3(){
         let val = this.value / 100;
         let h = val*5;
 
-        let update = new UpdateNode({"h": h});
+        let update = new UpdateNode({"h": h}, 1500);
         tanChain.update(update);
 
         txt.innerHTML = `h=${h.toFixed(2)}`;

@@ -492,9 +492,13 @@ class LineObj extends VisualObj{
         this.params = {
         "data": points,     // data value pairs; to plot
         "width": 2.5,       // line (stroke) width
-        "color": "black"    // lien (stroke) color
+        "color": "black",    // lien (stroke) color
+        "draw": false,
+        "drawT0": 0,
+        "drawT": 1
         };
 
+        this.lenght = 0;
         this.data = this.params.data;   // used to maintain comonolity with sibling classes: main data variable stored in parameters
 
         this.parse_params(params);
@@ -519,6 +523,11 @@ class LineObj extends VisualObj{
             .y( (d)=>{return this.canvas.yScale(d[1])} )
             .defined( (d, i) => { return this.isDefined(d, i) } );
 
+        if(this.params.draw){
+            this.svg_draw(u, line, duration, delay, callback);
+            return
+        }
+    
 
         u.enter()
             .append("path")
@@ -532,14 +541,79 @@ class LineObj extends VisualObj{
                 .attr("stroke", this.params.color)
                 .attr("stroke-width", this.params.width)
                 .delay(delay)
-            .on("end", callback);
+            .on("end", callback)
 
     }
+
+
+    svg_draw(u, line, duration, delay, callback){
+
+        this.get_lenght();
+        console.log(this.lenght);
+        const len = this.lenght;
+        
+        u.enter()
+            .append("path")
+                .attr("class", this.id)
+                .attr("clip-path", "url(#clip)")
+        .merge(u)
+            .attr("d", line)
+            .attr("fill", "none")
+            .attr("stroke", this.params.color)
+            .attr("stroke-width", this.params.width)
+            .attr("stroke-dasharray", len + " " + len)
+            .attr("stroke-dashoffset",len*(1-this.params.drawT0))
+            .transition()
+                .duration(duration)
+                .attr("stroke-dashoffset", len*(1-this.params.drawT));
+
+    }
+
 
 
     on_canvas_update(){
 
         this.svg_init();
+
+    }
+
+
+    get_lenght(){
+
+        if(this.canvas === null || this.canvas.svg === null){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
+            this.lenght = 0;
+            return
+        }
+
+
+        let x0 =  this.params.data[0][0];
+        x0 = this.canvas.xScale(x0);
+        let y0 =  this.params.data[0][1];
+        y0 = this.canvas.yScale(y0)
+
+        let x;
+        let y;
+
+        let L = Object.keys(this.params.data).length;
+
+        for(let i=1; i<L; i++){
+
+            x = this.params.data[i][0];
+            y = this.params.data[i][1];
+
+            if(y!==null && x!==null){
+
+                x = this.canvas.xScale( x );
+                y = this.canvas.yScale( y );
+
+                this.lenght += Math.sqrt( (x-x0)**2 + (y-y0)**2 );
+                x0 = x;
+                y0 = y; 
+
+            } 
+
+        }
+
 
     }
     

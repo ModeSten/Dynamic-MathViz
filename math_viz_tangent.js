@@ -13,7 +13,7 @@ class TangentBaseObj extends ExstensionObj{
         this.params = {
             "fx": fx,                  // reference function 
              "centerX":0 ,              // tangent 'origin' x value
-             "length": 35 ,            // tangent line lenght
+             "length": 10 ,            // tangent line lenght
              "width":2.5 ,             
              "color":"red",            // tangent line (stroke) color
              "h": 0.01                 // h value for calculating tangent slope (k)
