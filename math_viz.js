@@ -549,9 +549,10 @@ class LineObj extends VisualObj{
     svg_draw(u, line, duration, delay, callback){
 
         this.get_lenght();
-        console.log(this.lenght);
-        const len = this.lenght;
-        
+        let l = this.lenght;
+        let l0 = l * (1-this.params.drawT0);
+        let l1 = l * (1-this.params.drawT);
+
         u.enter()
             .append("path")
                 .attr("class", this.id)
@@ -561,11 +562,14 @@ class LineObj extends VisualObj{
             .attr("fill", "none")
             .attr("stroke", this.params.color)
             .attr("stroke-width", this.params.width)
-            .attr("stroke-dasharray", len + " " + len)
-            .attr("stroke-dashoffset",len*(1-this.params.drawT0))
+            .attr("stroke-dasharray",  l + " " + l)
+            .attr("stroke-dashoffset", l0)
             .transition()
                 .duration(duration)
-                .attr("stroke-dashoffset", len*(1-this.params.drawT));
+                .attr("stroke-dashoffset", l1)
+                .delay(delay)
+            .on("end", callback);
+
 
     }
 
@@ -580,11 +584,11 @@ class LineObj extends VisualObj{
 
     get_lenght(){
 
+        this.lenght = 0;
+
         if(this.canvas === null || this.canvas.svg === null){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
-            this.lenght = 0;
             return
         }
-
 
         let x0 =  this.params.data[0][0];
         x0 = this.canvas.xScale(x0);
@@ -1036,7 +1040,10 @@ class GraphObj extends ExstensionObj{
             "xRange": xRange,
             "color": "red",
             "width": 2,
-            "step": 0.1
+            "step": 0.1,
+            "draw": false,
+            "drawT0": 0,
+            "drawT": 1
         };
         this.parse_params(params);
 
