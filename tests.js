@@ -2,7 +2,7 @@ const margin = { top: 60, right: 60, bottom: 50, left: 60 },
 width = 750 - margin.left - margin.right,
 height = 600 - margin.top - margin.bottom;
 
-var fx = [ (x)=>{return 2*x} , (x)=>{return x**2/5}, (x)=>{return x**3/100}];
+var fx = [ (x)=>{return 2*x} , (x)=>{return x**2/5}, (x)=>{return x**3/100}, (x)=>{return -Math.sqrt(7**2 - x**2)}];
 let fI = 2;
 
 
@@ -12,6 +12,8 @@ function main(){
     let canvas = new CanvasObj("testcanvas1", width, height, margin, [-10, 10], [-10, 10], "test_viz1");
     let chart = new ChartObj("chart1", {}, canvas);
     let graph = new GraphObj("graph1", fx[fI], [-10, 10], {"drawT": 0, "draw": true});
+    let marker = new SpacedMarkerObj("marker1", graph, {"space": 5}, canvas);
+    //let marker = new SegmentMarkerObj("marker1", graph, {"p": [0]});
 
     graph.assigne_to_canvas(canvas);
 
@@ -26,6 +28,8 @@ function main(){
         update.next.next.next.next = new UpdateNode({"draw": false, "color": "blue", "width": 5}, 500, 50);
         update.next.next.next.next.next = new UpdateNode({"draw": false, "color": "black", "width": 2.5}, 500, 50);
         graph.update(update);
+
+        marker.assigne_to_canvas(canvas);
 
 
     }

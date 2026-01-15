@@ -147,6 +147,7 @@ class VisualObj{
 
     constructor(id){
 
+
         this.id = id;
         this.canvas = null;     // assigned canvas element
         this.params = {};       // parameters placeholder for child class overrride
@@ -636,7 +637,7 @@ class MarkerObj extends VisualObj{
         this.params={
             "data": data,       // marker locations
             "color": "red",     // marker color
-            "r": "3",           // marker (circle) radius 
+            "r": 3,           // marker (circle) radius 
         }
 
         this.data = data;       
@@ -684,207 +685,18 @@ class MarkerObj extends VisualObj{
         u.join("circle")
                 .attr("class", this.id)
                 .attr("clip-path", "url(#clip)")
+                .attr("cx", (d)=>{ return this.canvas.xScale(d[0]) })
+                .attr("cy", (d)=>{ return this.canvas.yScale(d[1]) })
                 .transition()
                 .duration(duration)
                     .attr("r", this.params.r)
-                    .attr("fill", this.params.color)
-                    .attr("cx", (d)=>{ return this.canvas.xScale(d[0]) })
-                    .attr("cy", (d)=>{ return this.canvas.yScale(d[1]) });
-
-    }
-
-}
-
-// uniformly place marker along graph
-class SpacedMarkerObj extends MarkerObj{
-
-    constructor(id, params={}, parent=null, canvas=null){
-
-        super( id );
-
-        let childParams = {
-            "space": 3,
-        };
-
-        this.join_params(childParams);  
-        this.parse_params(params);
-
-        this.set_parent(parent);
-        this.assigne_to_canvas(canvas);
-        this.svg_init();
-
-    }
-
-
-    on_parent_update(){
-
-        this.get_data();
-        this.svg_init();
-
-    }
-
-
-    resolve_update(){
-
-        this.get_data();
-
-    }
-
-
-    get_data(){
-
-
-        if( this.parent === null){
-            return
-        }
-
-        this.data = [];
-        let len = Object.keys(this.parent.data).length;
-        let space = this.params.space;
-
-        let d0 = this.parent.data[0];
-        this.data.push(d0);
-
-        let d1;
-        let L = 0;
-        for(let i=1; i<len; i++){
-            
-            d1 = this.parent.data[i];
-            L += Math.sqrt( (d1[0]-d0[0])**2 + (d1[1]-d0[1])**2 );
-            if(L >= space){ 
-                this.data.push(d1);
-                L=0;
-            }
-            d0 = d1;
-
-        }
+                    .attr("fill", this.params.color);
 
     }
 
 }
 
 
-// place markers at relative position of line segment (between data points): x and y interpolated
-class SegmentMarkerObj extends MarkerObj{
-
-    constructor(id, params={}, parent=null, canvas=null){
-
-        super(id);
-
-        let childParams = {
-            "p": [0.5]      // relative position of marker: 0 >= p <= 1
-        }
-        this.join_params(childParams);
-        this.parse_params(params);
-
-        this.set_parent(parent);
-        this.assigne_to_canvas(canvas);
-
-    }
-
-
-    on_parent_update(){
-
-        this.get_data();
-        this.svg_init();
-
-    }
-
-
-    resolve_update(){
-
-        this.get_data();
-
-    }
-
-
-
-    get_data(){
-
-        if(this.parent === null){
-            return
-        }
-
-        this.data = [];
-
-        let len = Object.keys(this.parent.data).length;
-
-        let d0;
-        let d1;
-        let d;
-        let p = this.params.p;
-
-        for(let i=0; i<len-1; i+=2){
-
-            if(this.parent.data[i][1] == null){
-                i++;
-            }
-
-            d0 = this.parent.data[i];
-            d1 = this.parent.data[i+1];
-
-            this.params.p.forEach((p, i)=>{
-                    d = [ p*d1[0]+(1-p)*d0[0], p*d1[1]+(1-p)*d0[1] ];
-                    this.data.push(d);
-                }
-            );
-
-        }
-
-    }
-
-
-}
-
-
-// place markers at relativ position along line segment (between data points): x interpolated and y from function
-class SegmentMarkerFxObj extends SegmentMarkerObj{
-
-    constructor( id, params={}, parent=null, canvas=null){
-
-        super(id, params, parent, canvas);
-
-    }
-
-
- get_data(){
-
-        if(this.parent === null){
-            return
-        }
-
-        this.data = [];
-
-        let len = Object.keys(this.parent.data).length;
-
-        let x0;
-        let x1;
-        let x;
-        let y;
-
-        for(let i=0; i<len-1; i+=2){
-
-            if(this.parent.data[i][1] == null){
-                i++;
-            }
-
-            x0 = this.parent.data[i][0];
-            x1 = this.parent.data[i+1][0];
-
-            this.params.p.forEach (  (p, i)=>{
-                x = p*x1 + (1-p)*x0;
-                y = this.parent.fx(x);
-                this.data.push([x, y]);
-                }
-            );
-            
-
-        }
-
-    }
-
-
-}
 
 
 // classes extending visual classes; cotnain visualObj (ex line) as parameter 
@@ -893,7 +705,7 @@ class ExstensionObj{
     constructor( id ){
 
         this.id = id;
-        this.svgObj;
+        this.svgObj = null;
         this.canvas = null;
         this.params = {};
         this.children = []
@@ -974,6 +786,7 @@ class ExstensionObj{
 
         this.remove_child(obj);     // remove child if already exists; avoid duplicates
         this.children.push( {element: obj, callback: callback} );
+        callback(this, "");
 
     }
 
@@ -999,13 +812,12 @@ class ExstensionObj{
         }
 
         this.parent = parent;
-        parent.add_child(this, this.on_parent_update);
-        this.on_parent_update();
+        parent.add_child(this, (obj,msg)=>{ this.on_parent_update(obj, msg) });
 
     }
 
 
-    on_parent_update(){
+    on_parent_update( obj, msg ){
         /* placeholder for child class override */
     }
 

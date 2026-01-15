@@ -26,17 +26,15 @@ class TangentBaseObj extends ExstensionObj{
 
         this.svgObj = new LineObj(this.id, this.data, this.params);
 
-        this.graph;         // reference graph object
-
         this.set_parent(graph);
         this.assigne_to_canvas(canvas);
         
     }
 
 
-    on_parent_update(){
+    on_parent_update( obj, msg){
 
-        let update = new UpdateNode({"fx": this.parent.params.fx});
+        let update = new UpdateNode({"fx": obj.params.fx});
         this.update(update);
 
     }
@@ -214,9 +212,9 @@ class TangenHChainObj extends ExstensionObj{
     }
 
 
-    on_parent_update(){
+    on_parent_update(obj, msg){
 
-        let update = new UpdateNode({"fx": this.parent.params.fx});
+        let update = new UpdateNode({"fx": obj.params.fx});
         this.update(update);
 
     }
