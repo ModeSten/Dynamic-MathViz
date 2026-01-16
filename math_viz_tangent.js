@@ -46,7 +46,7 @@ class TangentBaseObj extends ExstensionObj{
     get_data(){
 
         let func = get_tangent_function(this.params.fx, this.params.centerX, this.params.h);     // tangent-line function
-        this.data = get_points_from_lenght(func, this.params.centerX, this.params.length);
+        this.data = get_points_from_lenght(func, this.params.centerX, this.params.length, 0.5);
 
     }
 
@@ -100,7 +100,8 @@ class TangentChainObj extends ExstensionObj{
              "width":2.5 , 
              "color":"red",
              "xRange": xRange,
-             "h": 0.01
+             "h": 0.01,
+             "ofset": 0.5
             };    
         this.parse_params(params);
 
@@ -119,19 +120,21 @@ class TangentChainObj extends ExstensionObj{
     get_data(){
 
         this.data = [];
+        let ofset = this.params.ofset;
 
-        let segementL = ( this.params.xRange[1] - this.params.xRange[0] ) / this.params.n;
-        let half = segementL / 2;
-        let x0 = this.params.xRange[0] + half;
+        let len = ( this.params.xRange[1] - this.params.xRange[0] ) / this.params.n;
+        let half = len / 2;
+        let x0 = this.params.xRange[0] + len * ofset;
 
 
-        for (let i=x0; i<this.params.xRange[1]; i+=segementL){
+        for (let xi=x0; xi<this.params.xRange[1]; xi+=len){
 
-            let func = get_tangent_function(this.params.fx, i);
+            let func = get_tangent_function(this.params.fx, xi);
+            console.log(xi-len*(1-ofset));
 
-            this.data.push( [ i-half, func(i-half) ] );
-            this.data.push( [ i+half, func(i+half) ] );
-            this.data.push( [ i-half, null ] );
+            this.data.push( [ xi-len*ofset, func(xi-half) ] );
+            this.data.push( [ xi+len*(1-ofset), func(xi+half) ] );
+            this.data.push( [ xi+len*(1-ofset), null ] );
 
         }
 

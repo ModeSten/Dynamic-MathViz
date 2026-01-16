@@ -910,13 +910,15 @@ class UpdateNode{   // use for updating visualisation classes parameters
     
 /*  suport functions  */
 
-function get_points_from_lenght(fx, center, lenght){ // get line start and end values from target lenght
+function get_points_from_lenght(fx, x0, lenght, ofset){ // get line start and end values from target lenght
 
 
-    let deltaX = (lenght / (1+Math.abs(get_slope(fx, center)))) / 2;
+    let deltaX = (lenght / (1+Math.abs(get_slope(fx, x0))));
+    let deltaX1 = deltaX * (1-ofset);
+    let deltaX0 = deltaX * ofset;
     let points = [];
-    points.push( [ center-deltaX, fx(center-deltaX) ] );
-    points.push( [ center+deltaX, fx(center+deltaX) ] );
+    points.push( [ x0-deltaX0, fx(x0-deltaX0) ] );
+    points.push( [ x0+deltaX1, fx(x0+deltaX1) ] );
 
     return points;
 

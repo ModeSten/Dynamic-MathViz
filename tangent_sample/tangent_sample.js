@@ -85,8 +85,8 @@ function tangent2(){
     let canvas = new CanvasObj( "canvas2", width, height, margin, xRange, yRange, divId );
     let chart = new ChartObj( "chart2", {}, canvas );
     let graph = new GraphObj( "graph2", fx, xRange, {"color": "black"}, canvas );
-    let tanChain = new TangentChainObj( "tan_chain1", fx, xRange, {"n":n}, canvas, graph);
-    let marker = new SegmentMarkerFxObj( "marker2", tanChain, { "r": 3.5}, canvas);
+    let tanChain = new TangentChainObj( "tan_chain1", fx, xRange, {"n":n, "ofset":0.5}, canvas, graph);
+    let marker = new SegmentMarkerFxObj( "marker2", tanChain, { "r": 3.5, "p":[tanChain.params.ofset]}, canvas);
 
     let container = document.getElementById(divId);
     let viz = document.getElementById("canvas2");
