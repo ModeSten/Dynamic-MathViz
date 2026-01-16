@@ -130,7 +130,6 @@ class TangentChainObj extends ExstensionObj{
         for (let xi=x0; xi<this.params.xRange[1]; xi+=len){
 
             let func = get_tangent_function(this.params.fx, xi);
-            console.log(xi-len*(1-ofset));
 
             this.data.push( [ xi-len*ofset, func(xi-half) ] );
             this.data.push( [ xi+len*(1-ofset), func(xi+half) ] );
@@ -221,5 +220,72 @@ class TangenHChainObj extends ExstensionObj{
         this.update(update);
 
     }
+
+}
+
+
+class SlopeChainObj extends ExstensionObj{
+
+ constructor(id, fx, xRange, params={}, canvas=null, graph=null, h=5){
+
+        super(id);
+
+        this.params = {
+            "fx": fx,           // reference function
+             "n": 5 ,           // number of tangent (lines)
+             "length":5 ,       
+             "width":2.5 , 
+             "color":"red",
+             "xRange": xRange,
+             "h": 3
+            };   
+        this.parse_params(params); 
+
+        if(graph === null){
+            this.get_data();
+        }
+
+        this.svgObj = new LineObj( this.id, this.data, this.params );
+
+        this.set_parent(graph);
+        this.assigne_to_canvas(canvas);
+
+    }
+
+
+    get_data(){
+
+        this.data = [];
+
+        let xStart = this.params.xRange[0];
+        let xEnd = this.params.xRange[1];
+        let h = this.params.h;
+
+
+        for(let x=xStart; x<=xEnd; x+=h){
+
+            let func = get_tangent_function(this.params.fx, x, h);
+            
+            this.data.push([x, func(x)]);
+            this.data.push([x+h, func(x+h)]);
+            this.data.push([x+h, null]);
+
+        }
+
+    }
+
+
+    resolve_update(){
+        this.get_data();
+    }
+
+
+    on_parent_update(obj, msg){
+
+        let update = new UpdateNode({"fx": obj.params.fx});
+        this.update(update);
+
+    }
+
 
 }
