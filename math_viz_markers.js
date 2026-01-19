@@ -1,4 +1,9 @@
 
+/* requires math_viz script */
+/* Classes defining placment of markers */
+
+
+// Class for placing marker at regular intervals along line
 class SpacedMarkerObj extends ExstensionObj{
 
     constructor(id, parent, params={}, canvas=null){
@@ -6,9 +11,9 @@ class SpacedMarkerObj extends ExstensionObj{
         super(id);
 
         this.params = {
-            "color": "red",
-            "r": 3.5,
-            "space": 3
+            "color": "red",     // marker color
+            "r": 3.5,           // marker (circle) radius
+            "space": 3          // space between markers
         };
         this.parse_params(params);
 
@@ -17,13 +22,14 @@ class SpacedMarkerObj extends ExstensionObj{
         this.set_parent(parent);
         this.get_data();
 
-        this.svgObj = new MarkerObj(id, this.data, this.params);
+        this.svgObj = new MarkerObj(id, this.data, this.params);    // svg (visual) object for managing SVG elements
 
         this.assigne_to_canvas(canvas);
 
     }
 
 
+    // get marker position data
     get_data(){
 
         this.data = [];
@@ -75,7 +81,7 @@ class SpacedMarkerObj extends ExstensionObj{
 }
 
 
-
+// Class for placin markers at relative positions along line segment (between data points)
 class SegmentMarkerObj extends ExstensionObj{
 
 constructor(id, parent, params={}, canvas=null){
@@ -83,9 +89,9 @@ constructor(id, parent, params={}, canvas=null){
         super(id);
 
         this.params = {
-            "color": "red",
-            "r": 3.5,
-            "p": [0.5]
+            "color": "red",     // marker color
+            "r": 3.5,           // marker (circle) radius
+            "p": [0.5]          // (relative) positions alogn line segment (between 0 & 1); multiple values => multiple markers / segment
         };
         this.parse_params(params);
 
@@ -101,6 +107,7 @@ constructor(id, parent, params={}, canvas=null){
     }
 
 
+    // get marker position data
     get_data(){
 
         this.data = [];
@@ -147,6 +154,7 @@ constructor(id, parent, params={}, canvas=null){
 }
 
 
+// Class for placin markers at relative positions along line segment (between data points); y value based on function 
 class SegmentMarkerFxObj extends ExstensionObj{
 
 constructor(id, parent, params={}, canvas=null){
@@ -154,9 +162,9 @@ constructor(id, parent, params={}, canvas=null){
         super(id);
 
         this.params = {
-            "color": "red",
-            "r": 3.5,
-            "p": [0.5],
+            "color": "red",     // marker color
+            "r": 3.5,           // marker (circle) radius
+            "p": [0.5],         // (relative) positions alogn line segment (between 0 & 1); multiple values => multiple markers / segment
         };
         this.parse_params(params);
 
@@ -171,6 +179,7 @@ constructor(id, parent, params={}, canvas=null){
     }
 
 
+    // get marker position data
     get_data(){
 
         this.data = [];

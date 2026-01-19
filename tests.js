@@ -22,11 +22,11 @@ function main(){
 
         //canvas.update({"xRange": [-5, 5], "yRange": [-5, 5]});
         let update = new UpdateNode({"drawT": 0.5, "drawT0": 0, "draw": true, "color":"red"}, 1500, 100);
-        update.next = new UpdateNode({"draw": false, "color": "green", "width": 5}, 500, 50);
-        update.next.next = new UpdateNode({"draw": false, "color": "green", "width": 2.5}, 500, 50);
-        update.next.next.next = new UpdateNode({"drawT": 1, "drawT0": 0.5, "draw": true}, 1500, 100);
-        update.next.next.next.next = new UpdateNode({"draw": false, "color": "blue", "width": 5}, 500, 50);
-        update.next.next.next.next.next = new UpdateNode({"draw": false, "color": "black", "width": 2.5}, 500, 50);
+        update.append( new UpdateNode({"draw": false, "color": "green", "width": 5}, 500, 50) );
+        update.append( new UpdateNode({"draw": false, "color": "green", "width": 2.5}, 500, 50) );
+        update.append( new UpdateNode({"drawT": 1, "drawT0": 0.5, "draw": true}, 1500, 100) );
+        update.append( new UpdateNode({"draw": false, "color": "blue", "width": 5}, 500, 50) );
+        update.append( new UpdateNode({"draw": false, "color": "black", "width": 2.5}, 500, 50) );
         graph.update(update);
 
         marker.assigne_to_canvas(canvas);

@@ -1,7 +1,9 @@
 
 /* requires math_viz script */
+/* classes defining representations of graph derivative and tangent lines*/
 
 
+// Class for drawing tangent line
 class TangentBaseObj extends ExstensionObj{
 
 
@@ -12,11 +14,11 @@ class TangentBaseObj extends ExstensionObj{
         this.fx = fx;       // tangent reference function
         this.params = {
             "fx": fx,                  // reference function 
-             "centerX":0 ,              // tangent 'origin' x value
-             "length": 10 ,            // tangent line lenght
-             "width":2.5 ,             
-             "color":"red",            // tangent line (stroke) color
-             "h": 0.01                 // h value for calculating tangent slope (k)
+             "centerX":0 ,             // tangent 'origin' x value
+             "length": 10 ,            // tangent-line lenght
+             "width":2.5 ,             // line width
+             "color":"red",            // line (stroke) color
+             "h": 0.01                 // h value for calculating slope (k)
         };
         this.parse_params(params);
 
@@ -26,7 +28,7 @@ class TangentBaseObj extends ExstensionObj{
 
         this.svgObj = new LineObj(this.id, this.data, this.params);
 
-        this.set_parent(graph);
+        this.set_parent(graph);         // set Graph object as reference; update on graph update
         this.assigne_to_canvas(canvas);
         
     }
@@ -51,13 +53,14 @@ class TangentBaseObj extends ExstensionObj{
     }
 
 
-    translate_center(center, stepSize=0.05){
+    // Create update chain for changing tangent origin x value
+    translate_center(center, stepSize=0.05, duration=5){
 
 
-        let direction = Math.sign( center - this.params.centerX );
-        let x = this.params.centerX + direction * stepSize;
+        let direction = Math.sign( center - this.params.centerX );  // translate direction: new center is left (negative) or right (positive) of old
+        let x = this.params.centerX + direction * stepSize;         
 
-        let T = 5; // transition duration 
+        let T = duration; // transition duration 
 
 
         let root = new UpdateNode({"centerX": x}, T);
@@ -87,6 +90,7 @@ class TangentBaseObj extends ExstensionObj{
 }
 
 
+// Class creating chain of tangent lines
 class TangentChainObj extends ExstensionObj{
 
     constructor(id, fx, xRange, params={}, canvas=null, graph=null){
@@ -95,13 +99,12 @@ class TangentChainObj extends ExstensionObj{
 
         this.params = {
             "fx": fx,           // reference function
-             "n": 5 ,           // number of tangent (lines)
-             "length":5 ,       
-             "width":2.5 , 
-             "color":"red",
-             "xRange": xRange,
-             "h": 0.01,
-             "ofset": 0.5
+             "n": 5 ,           // number of tangent (lines)     
+             "width":2.5 ,      // line width
+             "color":"red",     // line color
+             "xRange": xRange,  // x value range 
+             "h": 0.01,         // h value for calculating line slope
+             "ofset": 0.5        // 
             };    
         this.parse_params(params);
 
@@ -122,7 +125,7 @@ class TangentChainObj extends ExstensionObj{
         this.data = [];
         let ofset = this.params.ofset;
 
-        let len = ( this.params.xRange[1] - this.params.xRange[0] ) / this.params.n;
+        let len = ( this.params.xRange[1] - this.params.xRange[0] ) / this.params.n;    // x value range for each tangent line
         let half = len / 2;
         let x0 = this.params.xRange[0] + len * ofset;
 
@@ -131,8 +134,8 @@ class TangentChainObj extends ExstensionObj{
 
             let func = get_tangent_function(this.params.fx, xi);
 
-            this.data.push( [ xi-len*ofset, func(xi-half) ] );
-            this.data.push( [ xi+len*(1-ofset), func(xi+half) ] );
+            this.data.push( [ xi-len*ofset, func(xi-len*ofset) ] );
+            this.data.push( [ xi+len*(1-ofset), func(xi+len*(1-ofset)) ] );
             this.data.push( [ xi+len*(1-ofset), null ] );
 
         }
@@ -158,20 +161,18 @@ class TangentChainObj extends ExstensionObj{
 }
 
 
-
+// Class creating a series of line representing average slope over x value range
 class TangenHChainObj extends ExstensionObj{
 
     constructor(id, fx, xRange, params={}, canvas=null, graph=null, h=5){
 
         super(id);
         this.params = {
-            "fx": fx,           // reference function
-             "n": 5 ,           // number of tangent (lines)
-             "length":5 ,       
-             "width":2.5 , 
-             "color":"red",
-             "xRange": xRange,
-             "h": 3
+            "fx": fx,           // reference function      
+             "width":2.5 ,      // line width
+             "color":"red",     // line color
+             "xRange": xRange,  // x value range
+             "h": 3             // h value for caclulating slope and for sgement lenght
             };   
         this.parse_params(params); 
 
@@ -224,6 +225,7 @@ class TangenHChainObj extends ExstensionObj{
 }
 
 
+// Class creating series of lines aproximating orginal graph
 class SlopeChainObj extends ExstensionObj{
 
  constructor(id, fx, xRange, params={}, canvas=null, graph=null, h=5){
