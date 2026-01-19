@@ -13,16 +13,14 @@ class CanvasObj {
 
     constructor (id, width, height, margin, xRange, yRange, parentId=null){
 
-        this.ID = id;           // canvas id; also used as svg id
+        this.ID = id;           // canvas id; also used as svg id; for selecting svg element
         this.parentId;          // id of div container; svg parent div 
         this.children = [];     // canvas child objects / elements [ class-objet, callback]
 
-        this.svg = null; 
+        this.svg = null;        // base svg element
 
-
-
-        this.xScale;
-        this.yScale;
+        this.xScale;            // canvas (svg) xScale; dependent on width and x value range
+        this.yScale;            // canvas yScale yScale: dependent on height and y value range 
 
 
         this.params = {
@@ -41,6 +39,7 @@ class CanvasObj {
 
     }
 
+    // set parameters dependent on input parameters
     set_dependent_params(){
 
         this.xScale = d3.scaleLinear( this.params.xRange, [0, this.params.width] );
@@ -76,6 +75,7 @@ class CanvasObj {
     }
 
 
+    // update canvas
     update_svg(rescale = false){
 
         if(rescale){
@@ -87,6 +87,7 @@ class CanvasObj {
     }
 
 
+    // remove canvas from contained div
     remove_from_div (){
 
         let container = document.getElementById(this.parentId);   // get conatining div
@@ -102,6 +103,7 @@ class CanvasObj {
     }
 
 
+    // update canvas
     update(params){
 
         for (let [key, val] of Object.entries(params)){
@@ -119,6 +121,8 @@ class CanvasObj {
 
     }
 
+
+    // add child object
     add_child( obj, func){
 
         this.removeChild(obj)   // remove to avoid duplicates
@@ -126,6 +130,8 @@ class CanvasObj {
 
     }
 
+
+    // remove specified child object
     removeChild( obj ){
 
         this.children = this.children.filter( (e) => {return e.element.id !== obj.id} );
@@ -176,6 +182,7 @@ class VisualObj{
     }
 
 
+    // add child object
     add_child( obj, func){
 
         this.remove_child(obj);     // remove child if already exists; to avoid duplicates
@@ -183,6 +190,8 @@ class VisualObj{
 
     }
 
+    
+    // remove specified child object
     remove_child( obj ){
 
         this.children = this.children.filter( (e) => {return e.element.id !== obj.id} );
@@ -190,6 +199,7 @@ class VisualObj{
     }
 
 
+    // notify child objects (on update)
     notify_children(){
 
         this.children.forEach( (c) => { c.callback( this, "" );} );
@@ -213,6 +223,7 @@ class VisualObj{
     }
 
 
+    // remove parent => stop subscribing to parent updates
     remove_parent(){
 
         this.parent.remove_child(this);
@@ -220,6 +231,7 @@ class VisualObj{
     }
 
 
+    // do if parent object is updated
     on_parent_update(){
         /* placeholder for child class override */ 
     }
@@ -239,7 +251,8 @@ class VisualObj{
 
     }
 
-
+    
+    // remove object svg elements from canvas
     remove_from_canvas(){
 
         if(this.canvas === null){
@@ -384,7 +397,7 @@ class ChartObj extends VisualObj{
         if (this.canvas === null || this.canvas.svg === null){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
             this.init = false;
             return;
-        } else if(this.init){
+        } else if(this.init){   // if svg elements already exists, run update function instead
             this.svg_update();
             return;
         }
@@ -426,7 +439,7 @@ class ChartObj extends VisualObj{
 
     }
 
-
+    // update svg elements
     svg_update(){
 
         if (this.canvas === null || this.canvas.svg === null){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
@@ -491,12 +504,12 @@ class LineObj extends VisualObj{
         super(id);
 
         this.params = {
-        "data": points,     // data value pairs; to plot
+        "data": points,     // data for drawing line (x & y value pairs)
         "width": 2.5,       // line (stroke) width
-        "color": "black",    // lien (stroke) color
-        "draw": false,
-        "drawT0": 0,
-        "drawT": 1
+        "color": "black",   // line (stroke) color
+        "draw": false,      // animate drawing of line
+        "drawT0": 0,        // line draw (relative) start: between 0 & 1
+        "drawT": 1          // line draw (relative) end: between 0 & 1
         };
 
         this.lenght = 0;
@@ -508,14 +521,14 @@ class LineObj extends VisualObj{
     }
 
 
-    svg_init(duration=this.duration, delay=this.delay, callback = ()=>{return}){
+    svg_init(duration=this.duration, delay=this.delay, callback = ()=>{return}){ // create / update svg elements
 
 
         if(this.canvas === null || this.canvas.svg === null){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
             return
         }
 
-        let u = this.canvas.svg.selectAll("."+this.id)
+        let u = this.canvas.svg.selectAll("."+this.id)          
             .data( [this.params.data], (d)=>{return d.ser1} );
 
 
@@ -547,7 +560,7 @@ class LineObj extends VisualObj{
     }
 
 
-    svg_draw(u, line, duration, delay, callback){
+    svg_draw(u, line, duration, delay, callback){   // animate drawing of Line
 
         this.get_lenght();
         let l = this.lenght;
@@ -575,7 +588,6 @@ class LineObj extends VisualObj{
     }
 
 
-
     on_canvas_update(){
 
         this.svg_init();
@@ -583,7 +595,7 @@ class LineObj extends VisualObj{
     }
 
 
-    get_lenght(){
+    get_lenght(){   // get line (path lenght), acounting for SVG scale
 
         this.lenght = 0;
 
@@ -619,7 +631,6 @@ class LineObj extends VisualObj{
 
         }
 
-
     }
     
 
@@ -629,15 +640,14 @@ class LineObj extends VisualObj{
 // data markers class; create circular markers based on data value paris
 class MarkerObj extends VisualObj{
 
-
     constructor( id,  data, params={}, canvas=null, parent=null){
 
         super(id);
 
         this.params={
-            "data": data,       // marker locations
+            "data": data,       // marker positions
             "color": "red",     // marker color
-            "r": 3,           // marker (circle) radius 
+            "r": 3,             // marker (circle) radius 
         }
 
         this.data = data;       
@@ -647,7 +657,6 @@ class MarkerObj extends VisualObj{
         this.svg_init();
 
     }
-
 
 
     on_canvas_update(){
@@ -662,16 +671,6 @@ class MarkerObj extends VisualObj{
     }
 
 
-    // combine base class parameter and child parameter objects
-    join_params(params){
-
-        for (let [key, val] of Object.entries(params)){
-            this.params[key] = val;
-        }
-
-    }
-
-
     // create / update svg elements
     svg_init(duration=this.duration, delay=this.delay, callback = ()=>{return}){
 
@@ -679,8 +678,8 @@ class MarkerObj extends VisualObj{
             return
         }
 
-        let u = this.canvas.svg.selectAll("."+this.id)
-            .data( this.data, (d)=>{return d.ser1});
+        let u = this.canvas.svg.selectAll("."+this.id)  // selected target SVG elements 
+            .data( this.data, (d)=>{return d.ser1});    // bind data
 
         u.join("circle")
                 .attr("class", this.id)
@@ -699,18 +698,18 @@ class MarkerObj extends VisualObj{
 
 
 
-// classes extending visual classes; cotnain visualObj (ex line) as parameter 
+// Base class for classes extending visual classes; cotnain visualObj (ex line) as parameter 
 class ExstensionObj{
 
     constructor( id ){
 
-        this.id = id;
-        this.svgObj = null;
-        this.canvas = null;
-        this.params = {};
-        this.children = []
-        this.data = [];
-        this.isDefined = (d, i)=>{return (d[0]!==null) && (d[1]!==null)};
+        this.id = id;       // object id; also used for selecting svg elements
+        this.svgObj = null; // Class object mannaging svg elements (VisualObj class)
+        this.canvas = null; // target canvas
+        this.params = {};   // object parameters; Specified by child classes
+        this.children = []  // child objects, updating with parent class
+        this.data = [];     // object data to visualize
+        this.isDefined = (d, i)=>{return (d[0]!==null) && (d[1]!==null)};   // specifies which data points should be ignored
         this.duration = 10; // transition (default) duration
         this.delay = 0;     // transition (default) delay
         this.parent = null;
@@ -842,20 +841,21 @@ class ExstensionObj{
 }
 
 
-class GraphObj extends ExstensionObj{
+// Class for creating Graph from function 
+class GraphObj extends ExstensionObj{ 
 
     constructor(id, fx, xRange, params, canvas){
 
         super(id);
         this.params = {
-            "fx": fx,
-            "xRange": xRange,
-            "color": "red",
-            "width": 2,
-            "step": 0.1,
-            "draw": false,
-            "drawT0": 0,
-            "drawT": 1
+            "fx": fx,           // graph function
+            "xRange": xRange,   // x value range
+            "color": "red",     // graph color
+            "width": 2,         // line widht
+            "step": 0.1,        // x value steps between points
+            "draw": false,      // animate drawing of graph
+            "drawT0": 0,        // (relative) starting point for drawing graph: [0, 1]
+            "drawT": 1          // (relative) enpoint for drawing grpah: [0, 1]
         };
         this.parse_params(params);
 
@@ -894,7 +894,7 @@ class GraphObj extends ExstensionObj{
 
 /* other classes */
 
-class UpdateNode{   // use for updating visualisation classes parameters
+class UpdateNode{   // Specify update parameters for other classes; link nodes (linked list) to chain updates
 
     constructor( params, duration=1000, delay=0,  next=null ){
 
@@ -902,6 +902,35 @@ class UpdateNode{   // use for updating visualisation classes parameters
         this.duration = duration;      // delya before next chained update
         this.delay = delay;
         this.next = next;           // next (chained) update node
+
+    }
+
+
+    append(updateN){    // append new update (node) to end of update chain
+
+        let node = this;
+
+        while( node.next !== null){
+            node = node.next;
+        }
+
+        node.next = updateN;
+
+    }
+
+
+    insert(UpdateN, level){ // insert update node in update chain
+
+        let node = this;
+        let i = 0;
+
+        while( node.next != null && i<level ){
+            node = node.next;
+            i++;
+        }
+
+        UpdateN.next = node.next;
+        node.next = UpdateN;
 
     }
 

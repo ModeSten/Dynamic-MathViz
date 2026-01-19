@@ -177,7 +177,7 @@ function tangent4(){
     txt.innerHTML = `h=${h0.toFixed(2)}`;
 
     let update = new UpdateNode({"fx":(x)=>{return 5*Math.cos(x)}});
-    graph.update(update);
+    //graph.update(update);
 
 
     var slider = document.getElementById("hRange2");
