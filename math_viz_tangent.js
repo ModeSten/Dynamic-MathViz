@@ -18,9 +18,12 @@ class TangentBaseObj extends ExstensionObj{
              "length": 10 ,            // tangent-line lenght
              "width":2.5 ,             // line width
              "color":"red",            // line (stroke) color
-             "h": 0.01                 // h value for calculating slope (k)
+             "h": 0.01,                // h value for calculating slope (k)
+             "draw": false
         };
         this.parse_params(params);
+
+        this.duration = 50;     // default transition duration
 
         if(graph===null){
             this.get_data();
@@ -54,7 +57,7 @@ class TangentBaseObj extends ExstensionObj{
 
 
     // Create update chain for changing tangent origin x value
-    translate_center(center, stepSize=0.05, duration=5){
+    translate_center(center, stepSize=0.05, duration=this.duration){
 
 
         let direction = Math.sign( center - this.params.centerX );  // translate direction: new center is left (negative) or right (positive) of old
@@ -104,9 +107,12 @@ class TangentChainObj extends ExstensionObj{
              "color":"red",     // line color
              "xRange": xRange,  // x value range 
              "h": 0.01,         // h value for calculating line slope
-             "ofset": 0.5        // 
+             "ofset": 0.5,       // 
+            "draw": false
             };    
         this.parse_params(params);
+
+        this.duration = 1000;
 
         if(graph===null){
             this.get_data();
@@ -172,7 +178,8 @@ class TangenHChainObj extends ExstensionObj{
              "width":2.5 ,      // line width
              "color":"red",     // line color
              "xRange": xRange,  // x value range
-             "h": 3             // h value for caclulating slope and for sgement lenght
+             "h": 3,            // h value for caclulating slope and for sgement lenght
+             "draw": false
             };   
         this.parse_params(params); 
 
@@ -181,6 +188,7 @@ class TangenHChainObj extends ExstensionObj{
         }
 
         this.svgObj = new LineObj( this.id, this.data, this.params );
+        this.svgObj.duration = 0;
 
         this.set_parent(graph);
         this.assigne_to_canvas(canvas);
@@ -239,7 +247,8 @@ class SlopeChainObj extends ExstensionObj{
              "width":2.5 , 
              "color":"red",
              "xRange": xRange,
-             "h": 3
+             "h": 3,
+             "draw": false
             };   
         this.parse_params(params); 
 

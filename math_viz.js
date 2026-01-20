@@ -273,6 +273,7 @@ class VisualObj{
     // update element
     update(state){
 
+
         if(state === null){
             return
         }
@@ -280,6 +281,13 @@ class VisualObj{
         this.parse_params(state.params);
         this.resolve_update();              // resolve update 'side-efects'; Custome for each child class (ex update data)
         this.notify_children();
+
+        if(state.duration === null){
+            state.duration = this.duration;
+        } 
+        if(state.delay === null){
+            state.delay = this.delay
+        }
 
         this.svg_init( state.duration, state.delay, ()=>{ this.update(state.next) } );
 
@@ -523,7 +531,6 @@ class LineObj extends VisualObj{
 
     svg_init(duration=this.duration, delay=this.delay, callback = ()=>{return}){ // create / update svg elements
 
-
         if(this.canvas === null || this.canvas.svg === null){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
             return
         }
@@ -542,20 +549,39 @@ class LineObj extends VisualObj{
             return
         }
     
+        if(duration === 0){
 
-        u.enter()
-            .append("path")
-                .attr("class", this.id)
-                .attr("clip-path", "url(#clip)")
-        .merge(u)
-            .transition()
-                .duration(duration)
-                .attr("d", line)
-                .attr("fill", "none")
-                .attr("stroke", this.params.color)
-                .attr("stroke-width", this.params.width)
-                .delay(delay)
-            .on("end", callback)
+            u.enter()
+                .append("path")
+                    .attr("class", this.id)
+                    .attr("clip-path", "url(#clip)")
+            .merge(u)
+                    .attr("d", line)
+                    .attr("fill", "none")
+                    .attr("stroke", this.params.color)
+                    .attr("stroke-width", this.params.width)
+
+            callback();
+
+        } else{
+
+            u.enter()
+                .append("path")
+                    .attr("class", this.id)
+                    .attr("clip-path", "url(#clip)")
+            .merge(u)
+                .transition()
+                    .duration(duration)
+                    .attr("d", line)
+                    .attr("fill", "none")
+                    .attr("stroke", this.params.color)
+                    .attr("stroke-width", this.params.width)
+                    .delay(delay)
+                .on("end", callback)
+
+             u.exit().remove();
+
+        }
 
     }
 
@@ -584,6 +610,7 @@ class LineObj extends VisualObj{
                 .delay(delay)
             .on("end", callback);
 
+        u.exit().remove();
 
     }
 
@@ -679,17 +706,39 @@ class MarkerObj extends VisualObj{
         }
 
         let u = this.canvas.svg.selectAll("."+this.id)  // selected target SVG elements 
-            .data( this.data, (d)=>{return d.ser1});    // bind data
+        .data( this.data, (d)=>{return d.ser1});    // bind data
 
-        u.join("circle")
-                .attr("class", this.id)
-                .attr("clip-path", "url(#clip)")
-                .attr("cx", (d)=>{ return this.canvas.xScale(d[0]) })
-                .attr("cy", (d)=>{ return this.canvas.yScale(d[1]) })
-                .transition()
-                .duration(duration)
+
+        if(duration === 0){     // duration = 0  =>   update without transition
+
+            u.join("circle")
+                    .attr("class", this.id)
+                    .attr("clip-path", "url(#clip)")
+                    .attr("cx", (d)=>{ return this.canvas.xScale(d[0]) })
+                    .attr("cy", (d)=>{ return this.canvas.yScale(d[1]) })
                     .attr("r", this.params.r)
                     .attr("fill", this.params.color);
+
+        } else{
+
+            u.enter()
+                .append("circle")
+                    .attr("class", this.id)
+                    .attr("clip-path", "url(#clip)")
+                    .attr("cx", (d)=>{ return this.canvas.xScale(d[0]) })
+                    .attr("cy", (d)=>{ return this.canvas.yScale(d[1]) })
+            .merge(u)
+                .attr("fill", this.params.color)
+                .attr("r", this.params.r)
+                .transition()
+                .duration(duration)
+                    .attr("cx", (d)=>{ return this.canvas.xScale(d[0]) })
+                    .attr("cy", (d)=>{ return this.canvas.yScale(d[1]) })
+                    .delay(delay)
+                .on("end", callback);
+
+            u.exit().remove();
+        }
 
     }
 
@@ -710,7 +759,7 @@ class ExstensionObj{
         this.children = []  // child objects, updating with parent class
         this.data = [];     // object data to visualize
         this.isDefined = (d, i)=>{return (d[0]!==null) && (d[1]!==null)};   // specifies which data points should be ignored
-        this.duration = 10; // transition (default) duration
+        this.duration = 1000; // transition (default) duration
         this.delay = 0;     // transition (default) delay
         this.parent = null;
 
@@ -738,18 +787,21 @@ class ExstensionObj{
 
 
     update(state){
-
-        this.parse_params(state.params);
-        this.resolve_update();
-
-        state.params.data = this.data;      
-        let node = state.next;      
+  
+        let node = state;      
 
         while( node !== null){              // loop through update nodes
     
             this.parse_params(node.params);
             this.resolve_update();
             node.params.data = this.data;   // add data to update node
+
+            if(node.duration === null){
+                node.duration = this.duration;
+            } 
+            if(node.delay === null){
+                node.delay = this.delay
+            }
 
             node = node.next;
 
@@ -850,7 +902,7 @@ class GraphObj extends ExstensionObj{
         this.params = {
             "fx": fx,           // graph function
             "xRange": xRange,   // x value range
-            "color": "red",     // graph color
+            "color": "black",     // graph color
             "width": 2,         // line widht
             "step": 0.1,        // x value steps between points
             "draw": false,      // animate drawing of graph
@@ -896,7 +948,7 @@ class GraphObj extends ExstensionObj{
 
 class UpdateNode{   // Specify update parameters for other classes; link nodes (linked list) to chain updates
 
-    constructor( params, duration=1000, delay=0,  next=null ){
+    constructor( params, duration=null, delay=null,  next=null ){
 
         this.params = params;       // parameters to be updated; ex {"data": data, "color": color}
         this.duration = duration;      // delya before next chained update

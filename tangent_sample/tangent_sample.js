@@ -51,6 +51,7 @@ function tangent1(){
     let graph = new GraphObj( "graph1", fx, xRange, {"color": "black"}, canvas );
     let tangent = new TangentBaseObj( "tangent1", fx, {}, canvas, graph );
     let marker = new SegmentMarkerFxObj( "marker1", tangent, { "r": 3.5}, canvas);
+    marker.svgObj.duration = tangent.duration;
 
 
     let container = document.getElementById(divId);
@@ -145,7 +146,7 @@ function tangent3(){
         let val = this.value / 100;
         let h = val*5;
 
-        let update = new UpdateNode({"h": h}, 1500);
+        let update = new UpdateNode({"h": h}, 0);
         tanChain.update(update);
 
         txt.innerHTML = `h=${h.toFixed(2)}`;
@@ -186,7 +187,7 @@ function tangent4(){
         let val = this.value / 100;
         let h = val*10;
 
-        let update = new UpdateNode({"h": h}, 1500);
+        let update = new UpdateNode({"h": h}, 0);
         tanChain.update(update);
 
         txt.innerHTML = `h=${h.toFixed(2)}`;
