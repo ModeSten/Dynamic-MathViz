@@ -72,7 +72,7 @@ class SpacedMarkerObj extends ExstensionObj{
         this.get_data();
 
         if(this.svgObj !== null){
-            this.svgObj.update(new UpdateNode({"data":this.data}), this.parent.duration);
+            this.svgObj.update(new UpdateNode({"data":this.data}, this.parent.duration));
         }
 
     }
@@ -149,7 +149,7 @@ constructor(id, parent, params={}, canvas=null){
     on_parent_update(){
 
         this.get_data();
-        this.svgObj.update(new UpdateNode({"data":this.data}), this.parent.duration);
+        this.svgObj.update(new UpdateNode({"data":this.data}, this.parent.duration));
 
     }
 
@@ -230,7 +230,7 @@ constructor(id, parent, params={}, canvas=null){
         this.get_data();
 
         if(this.svgObj !== null){
-            this.svgObj.update(new UpdateNode({"data":this.data}), this.parent.duration);
+            this.svgObj.update(new UpdateNode({"data":this.data}, this.parent.duration));
         }
 
     }

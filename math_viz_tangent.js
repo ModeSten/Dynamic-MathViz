@@ -183,6 +183,8 @@ class TangenHChainObj extends ExstensionObj{
             };   
         this.parse_params(params); 
 
+        this.duration = 0;
+
         if(graph === null){
             this.get_data();
         }
@@ -251,6 +253,8 @@ class SlopeChainObj extends ExstensionObj{
              "draw": false
             };   
         this.parse_params(params); 
+
+        this.duration = 0;
 
         if(graph === null){
             this.get_data();

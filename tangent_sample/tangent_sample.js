@@ -50,8 +50,7 @@ function tangent1(){
     let chart = new ChartObj( "chart1", {}, canvas );
     let graph = new GraphObj( "graph1", fx, xRange, {"color": "black"}, canvas );
     let tangent = new TangentBaseObj( "tangent1", fx, {}, canvas, graph );
-    let marker = new SegmentMarkerFxObj( "marker1", tangent, { "r": 3.5}, canvas);
-    marker.svgObj.duration = tangent.duration;
+    let marker = new SegmentMarkerFxObj( "marker1", tangent, { "color": "green"}, canvas);
 
 
     let container = document.getElementById(divId);
@@ -87,7 +86,7 @@ function tangent2(){
     let chart = new ChartObj( "chart2", {}, canvas );
     let graph = new GraphObj( "graph2", fx, xRange, {"color": "black"}, canvas );
     let tanChain = new TangentChainObj( "tan_chain1", fx, xRange, {"n":n, "ofset":0.5}, canvas, graph);
-    let marker = new SegmentMarkerFxObj( "marker2", tanChain, { "r": 3.5, "p":[tanChain.params.ofset]}, canvas);
+    let marker = new SegmentMarkerFxObj( "marker2", tanChain, { "color": "green", "p":[tanChain.params.ofset]}, canvas);
 
     let container = document.getElementById(divId);
     let viz = document.getElementById("canvas2");
@@ -129,7 +128,7 @@ function tangent3(){
     let chart = new ChartObj( "chart3", {}, canvas );
     let graph = new GraphObj( "graph3", fx, yRange, {"color": "black"}, canvas );
     let tanChain = new TangenHChainObj( "tan_hchain1", fx, xRange, {}, canvas, graph, h0);
-    let marker = new SegmentMarkerFxObj( "marker3", tanChain, {"p": [0, 1], "r": 2}, canvas);
+    let marker = new SegmentMarkerFxObj( "marker3", tanChain, {"color": "green", "p": [0, 1]}, canvas);
     //marker.duration =5;
 
 
@@ -166,7 +165,7 @@ function tangent4(){
     let chart = new ChartObj( "chart4", {}, canvas );
     let graph = new GraphObj( "graph4", fx, yRange, {"color": "black"}, canvas );
     let tanChain = new SlopeChainObj( "tan_hchain2", fx, xRange, {}, canvas, graph, h0);
-    let marker = new SegmentMarkerFxObj( "marker4", tanChain, {"p": [0, 1], "r": 2}, canvas);
+    let marker = new SegmentMarkerFxObj( "marker4", tanChain, {"p": [0, 1], "color": "green"}, canvas);
     //marker.duration =5;
 
 
@@ -187,7 +186,7 @@ function tangent4(){
         let val = this.value / 100;
         let h = val*10;
 
-        let update = new UpdateNode({"h": h}, 0);
+        let update = new UpdateNode({"h": h});
         tanChain.update(update);
 
         txt.innerHTML = `h=${h.toFixed(2)}`;

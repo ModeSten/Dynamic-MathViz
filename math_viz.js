@@ -273,7 +273,6 @@ class VisualObj{
     // update element
     update(state){
 
-
         if(state === null){
             return
         }
@@ -536,7 +535,7 @@ class LineObj extends VisualObj{
         }
 
         let u = this.canvas.svg.selectAll("."+this.id)          
-            .data( [this.params.data], (d)=>{return d.ser1} );
+            .data( [this.params.data] );
 
 
         let line = d3.line()
@@ -680,6 +679,7 @@ class MarkerObj extends VisualObj{
         this.data = data;       
         this.parent = null;
 
+        this.parse_params(params);
         this.assigne_to_canvas(canvas);
         this.svg_init();
 
@@ -701,12 +701,15 @@ class MarkerObj extends VisualObj{
     // create / update svg elements
     svg_init(duration=this.duration, delay=this.delay, callback = ()=>{return}){
 
+        console.log(this.params.color);
+
         if(this.canvas === null || this.canvas.svg === null){
             return
         }
 
-        let u = this.canvas.svg.selectAll("."+this.id)  // selected target SVG elements 
-        .data( this.data, (d)=>{return d.ser1});    // bind data
+        let u = this.canvas.svg.selectAll("."+this.id) // selected target SVG elements 
+        .data( this.data );    // bind data
+        
 
 
         if(duration === 0){     // duration = 0  =>   update without transition
@@ -728,10 +731,10 @@ class MarkerObj extends VisualObj{
                     .attr("cx", (d)=>{ return this.canvas.xScale(d[0]) })
                     .attr("cy", (d)=>{ return this.canvas.yScale(d[1]) })
             .merge(u)
-                .attr("fill", this.params.color)
-                .attr("r", this.params.r)
                 .transition()
                 .duration(duration)
+                    .attr("fill", this.params.color)
+                    .attr("r", this.params.r)
                     .attr("cx", (d)=>{ return this.canvas.xScale(d[0]) })
                     .attr("cy", (d)=>{ return this.canvas.yScale(d[1]) })
                     .delay(delay)
