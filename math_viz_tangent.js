@@ -183,14 +183,14 @@ class TangenHChainObj extends ExstensionObj{
             };   
         this.parse_params(params); 
 
-        this.duration = 0;
+        this.duration = 50;
 
         if(graph === null){
             this.get_data();
         }
 
         this.svgObj = new LineObj( this.id, this.data, this.params );
-        this.svgObj.duration = 0;
+        this.svgObj.duration = this.duration;
 
         this.set_parent(graph);
         this.assigne_to_canvas(canvas);
@@ -236,9 +236,104 @@ class TangenHChainObj extends ExstensionObj{
 
 
 // Class creating series of lines aproximating orginal graph
+class SlopeObj extends ExstensionObj{
+
+ constructor(id, fx, params={}, canvas=null, graph=null){
+
+        super(id);
+
+        this.params = {
+            "fx": fx,           // reference function       
+             "h": 5 ,
+             "x0":  -2.5,  
+             "width":2.5 , 
+             "color":"red",
+             "draw": false
+            };   
+        this.parse_params(params); 
+
+        this.duration = 50;
+
+        if(graph === null){
+            this.get_data();
+        }
+
+        this.svgObj = new LineObj( this.id, this.data, this.params );
+        this.svgObj.duration = this.duration;
+
+        this.set_parent(graph);
+        this.assigne_to_canvas(canvas);
+
+    }
+
+
+    get_data(){
+
+        this.data = [];
+
+        let x = this.params.x0;
+        let h = this.params.h;
+            
+        this.data.push([x, this.params.fx(x)]);
+        this.data.push([x+h, this.params.fx(x+h)]);
+
+    }
+
+
+    resolve_update(){
+        this.get_data();
+    }
+
+
+    on_parent_update(obj, msg){
+
+        let update = new UpdateNode({"fx": obj.params.fx});
+        this.update(update);
+
+    }
+
+
+    // Create update chain for changing tangent origin x value
+    translate_x0(x0, stepSize=0.05, duration=this.duration){
+
+
+        let direction = Math.sign( x0 - this.params.x0 );  // translate direction: new center is left (negative) or right (positive) of old
+        let x = this.params.x0 + direction * stepSize;         
+
+        let T = duration; // transition duration 
+
+
+        let root = new UpdateNode({"x0": x}, T);
+        let node = root;
+        x +=  direction * stepSize;
+
+
+        while ( Math.abs(x0-x) > 0.05 ){
+
+            node.next = new UpdateNode({"x0": x}, T);
+            node = node.next;
+
+            x +=  direction * stepSize;
+            if( (x > x0 && x0 > this.params.centerX) || (x < x0 && x0 < this.params.x0) ){
+                x = x0;
+                node.next = new UpdateNode({"x0": x}, T);
+                break;
+            }
+
+        }
+
+        this.update(root);
+
+    }
+
+}
+
+
+
+// Class creating series of lines aproximating orginal graph
 class SlopeChainObj extends ExstensionObj{
 
- constructor(id, fx, xRange, params={}, canvas=null, graph=null, h=5){
+ constructor(id, fx, xRange, params={}, canvas=null, graph=null){
 
         super(id);
 
@@ -249,18 +344,19 @@ class SlopeChainObj extends ExstensionObj{
              "width":2.5 , 
              "color":"red",
              "xRange": xRange,
-             "h": 3,
+             "h": 5,
              "draw": false
             };   
         this.parse_params(params); 
 
-        this.duration = 0;
+        this.duration = 50;
 
         if(graph === null){
             this.get_data();
         }
 
         this.svgObj = new LineObj( this.id, this.data, this.params );
+        this.svgObj.duration = this.duration;
 
         this.set_parent(graph);
         this.assigne_to_canvas(canvas);
@@ -278,11 +374,9 @@ class SlopeChainObj extends ExstensionObj{
 
 
         for(let x=xStart; x<=xEnd; x+=h){
-
-            let func = get_tangent_function(this.params.fx, x, h);
             
-            this.data.push([x, func(x)]);
-            this.data.push([x+h, func(x+h)]);
+            this.data.push([x, this.params.fx(x)]);
+            this.data.push([x+h, this.params.fx(x+h)]);
             this.data.push([x+h, null]);
 
         }

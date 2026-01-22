@@ -700,8 +700,7 @@ class MarkerObj extends VisualObj{
 
     // create / update svg elements
     svg_init(duration=this.duration, delay=this.delay, callback = ()=>{return}){
-
-        console.log(this.params.color);
+        
 
         if(this.canvas === null || this.canvas.svg === null){
             return
