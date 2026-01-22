@@ -221,7 +221,10 @@ function tangent5(){
         let xVal = graph.params.xRange[0] * (1-val) + graph.params.xRange[1]*val;
         slope.translate_x0(xVal);
 
-        txt.innerHTML = `x=${xVal.toFixed(1)}`;
+        let x0 = slope.params.x0;
+        let x1 = x0 + slope.params.h;
+
+        txt.innerHTML = `x=${x0.toFixed(1)} | ${x1.toFixed(1)}`;
 
     }
 
