@@ -60,7 +60,7 @@ class SliderObj{
         // create slider html elements
         this.container = document.createElement("div");
             this.container.id = this.id;
-            this.container.className = "sliderContainer" + " " + className;
+            this.container.className = "slider_container" + " " + className;
         this.range = document.createElement("input");
             this.range.type = "range";
             this.range.id = this.id+"Range";

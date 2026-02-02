@@ -42,8 +42,9 @@ function get_fx_string(fx){
 
 function tangent1(){
 
+    let root = document.getElementById("root");
     let divId = "tan_viz1";
-    //let fx = (x)=>{ return 5*Math.sin(x/2) };
+    let container = new DivObj(divId, root, "viz_container");
 
 
     let canvas = new CanvasObj( "canvas1", width, height, margin, xRange, yRange, divId );
@@ -53,24 +54,15 @@ function tangent1(){
     let marker = new SegmentMarkerFxObj( "marker1", tangent, { "color": "green"}, canvas);
 
 
-    let container = document.getElementById(divId);
-    let viz = document.getElementById("canvas1");
-    container.insertBefore(viz, container.firstChild);
+    let slider = new SliderObj("tanSlider1", [-10, 10], 0, "x", container.div);
+    
+    let update = (val)=>{
 
-    let txt = document.getElementById("xTXT");
-    txt.innerHTML = `x=${Math.round(tangent.params.center)}`;
-
-    var slider = document.getElementById("originR");
-
-    slider.oninput = function(){
-
-        let val = this.value / 100;
-        let xVal = graph.params.xRange[0] * (1-val) + graph.params.xRange[1]*val;
-        tangent.translate_center(xVal);
-
-        txt.innerHTML = `x=${xVal.toFixed(1)}`;
+        tangent.translate_center(val);
 
     }
+
+    slider.addListener(update);
 
 
 }
@@ -78,9 +70,11 @@ function tangent1(){
 
 function tangent2(){
 
+    let root = document.getElementById("root");
     let divId= "tan_viz2";
-    //let fx = (x)=>{ return 5*Math.sin(x/2) };
     let n = 3;
+
+    let container = new DivObj(divId, root, "viz_container");
 
     let canvas = new CanvasObj( "canvas2", width, height, margin, xRange, yRange, divId );
     let chart = new ChartObj( "chart2", {}, canvas );
@@ -88,40 +82,15 @@ function tangent2(){
     let tanChain = new TangentChainObj( "tan_chain1", fx, xRange, {"n":n, "ofset":0.5}, canvas, graph);
     let marker = new SegmentMarkerFxObj( "marker2", tanChain, { "color": "green", "p":[tanChain.params.ofset]}, canvas);
 
-    let container = document.getElementById(divId);
-    let viz = document.getElementById("canvas2");
-    container.insertBefore(viz, container.firstChild);
-
-    let txt = document.getElementById("nTXT");
-    txt.innerHTML = `n=${n}`;
-
-    let fwdBtn = document.getElementById("n+");
-    fwdBtn.onclick = () => {
-        n++;
-        let update = new UpdateNode({"n": n});
-        tanChain.update(update);
-        txt.innerHTML = `n=${n}`;
-
-    }
-
-    let BckBtn = document.getElementById("n-");
-    BckBtn.onclick = () => {
-        if(n>0){
-            n--;
-            let update = new UpdateNode({"n": n});
-            tanChain.update(update);
-            txt.innerHTML = `n=${n}`;
-        }
-    }
-
 
 }
 
 
 function tangent3(){
 
+    let root = document.getElementById("root");
     let divId= "tan_viz3";
-    //let fx = (x)=>{ return 5*Math.sin(x/2) };
+    let container = new DivObj(divId, root, "viz_container");
     let h0 = 0.5;
 
     let canvas = new CanvasObj( "canvas3", width, height, margin, xRange, yRange, divId );
@@ -129,36 +98,33 @@ function tangent3(){
     let graph = new GraphObj( "graph3", fx, yRange, {"color": "black"}, canvas );
     let tanChain = new TangenHChainObj( "tan_hchain1", fx, xRange, {}, canvas, graph, h0);
     let marker = new SegmentMarkerFxObj( "marker3", tanChain, {"color": "green", "p": [0, 1]}, canvas);
-    //marker.duration =5;
 
 
-    let container = document.getElementById(divId);
-    let viz = document.getElementById("canvas3");
-    container.insertBefore(viz, container.firstChild);
+    let slider = new SliderObj("tanSlider2", [0.1, 10], 5, "h", container.div);
+    
+    let update = (val)=>{
 
-    let txt = document.getElementById("hTXT");
-    txt.innerHTML = `h=${h0.toFixed(2)}`;
+        tanChain.update(new UpdateNode({"h": val}))
 
-    var slider = document.getElementById("hRange");
-    slider.oninput = function(){
-
-        let val = this.value / 100;
-        let h = val*5;
-
-        let update = new UpdateNode({"h": h}, 0);
-        tanChain.update(update);
-
-        txt.innerHTML = `h=${h.toFixed(2)}`;
+        if(val < 0.5){
+            marker.remove_from_canvas();
+        } else{
+            marker.assigne_to_canvas(canvas);
+        }
 
     }
+
+    slider.addListener(update);
+
 
 }
 
 
 function tangent4(){
 
+    let root = document.getElementById("root");
     let divId= "tan_viz4";
-    //let fx = (x)=>{ return 5*Math.sin(x/2) };
+    let container = new DivObj(divId, root, "viz_container");
     let h0 = 0.5;
 
     let canvas = new CanvasObj( "canvas4", width, height, margin, xRange, yRange, divId );
@@ -166,32 +132,24 @@ function tangent4(){
     let graph = new GraphObj( "graph4", fx, yRange, {"color": "black"}, canvas );
     let tanChain = new SlopeChainObj( "tan_hchain2", fx, xRange, {}, canvas, graph, h0);
     let marker = new SegmentMarkerFxObj( "marker4", tanChain, {"p": [0, 1], "color": "green"}, canvas);
-    //marker.duration =5;
+    marker.duration =0;
 
+    let slider = new SliderObj("tanSlider3", [0.1, 10], 5, "h", container.div);
+    
+    let update = (val)=>{
 
-    let container = document.getElementById(divId);
-    let viz = document.getElementById("canvas4");
-    container.insertBefore(viz, container.firstChild);
+        tanChain.update(new UpdateNode({"h": val}))
 
-    let txt = document.getElementById("hTXT2");
-    txt.innerHTML = `h=${h0.toFixed(2)}`;
-
-    let update = new UpdateNode({"fx":(x)=>{return 5*Math.cos(x)}});
-    //graph.update(update);
-
-
-    var slider = document.getElementById("hRange2");
-    slider.oninput = function(){
-
-        let val = this.value / 100;
-        let h = val*10;
-
-        let update = new UpdateNode({"h": h});
-        tanChain.update(update);
-
-        txt.innerHTML = `h=${h.toFixed(2)}`;
+        if(val < 0.5){
+            marker.remove_from_canvas();
+        } else{
+            marker.assigne_to_canvas(canvas);
+        }
 
     }
+
+    slider.addListener(update);
+
 
 }
 
@@ -199,52 +157,37 @@ function tangent4(){
 function tangent5(){
 
     let divId = "tan_viz5";
-    
-    let canvas = new CanvasObj("canvas5", width, height, margin, xRange, yRange, divId);
-    let container = document.getElementById(divId);
-    let viz = document.getElementById("canvas5");
-    container.insertBefore(viz, container.firstChild);
+    let root = document.getElementById("root");
 
+    let container = new DivObj(divId, root, "viz_container");
+
+    let canvas = new CanvasObj("canvas5", width, height, margin, xRange, yRange, divId);
     let chart = new ChartObj("chart5", {}, canvas);
     let graph = new GraphObj("graph5", fx, xRange, {"color": "black"}, canvas);
     let slope = new SlopeObj("slope1", fx, {}, canvas, graph);
     let marker = new SegmentMarkerFxObj("marker5", slope, {"p": [0, 1], "color": "green"}, canvas);
 
+    let slider = new SliderObj("tanSlider4", [-10, 10], -5, "x0", container.div);
+    
+    let update = (val)=>{
 
-    let txt = document.getElementById("xTXT2");
-    txt.innerHTML = `x=${Math.round(slope.params.x0)}`;
-    var slider = document.getElementById("originR2");
+        slope.update(new UpdateNode({"x0": val}))
 
-    slider.oninput = function(){
-
-        let val = this.value / 100;
-        let xVal = graph.params.xRange[0] * (1-val) + graph.params.xRange[1]*val;
-        slope.translate_x0(xVal);
-
-        let x0 = slope.params.x0;
-        let x1 = x0 + slope.params.h;
-
-        txt.innerHTML = `x=${x0.toFixed(1)} | ${x1.toFixed(1)}`;
 
     }
 
+    slider.addListener(update);
 
-    let txt2 = document.getElementById("hTXT3");
-    txt2.innerHTML = `h=${Math.round(slope.params.x0)}`;
-    var slider2 = document.getElementById("hRange3");
+    let slider2 = new SliderObj("tanSlider5", [0.1, 10], 1, "h", container.div);
+    
+    let update2 = (val)=>{
 
-    slider2.oninput = function(){
+        slope.update(new UpdateNode({"h": val}))
 
-        let val = this.value / 100;
-        let h = val*10;
-
-        let update = new UpdateNode({"h": h});
-        slope.update(update);
-
-        txt2.innerHTML = `h=${h.toFixed(2)}`;
 
     }
 
+    slider2.addListener(update2);
 
 }
 

@@ -10,51 +10,14 @@
     <script src="../math_viz.js"></script>
     <script src="../math_viz_tangent.js"></script>
     <script src="../math_viz_markers.js"></script>
+    <script src="../math_viz_elements.js"></script>
 
     <link rel="stylesheet" href="tangent_sample.css">
 </head>
 
 <body>
 
-    <div id="tan_viz1" class="viz_container">
-            <div id="slider1" class="slidercontainer">
-                <input type="range" min="0" max="100" value="50" class="slider" id="originR">
-                <h3 id="xTXT">x=0</h3>
-            </div>
-    </div>
-        
-    <div id="tan_viz2" class="viz_container">
-        <div id="steps1", class="steps">       
-            <button id="n-">-</button>
-            <h3 id="nTXT">3</h3>
-            <button id="n+">+</button>
-        </div>
-    </div>
-
-    <div id="tan_viz3" class="viz_container">
-                <div id="slider2" class="slidercontainer">
-                    <input type="range" min="1" max="100" value="50" class="slider" id="hRange">
-                <h3 id="hTXT">0</h3>
-            </div>
-    </div>
-
-    <div id="tan_viz4" class="viz_container">
-                <div id="slider3" class="slidercontainer">
-                    <input type="range" min="1" max="100" value="50" class="slider" id="hRange2">
-                <h3 id="hTXT2">0</h3>
-            </div>
-    </div>
-
-    <div id="tan_viz5" class="viz_container">
-                <div id="slider4" class="slidercontainer">
-                    <input type="range" min="1" max="100" value="50" class="slider" id="originR2">
-                <h3 id="xTXT2">0</h3>
-            </div>
-            <div id="slider4" class="slidercontainer">
-                    <input type="range" min="1" max="100" value="50" class="slider" id="hRange3">
-                <h3 id="hTXT3">0</h3>
-            </div>
-    </div>
+    <div id="root"></div>
 
     <script src="tangent_sample.js"></script>
 
