@@ -9,9 +9,14 @@ let fI = 3;
 
 function main(){
 
-    let div = new DivObj("testDiv1", "root", "testDiv");
-    let slider = new SliderObj("testSlider1", [0, 100]);
-    slider.assignToDiv(div.div.id);
+    let root = document.getElementById("root");
+
+    let div = new DivObj("testDiv1", root);
+    let slider = new SliderObj("testSlider1", [-7, 7], -2, null);
+    slider.assignToDiv(div.div);
+
+    let button = new ButtonObj("testButton", "test", div.div);
+    let btnRm = button.addListener( (obj)=>{console.log( obj.id )} );
 
     let canvas = new CanvasObj("canvas1", width, height, margin, [-10, 10], [-10, 10], "testDiv1");
     let chart = new ChartObj("chart1", {}, canvas);
@@ -21,15 +26,12 @@ function main(){
 
     let listener = (val)=>{
 
-        val /= 100;
-        let xVal = (1-val)*graph.params.xRange[0] + val*graph.params.xRange[1];
-        tangent.translate_center(xVal);
+        tangent.translate_center(val);
 
     }
 
 
     let remove = slider.addListener(listener);
-
 
 }
 

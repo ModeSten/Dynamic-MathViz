@@ -2,7 +2,7 @@
 
 class DivObj {
 
-    constructor(id, parentId="", className=null ){
+    constructor(id, parentDiv, className=null ){
 
         this.div = document.createElement("div");
         this.className = className;
@@ -14,20 +14,19 @@ class DivObj {
             this.div.className = this.className;
         }
 
-        this.assignToDiv(parentId);
+        this.assignToDiv(parentDiv);
 
     
     }
 
 
-    assignToDiv( parentId="" ){
-
-        this.parentDiv = document.getElementById(parentId);
+    assignToDiv( parentDiv ){
         
-        if(this.parentDiv === null){
+        if(parentDiv === null){
             return
         }
 
+        this.parentDiv = parentDiv;
         this.parentDiv.appendChild(this.div);
 
     }
@@ -45,47 +44,56 @@ class DivObj {
 
 class SliderObj{
 
-    constructor(id, range, val=0, labelName="val", parentId=""){
+    constructor(id, range, val=0, labelName="val", parentDiv=null, className="", steps=100){
 
         this.id = id;
         this.parentDiv = null;
-        this.labelName = labelName;
-        this.valRound = 1;  
-        this.val = val;
-        this.listener = [];
+        this.labelName = labelName;     // text to show before value
+        this.valRound = 1;              // number of decimal points to display
+        this.val = val;                 // current value
+        this.listener = [];             // call on slider input
+        this.steps = steps;             // number of slider value steps
+        this.min = range[0];            // slider min value
+        this.max = range[1];            // slider max value
+        this.stepSize = (this.max -  this.min) / this.steps;    // slider value step coresponding to real value step
         
+        // create slider html elements
         this.container = document.createElement("div");
             this.container.id = this.id;
-            this.container.className = "sliderContainer";
+            this.container.className = "sliderContainer" + " " + className;
         this.range = document.createElement("input");
             this.range.type = "range";
             this.range.id = this.id+"Range";
             this.range.className = "sliderRange";
-            this.range.min = range[0]*100;
-            this.range.max = range[1]*100;
-            this.range.value = val*100;
+            this.range.min = 0;
+            this.range.max = steps;
+            this.range.value = (val-this.min) / this.stepSize;
             this.range.oninput = ()=>this.onInput();
         this.label = document.createElement("h3");
             this.label.id = this.id+"Label";
             this.className = "sliderLabel";
-            this.label.innerHTML = this.labelName+`=${(val*100).toFixed(this.valRound)}`;
+            let labelTxt = "";
+            if(this.labelName !== null){
+                labelTxt += `${this.labelName}=`
+            }
+            labelTxt += `${val}`;
+            this.label.innerHTML = labelTxt;
 
         this.container.appendChild(this.range);
         this.container.appendChild(this.label);
 
-        this.assignToDiv(parentId);
+        this.assignToDiv(parentDiv);
 
     }
 
 
-    assignToDiv( parentId="" ){
+    assignToDiv( parentDiv ){
 
-        this.parentDiv = document.getElementById(parentId);
-        
-        if(this.parentDiv === null){
+        if(parentDiv === null){
             return
         }
-
+        
+        this.parentDiv = parentDiv;
         this.parentDiv.appendChild(this.container);
 
     }
@@ -93,7 +101,7 @@ class SliderObj{
 
     removeFromDiv(){
 
-        this.div.remove();
+        this.container.remove();
         this.parentDiv = null;
 
     }
@@ -101,9 +109,15 @@ class SliderObj{
 
     onInput(){
 
-        this.val = Number( this.range.value ) / 100;
-        this.val = this.val.toFixed(this.valRound);
-        this.label.innerHTML = this.label.innerHTML = `${this.labelName}=${this.val}`;
+        this.val = (Number( this.range.value ) * this.stepSize) + this.min;
+        let diplayVal = this.val.toFixed(this.valRound);
+
+        let labelTxt = "";
+        if(this.labelName !== null){
+            labelTxt += `${this.labelName}=`
+        }
+        labelTxt += `${diplayVal}`;
+        this.label.innerHTML = labelTxt;
 
         this.listener.forEach( (func)=>{ func( this.val ) } );
 
@@ -125,3 +139,61 @@ class SliderObj{
 
 
 }
+
+
+class ButtonObj{
+
+    constructor(id, label, parentDiv=null, className=""){
+
+        this.id = id;
+        this.parent = null;
+        this.listener = [];
+
+        this.button = document.createElement("button");
+            this.button.id = this.id;
+            this.button.className = className;
+            this.button.textContent = label;
+            this.button.onclick = ()=>{this.onClick();};
+
+        this.assignToDiv(parentDiv);
+
+    }
+
+
+    assignToDiv( parentDiv ){
+
+        if(parentDiv === null){
+            return
+        }
+
+        this.parentDiv = parentDiv;
+        this.parentDiv.appendChild(this.button);
+
+    }
+
+
+    addListener(callback){
+
+        this.listener.push(callback);
+        console.log(this.listener);
+        return ()=>{ this.listener = this.listener.filter( (func)=>{func !== callback}) };
+
+    }
+
+
+    removeAllListeners(){
+
+        this.listener = [];
+
+    }
+
+
+    onClick(){
+
+        this.listener.forEach( (func)=>{ func(this) } );
+
+    }
+
+
+}
+
