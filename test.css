@@ -1,1 +1,28 @@
 
+#root{
+
+    display: flex;
+    justify-content: center;
+    align-content: center;
+
+    width: 100%;
+    padding-left: 15px;
+    padding-top: 10px;
+    
+    background-color: lightblue;
+
+}
+
+
+
+.sliderContainer{
+
+    position:relative;
+
+    display: inline-flex;
+    background-color: whitesmoke;
+    width: fit-content;
+
+
+}
+
