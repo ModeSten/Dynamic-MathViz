@@ -1,22 +1,20 @@
 
 
+// for creating and managing divs
 class DivObj {
 
-    constructor(id, parentDiv, className=null ){
+    constructor(id, parentDiv, className="" ){
 
+        this.id = id;
         this.div = document.createElement("div");
         this.className = className;
         this.parentDiv = null;
 
-        this.div.id = id;
-
-        if(this.className !== null){
-            this.div.className = this.className;
-        }
+        this.div.id = this.id;
+        this.div.className = this.className;
 
         this.assignToDiv(parentDiv);
 
-    
     }
 
 
@@ -42,6 +40,7 @@ class DivObj {
 }
 
 
+// for creating and managing sliders (inputs)
 class SliderObj{
 
     constructor(id, range, val=0, labelName="val", parentDiv=null, className="", steps=100){
@@ -57,22 +56,24 @@ class SliderObj{
         this.max = range[1];            // slider max value
         this.stepSize = (this.max -  this.min) / this.steps;    // slider value step coresponding to real value step
         
-        // create slider html elements
-        this.container = document.createElement("div");
+        /* create slider html elements */
+        this.container = document.createElement("div");     // create containing div
             this.container.id = this.id;
             this.container.className = "slider_container" + " " + className;
-        this.range = document.createElement("input");
+
+        this.range = document.createElement("input");       // create slider range (input)
             this.range.type = "range";
             this.range.id = this.id+"Range";
             this.range.className = "sliderRange";
-            this.range.min = 0;
-            this.range.max = steps;
-            this.range.value = (val-this.min) / this.stepSize;
+            this.range.min = 0;                             
+            this.range.max = steps;                             // range max value; number of value steps; default, 100
+            this.range.value = (val-this.min) / this.stepSize;  // set inital value; convert slider value (custom) to range value (0 to 100)
             this.range.oninput = ()=>this.onInput();
-        this.label = document.createElement("h3");
+
+        this.label = document.createElement("h3");              // create value label
             this.label.id = this.id+"Label";
             this.className = "sliderLabel";
-            this.label.innerHTML = `${labelName}${val}`;
+            this.label.innerHTML = `${labelName}${val}`;        
 
         this.container.appendChild(this.range);
         this.container.appendChild(this.label);
@@ -104,17 +105,10 @@ class SliderObj{
 
     onInput(){
 
-        this.val = (Number( this.range.value ) * this.stepSize) + this.min;
-        let diplayVal = this.val.toFixed(this.valRound);
-
-        let labelTxt = "";
-        if(this.labelName !== null){
-            labelTxt += `${this.labelName}=`
-        }
-        labelTxt += `${diplayVal}`;
-        this.label.innerHTML = labelTxt;
-
-        this.listener.forEach( (func)=>{ func( this.val ) } );
+        this.val = (Number( this.range.value ) * this.stepSize) + this.min; // convert range value to slider value
+        let diplayVal = this.val.toFixed(this.valRound);                    // round value to be displayed
+        this.label.innerHTML = `${this.labelName}${diplayVal}`;             // set display text
+        this.listener.forEach( (func)=>{ func( this.val ) } );              // handle listeners
 
     }
 
@@ -135,18 +129,19 @@ class SliderObj{
 }
 
 
+/* for creating and managing buttons */
 class ButtonObj{
 
     constructor(id, label, parentDiv=null, className=""){
 
         this.id = id;
-        this.parent = null;
-        this.listener = [];
+        this.parentDiv = null;
+        this.listener = [];     // call on button click
 
-        this.button = document.createElement("button");
+        this.button = document.createElement("button"); // create button
             this.button.id = this.id;
             this.button.className = className;
-            this.button.textContent = label;
+            this.button.textContent = label;   
             this.button.onclick = ()=>{this.onClick();};
 
         this.assignToDiv(parentDiv);
@@ -191,35 +186,36 @@ class ButtonObj{
 }
 
 
+// for creating buttons for steping (up and down) value; left-> - , right-> +
 class ButtonStepObj{
 
     constructor(id, labelName, valRange, stepSize, value, btnLabelL="<", btnLabelR=">", parentDiv=null, className=""){
 
         this.id = id;
-        this.parent = null;
-        this.range = valRange;
-        this.stepSize = stepSize;
-        this.val = value;
-        this.labelName = labelName;
-        this.listener = [];
+        this.parent = null;             
+        this.range = valRange;          // min and max values: [min, max]
+        this.stepSize = stepSize;       // value to decrease, increase by on click
+        this.val = value;               // curent value
+        this.labelName = labelName;     // text to display before value: ex "x="
+        this.listener = [];             // call on button click
 
-        this.container = document.createElement("div");
+        this.container = document.createElement("div"); // create conatining div
             this.container.id = this.id;
             this.container.className = "stepBtn";
 
-        this.btnL = document.createElement("button");
+        this.btnL = document.createElement("button");   // create left (minus) button
             this.btnL.id = this.id+"L";
             this.btnL.className = "BtnL";
             this.btnL.textContent = btnLabelL;
             this.btnL.onclick = ()=>{this.onClick("L")};
 
-        this.btnR = document.createElement("button");
+        this.btnR = document.createElement("button");   // creat right (pluss) button
             this.btnR.id = this.id+"R";
             this.btnR.className = "BtnR";
             this.btnR.textContent = btnLabelR;
             this.btnR.onclick = ()=>{this.onClick("R")};
 
-        this.label = document.createElement("h3");
+        this.label = document.createElement("h3");      // create text for displaying value and label text
             this.label.id = this.id+"label";
             this.className = "stepLabel";
             this.label.innerHTML = `${labelName}${this.val}`;
@@ -230,6 +226,7 @@ class ButtonStepObj{
         this.container.appendChild(this.btnR);
 
 
+        // disabel / enable button
         if(this.val - this.stepSize < this.range[0]){
             this.btnL.disabled = true;
         } else if(this.val + this.stepSize > this.range[1]){
@@ -258,31 +255,29 @@ class ButtonStepObj{
 
     onClick(side){
 
-        if(side === "L"){
+        if(side === "L"){   // left button clicked => decreae value
 
-            this.btnR.disabled = false;
+            this.btnR.disabled = false; // enable right button
+            this.val -= this.stepSize;  // decrease by stepsize
 
-            this.val -= this.stepSize;
-
-            if(this.val - this.stepSize < this.range[0]){
+            if(this.val - this.stepSize < this.range[0]){ // disable left button if at min value
                 this.btnL.disabled = true;
             }
 
-        } else if(side === "R"){
+        } else if(side === "R"){    // right button pressed => increase value
 
-            this.btnL.disabled = false;
+            this.btnL.disabled = false; // enable left button
+            this.val += this.stepSize;  // increase value by stepsize
 
-            this.val += this.stepSize;
-
-            if(this.val + this.stepSize > this.range[1]){
+            if(this.val + this.stepSize > this.range[1]){   // disable right button if at max value
                 this.btnR.disabled = true;
             }
 
         }
 
-        this.label.innerHTML = `${this.labelName}${this.val}`;
+        this.label.innerHTML = `${this.labelName}${this.val}`;  // set display text
 
-        this.listener.forEach( (func)=>{ func(this.val) } );
+        this.listener.forEach( (func)=>{ func(this.val) } );    // handle listener functions
 
     }
 
