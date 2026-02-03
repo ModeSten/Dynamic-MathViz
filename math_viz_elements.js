@@ -72,12 +72,7 @@ class SliderObj{
         this.label = document.createElement("h3");
             this.label.id = this.id+"Label";
             this.className = "sliderLabel";
-            let labelTxt = "";
-            if(this.labelName !== null){
-                labelTxt += `${this.labelName}=`
-            }
-            labelTxt += `${val}`;
-            this.label.innerHTML = labelTxt;
+            this.label.innerHTML = `${labelName}${val}`;
 
         this.container.appendChild(this.range);
         this.container.appendChild(this.label);
@@ -127,7 +122,6 @@ class SliderObj{
     addListener(callback){
 
         this.listener.push(callback);
-        console.log(this.listener);
         return ()=>{ this.listener = this.listener.filter( (func)=>{func !== callback}) };
 
     }
@@ -175,7 +169,6 @@ class ButtonObj{
     addListener(callback){
 
         this.listener.push(callback);
-        console.log(this.listener);
         return ()=>{ this.listener = this.listener.filter( (func)=>{func !== callback}) };
 
     }
@@ -197,3 +190,116 @@ class ButtonObj{
 
 }
 
+
+class ButtonStepObj{
+
+    constructor(id, labelName, valRange, stepSize, value, btnLabelL="<", btnLabelR=">", parentDiv=null, className=""){
+
+        this.id = id;
+        this.parent = null;
+        this.range = valRange;
+        this.stepSize = stepSize;
+        this.val = value;
+        this.labelName = labelName;
+        this.listener = [];
+
+        this.container = document.createElement("div");
+            this.container.id = this.id;
+            this.container.className = "stepBtn";
+
+        this.btnL = document.createElement("button");
+            this.btnL.id = this.id+"L";
+            this.btnL.className = "BtnL";
+            this.btnL.textContent = btnLabelL;
+            this.btnL.onclick = ()=>{this.onClick("L")};
+
+        this.btnR = document.createElement("button");
+            this.btnR.id = this.id+"R";
+            this.btnR.className = "BtnR";
+            this.btnR.textContent = btnLabelR;
+            this.btnR.onclick = ()=>{this.onClick("R")};
+
+        this.label = document.createElement("h3");
+            this.label.id = this.id+"label";
+            this.className = "stepLabel";
+            this.label.innerHTML = `${labelName}${this.val}`;
+
+
+        this.container.appendChild(this.btnL);
+        this.container.appendChild(this.label);
+        this.container.appendChild(this.btnR);
+
+
+        if(this.val - this.stepSize < this.range[0]){
+            this.btnL.disabled = true;
+        } else if(this.val + this.stepSize > this.range[1]){
+            this.btnR.disabled = true;
+        }
+
+
+        this.assignToDiv(parentDiv);
+
+
+    }
+
+
+    assignToDiv( parentDiv ){
+
+
+        if(parentDiv === null){
+            return
+        }
+
+        this.parentDiv = parentDiv;
+        this.parentDiv.appendChild(this.container);
+
+    }
+
+
+    onClick(side){
+
+        if(side === "L"){
+
+            this.btnR.disabled = false;
+
+            this.val -= this.stepSize;
+
+            if(this.val - this.stepSize < this.range[0]){
+                this.btnL.disabled = true;
+            }
+
+        } else if(side === "R"){
+
+            this.btnL.disabled = false;
+
+            this.val += this.stepSize;
+
+            if(this.val + this.stepSize > this.range[1]){
+                this.btnR.disabled = true;
+            }
+
+        }
+
+        this.label.innerHTML = `${this.labelName}${this.val}`;
+
+        this.listener.forEach( (func)=>{ func(this.val) } );
+
+    }
+
+
+    addListener(callback){
+
+        this.listener.push(callback);
+        return ()=>{ this.listener = this.listener.filter( (func)=>{func !== callback}) };
+
+    }
+
+
+    removeAllListeners(){
+
+        this.listener = [];
+
+    }
+
+
+}

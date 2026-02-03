@@ -54,7 +54,7 @@ function tangent1(){
     let marker = new SegmentMarkerFxObj( "marker1", tangent, { "color": "green"}, canvas);
 
 
-    let slider = new SliderObj("tanSlider1", [-10, 10], 0, "x", container.div);
+    let slider = new SliderObj("tanSlider1", [-10, 10], 0, "x=", container.div);
     
     let update = (val)=>{
 
@@ -82,6 +82,17 @@ function tangent2(){
     let tanChain = new TangentChainObj( "tan_chain1", fx, xRange, {"n":n, "ofset":0.5}, canvas, graph);
     let marker = new SegmentMarkerFxObj( "marker2", tanChain, { "color": "green", "p":[tanChain.params.ofset]}, canvas);
 
+    let button = new ButtonStepObj("stepBtn1", "n=", [0, 30], 1, 3);
+    button.assignToDiv(container.div);
+
+    let update = (val)=>{
+
+        tanChain.update( new UpdateNode({"n": val}) );
+
+    }
+
+
+    button.addListener(update);
 
 }
 
@@ -134,7 +145,7 @@ function tangent4(){
     let marker = new SegmentMarkerFxObj( "marker4", tanChain, {"p": [0, 1], "color": "green"}, canvas);
     marker.duration =0;
 
-    let slider = new SliderObj("tanSlider3", [0.1, 10], 5, "h", container.div);
+    let slider = new SliderObj("tanSlider3", [0.1, 10], 5, "h=", container.div);
     
     let update = (val)=>{
 
@@ -167,7 +178,7 @@ function tangent5(){
     let slope = new SlopeObj("slope1", fx, {}, canvas, graph);
     let marker = new SegmentMarkerFxObj("marker5", slope, {"p": [0, 1], "color": "green"}, canvas);
 
-    let slider = new SliderObj("tanSlider4", [-10, 10], -5, "x0", container.div);
+    let slider = new SliderObj("tanSlider4", [-10, 10], -5, "x0=", container.div);
     
     let update = (val)=>{
 
@@ -178,7 +189,7 @@ function tangent5(){
 
     slider.addListener(update);
 
-    let slider2 = new SliderObj("tanSlider5", [0.1, 10], 1, "h", container.div);
+    let slider2 = new SliderObj("tanSlider5", [0.1, 10], 1, "h=", container.div);
     
     let update2 = (val)=>{
 

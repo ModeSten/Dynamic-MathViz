@@ -23,7 +23,6 @@ function main(){
     let graph = new GraphObj("graph1", fx[fI], [-7, 7], {"draw": true}, canvas);
     let tangent = new TangentBaseObj("tangent1", fx[fI], {}, canvas, graph);
 
-
     let listener = (val)=>{
 
         tangent.translate_center(val);
