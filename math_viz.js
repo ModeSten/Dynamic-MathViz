@@ -904,7 +904,7 @@ class GraphObj extends ExstensionObj{
         this.params = {
             "fx": fx,           // graph function
             "xRange": xRange,   // x value range
-            "color": "black",     // graph color
+            "color": "black",   // graph color
             "width": 2,         // line widht
             "step": 0.1,        // x value steps between points
             "draw": false,      // animate drawing of graph
@@ -1022,6 +1022,53 @@ function get_tangent_function(fx, x, h=0.001){    // get tangent-line function
     let m = fx(x) - k*x;
 
     return (x) => { return k*x + m };
+
+}
+
+
+function derivativeFx(fx, xRange, step=0.1){
+
+    let data = [];
+    for(let x=xRange[0]; x<=xRange[1]; x+=step){
+
+        let y = get_slope(fx, x);
+        data.append([x, y]);
+
+    }
+
+    return data;
+
+}
+
+
+function derivativeData(fxData){
+
+    let data = [];
+    let l = Object.keys(fxData).length;
+
+    for(let i=0; i<l-1; i++){
+
+        let x0 = fxData[i][0];
+        let y0 = fxData[i][1];
+
+        let x1 = fxData[i+1][0];
+        let y1 = fxData[i+1][1];
+
+        if(y0 === null){
+            i++;
+        } else if(y1 === null){
+            i+2;
+        } else{
+
+        let dx = (y1-y0) / (x1-x0);
+
+        data[i] = [x0, dx];
+
+        }
+
+    }
+
+    return data;
 
 }
 
