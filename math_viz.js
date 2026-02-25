@@ -790,7 +790,8 @@ class ExstensionObj{
 
     update(state){
   
-        let node = state;      
+        let node = state;     
+        let duration = 0; 
 
         while( node !== null){              // loop through update nodes
     
@@ -805,12 +806,13 @@ class ExstensionObj{
                 node.delay = this.delay
             }
 
+            duration += node.duration;
             node = node.next;
 
         }
         
         this.svgObj.update(state);            // update child line object; pass root update node
-        this.notify_children();
+        this.notify_children(duration);
 
     }
 
@@ -851,9 +853,9 @@ class ExstensionObj{
     }
 
 
-    notify_children(){
+    notify_children(duration){
 
-        this.children.forEach( (c) => { c.callback( this, "" );} );
+        this.children.forEach( (c) => { c.callback( this, "", duration); } );
 
     }
 
@@ -865,7 +867,7 @@ class ExstensionObj{
         }
 
         this.parent = parent;
-        parent.add_child(this, (obj,msg)=>{ this.on_parent_update(obj, msg) });
+        parent.add_child(this, (obj,msg, duration)=>{ this.on_parent_update(obj, msg, duration) });
 
     }
 

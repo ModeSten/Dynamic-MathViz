@@ -50,7 +50,7 @@ function tangent1(){
     let canvas = new CanvasObj( "canvas1", width, height, margin, xRange, yRange, divId );
     let chart = new ChartObj( "chart1", {}, canvas );
     let graph = new GraphObj( "graph1", fx, xRange, {"color": "black"}, canvas );
-    let tangent = new TangentBaseObj( "tangent1", fx, {}, canvas, graph );
+    let tangent = new TangentObj( "tangent1", fx, {}, canvas, graph );
     let marker = new SegmentMarkerFxObj( "marker1", tangent, { "color": "green"}, canvas);
 
 
@@ -107,7 +107,7 @@ function tangent3(){
     let canvas = new CanvasObj( "canvas3", width, height, margin, xRange, yRange, divId );
     let chart = new ChartObj( "chart3", {}, canvas );
     let graph = new GraphObj( "graph3", fx, yRange, {"color": "black"}, canvas );
-    let tanChain = new TangenHChainObj( "tan_hchain1", fx, xRange, {}, canvas, graph, h0);
+    let tanChain = new DerivativeApxObj( "tan_hchain1", fx, xRange, {}, canvas, graph, h0);
     let marker = new SegmentMarkerFxObj( "marker3", tanChain, {"color": "green", "p": [0, 1]}, canvas);
 
 

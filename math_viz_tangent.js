@@ -4,7 +4,7 @@
 
 
 // Class for drawing tangent line
-class TangentBaseObj extends ExstensionObj{
+class TangentObj extends ExstensionObj{
 
 
     constructor(id, fx, params={}, canvas=null, graph=null){
@@ -167,8 +167,8 @@ class TangentChainObj extends ExstensionObj{
 }
 
 
-// Class creating a series of line representing average slope over x value range
-class TangenHChainObj extends ExstensionObj{
+// Class creating an aproximation of derivative based on function
+class DerivativeApxObj extends ExstensionObj{
 
     constructor(id, fx, xRange, params={}, canvas=null, graph=null, h=5){
 
@@ -225,9 +225,10 @@ class TangenHChainObj extends ExstensionObj{
     }
 
 
-    on_parent_update(obj, msg){
+    on_parent_update(obj, msg, duration){
 
-        let update = new UpdateNode({"fx": obj.params.fx});
+        console.log(msg);
+        let update = new UpdateNode({"fx": obj.params.fx}, duration);
         this.update(update);
 
     }
@@ -235,7 +236,34 @@ class TangenHChainObj extends ExstensionObj{
 }
 
 
-// Class creating series of lines aproximating orginal graph
+
+class DxApxDataObj extends DerivativeApxObj{
+
+    constructor(id, params={}, canvas=null, graph=null){
+
+        super(id, null, null, params, canvas, graph);
+
+    }
+
+
+    // parent class override; get data based on parent data rather than function
+    get_data(){
+
+        this.data = [];
+        if(this.graph === null){
+            return;
+        }
+
+        this.data = derivativeData(this.parent.data);
+
+    }
+
+
+}
+
+
+
+// Class creating series of (n) lines, aproximating orginal graph
 class SlopeObj extends ExstensionObj{
 
  constructor(id, fx, params={}, canvas=null, graph=null){
