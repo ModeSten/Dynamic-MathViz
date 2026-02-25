@@ -806,12 +806,13 @@ class ExstensionObj{
                 node.delay = this.delay
             }
 
+            
             duration += node.duration;
             node = node.next;
 
         }
         
-        this.svgObj.update(state);            // update child line object; pass root update node
+        this.svgObj.update(state);            // update child (visual) object; pass root update node
         this.notify_children(duration);
 
     }
@@ -995,8 +996,9 @@ class UpdateNode{   // Specify update parameters for other classes; link nodes (
     
 /*  suport functions  */
 
-function get_points_from_lenght(fx, x0, lenght, ofset){ // get line start and end values from target lenght
 
+/* get line start and end values from target line lenght lenght */
+function get_points_from_lenght(fx, x0, lenght, ofset){ 
 
     let deltaX = (lenght / (1+Math.abs(get_slope(fx, x0))));
     let deltaX1 = deltaX * (1-ofset);
@@ -1010,15 +1012,16 @@ function get_points_from_lenght(fx, x0, lenght, ofset){ // get line start and en
 }
 
 
-
-function get_slope(fx, x, h=0.001){  // get graph slope at x
+/* get graph slope at x */
+function get_slope(fx, x, h=0.001){  
 
     return ( fx(x+h) - fx(x) ) / h;
 
 }
 
 
-function get_tangent_function(fx, x, h=0.001){    // get tangent-line function
+/* get tangent-line function */
+function get_tangent_function(fx, x, h=0.001){   
 
     let k = get_slope(fx, x, h);
     let m = fx(x) - k*x;
@@ -1028,13 +1031,14 @@ function get_tangent_function(fx, x, h=0.001){    // get tangent-line function
 }
 
 
-function derivativeFx(fx, xRange, step=0.1){
+/* get derivative aproximation based on function */
+function derivativeFx(fx, xRange, step=0.1, h=0.001){
 
     let data = [];
     for(let x=xRange[0]; x<=xRange[1]; x+=step){
 
-        let y = get_slope(fx, x);
-        data.append([x, y]);
+        let y = get_slope(fx, x, h);
+        data.push([x, y]);
 
     }
 
@@ -1043,6 +1047,7 @@ function derivativeFx(fx, xRange, step=0.1){
 }
 
 
+/* get derivative aproximation based on graph data; use diference between data points */
 function derivativeData(fxData){
 
     let data = [];
@@ -1076,4 +1081,3 @@ function derivativeData(fxData){
 
 
 
-/* Test functions */
