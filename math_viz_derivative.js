@@ -170,7 +170,7 @@ class TangentChainObj extends ExstensionObj{
 // Class creating an aproximation of derivative based on function
 class DerivativeApxObj extends ExstensionObj{
 
-    constructor(id, fx, xRange, params={}, canvas=null, graph=null, h=5){
+    constructor(id, fx, xRange, params={}, canvas=null, graph=null){
 
         super(id);
         this.params = {
@@ -178,8 +178,9 @@ class DerivativeApxObj extends ExstensionObj{
              "width":2.5 ,      // line width
              "color":"red",     // line color
              "xRange": xRange,  // x value range
-             "h": 3,            // h value for caclulating slope and for sgement lenght
-             "draw": false
+             "h": 0.05,            // h value for caclulating slope and for sgement lenght
+             "draw": false,
+             "discrete": false
             };   
         this.parse_params(params); 
 
@@ -212,8 +213,6 @@ class DerivativeApxObj extends ExstensionObj{
             let k = get_slope(this.params.fx, x, h);
 
             this.data.push([x, k]);
-            this.data.push([x+h, k]);
-            this.data.push([x+h, null]);
 
         }
 
@@ -254,7 +253,6 @@ class DxApxDataObj extends DerivativeApxObj{
         }
 
         this.data = derivativeData(this.parent.data);
-        console.log(this.data);
 
     }
 
@@ -320,9 +318,21 @@ class DxColorObj extends ExstensionObj{
     definedPos(i){
 
         if(this.params.mode === "first"){
+
+            if(this.dxData0[i][1] === null){
+                return false
+            }
+
             return ( this.dxData0[i][1] > 0 );
+
         } else{
+
+            if(this.dxData1[i][1] === null){
+                return false
+            }
+
             return ( this.dxData1[i][1] > 0 );
+
         }
 
     } 
@@ -332,9 +342,21 @@ class DxColorObj extends ExstensionObj{
 
 
         if(this.params.mode === "first"){
+
+            if(this.dxData0[i][1] === null){
+                return false
+            }
+
             return ( this.dxData0[i][1] < 0 );
+
         } else{
+
+            if(this.dxData1[i][1] === null){
+                return false
+            }
+
             return ( this.dxData1[i][1] < 0 );
+
         }
 
     }

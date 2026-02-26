@@ -24,16 +24,17 @@ function main(){
     //let dxdx = new DxApxDataObj("derivative2", {"color":"green"}, canvas, dx);
 
 
-    let graphColor = new DxColorObj("dxColorGraph", fx[fI], [-10, 10], {"draw": true}, canvas);
-    let fDx = new DerivativeApxObj("dx", fx[fI], [-10, 10], {"color": "blue", "h": 0.1}, canvas, graphColor);
-    //let fDdx = new DxApxDataObj("ddx", {"color": "purple"}, canvas, fDx);
+    let graphColor = new DxColorObj("dxColorGraph", fx[fI], [-10, 10], {}, canvas);
+    let fDx = new DerivativeApxObj("dx", fx[fI], [-10, 10], {"color": "blue", "draw":true}, canvas, graphColor);
+    let fDdx = new DxApxDataObj("ddx", {"color": "purple"}, canvas, fDx);
 
+    console.log(fDdx.data[fDdx.data.length-1]);
 
     let btnRm = button.addListener( (obj)=>{
         
         fI ++;
-        let update = new UpdateNode({"fx": fx[fI%fx.length]});
-        graphColor.update(update, 1000);
+        let update = new UpdateNode({"fx": fx[fI%fx.length]}, 1000);
+        graphColor.update(update);
     
     } );
 

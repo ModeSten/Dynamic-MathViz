@@ -1050,6 +1050,7 @@ function derivativeFx(fx, xRange, step=0.1, h=0.001){
 /* get derivative aproximation based on graph data; use diference between data points */
 function derivativeData(fxData){
 
+
     let data = [];
     let l = Object.keys(fxData).length;
     let dx = 0;
@@ -1063,8 +1064,11 @@ function derivativeData(fxData){
         let y1 = fxData[i+1][1];
 
         if(y0 === null){
+            data.push([x0, null]);
             i++;
         } else if(y1 === null){
+            data.push([x0, null]);
+            data.push([x1, null]);
             i+2;
         } else{
 
@@ -1076,7 +1080,7 @@ function derivativeData(fxData){
 
     }
         
-    data.push([fxData[l-1], dx]);
+    data.push([fxData[l-1][0], dx]);
     
     return data;
 
