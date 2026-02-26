@@ -224,7 +224,7 @@ class DerivativeApxObj extends ExstensionObj{
     }
 
 
-    on_parent_update(obj, msg, duration){
+    on_parent_update(obj, msg, duration=this.duration){
 
         let update = new UpdateNode({"fx": obj.params.fx}, duration);
         this.update(update);
@@ -364,7 +364,7 @@ class DxColorObj extends ExstensionObj{
 
     update(state){
    
-        let duration = 0; 
+        let duration = state.duration; 
 
         this.parse_params(state.params);
         this.resolve_update();

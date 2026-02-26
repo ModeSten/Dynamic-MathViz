@@ -790,6 +790,7 @@ class ExstensionObj{
 
     update(state){
   
+
         let node = state;     
         let duration = 0; 
 
@@ -806,11 +807,11 @@ class ExstensionObj{
                 node.delay = this.delay
             }
 
-            
             duration += node.duration;
             node = node.next;
 
         }
+
         
         this.svgObj.update(state);            // update child (visual) object; pass root update node
         this.notify_children(duration);
