@@ -1052,6 +1052,7 @@ function derivativeData(fxData){
 
     let data = [];
     let l = Object.keys(fxData).length;
+    let dx = 0;
 
     for(let i=0; i<l-1; i++){
 
@@ -1067,14 +1068,16 @@ function derivativeData(fxData){
             i+2;
         } else{
 
-        let dx = (y1-y0) / (x1-x0);
+        dx = (y1-y0) / (x1-x0);
 
-        data[i] = [x0, dx];
+        data.push([x0, dx]);
 
         }
 
     }
-
+        
+    data.push([fxData[l-1], dx]);
+    
     return data;
 
 }

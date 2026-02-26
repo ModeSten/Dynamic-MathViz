@@ -4,7 +4,7 @@ height = 600 - margin.top - margin.bottom;
 
 var fx = [ (x)=>{return 2*x} , (x)=>{return x**2/5}, (x)=>{return x**3/50}, (x)=>{ return 5*Math.sin(x/3)}, (x)=>{return 5*Math.cos(x/3)} ];
 //var fx = [ (x)=>{ return 1.5*x}, (x)=>{ return 1.5*x**2 / 5}, (x)=>{ return 1.5*x**3 / 10}, (x)=>{ return 1.5 * x**4 / 100} ];
-var fI = 0;
+var fI = 2;
 
 
 
@@ -25,6 +25,8 @@ function main(){
 
 
     let graphColor = new DxColorObj("dxColorGraph", fx[fI], [-10, 10], {"draw": true}, canvas);
+    let fDx = new DerivativeApxObj("dx", fx[fI], [-10, 10], {"color": "blue", "h": 0.1}, canvas, graphColor);
+    //let fDdx = new DxApxDataObj("ddx", {"color": "purple"}, canvas, fDx);
 
 
     let btnRm = button.addListener( (obj)=>{

@@ -254,6 +254,7 @@ class DxApxDataObj extends DerivativeApxObj{
         }
 
         this.data = derivativeData(this.parent.data);
+        console.log(this.data);
 
     }
 
@@ -278,7 +279,7 @@ class DxColorObj extends ExstensionObj{
             "draw": false,
             "drawT": 1,
             "drawT0": 0,
-            "mode": "first" // first (first derivative), second (second derivative), both.
+            "mode": "second" // first (first derivative), second (second derivative), both.
         }
         this.parse_params(params);
 
@@ -289,10 +290,8 @@ class DxColorObj extends ExstensionObj{
 
         this.line0 = new LineObj(this.id+"0", this.data, {"color": this.params.color0}, canvas);
         this.line0.isDefined = (d, i )=>{ return this.definedPos( d, i ) };
-        this.line0.isDefined = (d, i )=>{ return (d[0]<0) };
         this.line1 = new LineObj(this.id+"1", this.data, {"color": this.params.color1}, canvas);
         this.line1.isDefined = (d, i )=>{ return this.definedNeg( d, i ) };
-        this.line1.isDefined = (d, i )=>{ return (d[0] > 0) };
         
         this.update(new UpdateNode({}));
 
@@ -311,9 +310,8 @@ class DxColorObj extends ExstensionObj{
 
         }
 
-        this.dxData0 = derivativeFx(this.params.fx, this.params.xRange, this.params.step);
+        this.dxData0 = derivativeData(this.data);
         this.dxData1 = derivativeData(this.dxData0);
-
 
     }
 
@@ -400,8 +398,8 @@ class DxColorObj extends ExstensionObj{
 
         this.get_data();
 
-        this.line0.isDefined =  (d, i )=>{ return this.definedPos( i ) };
-        this.line1.isDefined =  (d, i )=>{ return this.definedNeg( i ) };
+        this.line0.isDefined =  (d, i )=>{ return this.definedNeg( i ) };
+        this.line1.isDefined =  (d, i )=>{ return this.definedPos( i ) };
 
     }
 
