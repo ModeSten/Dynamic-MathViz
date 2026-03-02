@@ -290,6 +290,7 @@ class DxColorObj extends ExstensionObj{
         this.line0.isDefined = (d, i )=>{ return this.definedPos( d, i ) };
         this.line1 = new LineObj(this.id+"1", this.data, {"color": this.params.color1}, canvas);
         this.line1.isDefined = (d, i )=>{ return this.definedNeg( d, i ) };
+
         
         this.update(new UpdateNode({}));
 
@@ -362,14 +363,39 @@ class DxColorObj extends ExstensionObj{
     }
 
 
+    definedZero(){
+
+        if(this.params.mode === "first"){
+
+            if(this.dxData0[i][1] === null){
+                return false
+            }
+
+            return ( this.dxData0[i][1] === 0 );
+
+        } else{
+
+            if(this.dxData1[i][1] === null){
+                return false
+            }
+
+            return ( this.dxData1[i][1] === 0 );
+
+        }
+
+    }
+
+
     update(state){
    
+        /*
         let duration = state.duration; 
 
         this.parse_params(state.params);
         this.resolve_update();
 
         state.params["data"] = this.data;
+
         
         let state0 = new UpdateNode({...state.params});
         state0.params["color"] = this.params.color0;
@@ -378,12 +404,21 @@ class DxColorObj extends ExstensionObj{
         state1.params["color"] = this.params.color1;
 
         let node = state.next;
+        */
+
+        let node = state;
+        let state0 = new UpdateNode({});
+        let state1 = new UpdateNode({});
+
+        let duration = 0;
+
 
         while( node !== null){              // loop through update nodes
 
             this.parse_params(node.params);
             this.resolve_update();
 
+            node.params["data"] = this.data;
 
             if(node.duration === null){
                 node.duration = this.duration;
@@ -409,8 +444,8 @@ class DxColorObj extends ExstensionObj{
         }
         
 
-        this.line0.update(state0);            // update child (visual) object; pass root update node
-        this.line1.update(state1);
+        this.line0.update(state0.next);            // update child (visual) object; pass root update node
+        this.line1.update(state1.next);
         this.notify_children(duration);
 
     }
