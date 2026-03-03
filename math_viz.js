@@ -754,15 +754,15 @@ class ExstensionObj{
 
     constructor( id ){
 
-        this.id = id;       // object id; also used for selecting svg elements
-        this.svgObj = null; // Class object mannaging svg elements (VisualObj class)
-        this.canvas = null; // target canvas
-        this.params = {};   // object parameters; Specified by child classes
-        this.children = []  // child objects, updating with parent class
-        this.data = [];     // object data to visualize
+        this.id = id;           // object id; also used for selecting svg elements
+        this.svgObj = null;     // Class object mannaging svg elements (VisualObj class)
+        this.canvas = null;     // target canvas
+        this.params = {};       // object parameters; Specified by child classes
+        this.children = []      // child objects, updating with parent class
+        this.data = [];         // object data to visualize
         this.isDefined = (d, i)=>{return (d[0]!==null) && (d[1]!==null)};   // specifies which data points should be ignored
-        this.duration = 1000; // transition (default) duration
-        this.delay = 0;     // transition (default) delay
+        this.duration = 1000;   // transition (default) duration
+        this.delay = 0;         // transition (default) delay
         this.parent = null;
 
     }
@@ -957,7 +957,7 @@ class UpdateNode{   // Specify update parameters for other classes; link nodes (
     constructor( params, duration=null, delay=null,  next=null ){
 
         this.params = params;       // parameters to be updated; ex {"data": data, "color": color}
-        this.duration = duration;      // delya before next chained update
+        this.duration = duration;   // delya before next chained update
         this.delay = delay;
         this.next = next;           // next (chained) update node
 
@@ -1048,7 +1048,7 @@ function derivativeFx(fx, xRange, step=0.1, h=0.001){
 }
 
 
-/* get derivative aproximation based on graph data; use diference between data points */
+/* get derivative aproximation based on graph data; use diference between data points. Assure output lenght = input lenght */
 function derivativeData(fxData){
 
 

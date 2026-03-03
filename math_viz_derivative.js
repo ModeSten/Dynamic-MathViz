@@ -268,25 +268,25 @@ class DxColorObj extends ExstensionObj{
         super(id);
 
         this.params = {
-            "fx": fx, 
-            "xRange": xRange,
-            "step": 0.1,
-            "color0": "red",
-            "color1": "green",
-            "width": 2,
-            "draw": false,
-            "drawT": 1,
-            "drawT0": 0,
-            "mode": "second" // first (first derivative), second (second derivative), both.
+            "fx": fx,           // function
+            "xRange": xRange,   // line x start and en values ([start, end])
+            "step": 0.1,        // x step size between each data pair
+            "color0": "red",    // color when derivative is negative  
+            "color1": "green",  // color when derivative is positive
+            "width": 2,         
+            "draw": false,      // specifiy line should animated as if drawn (true || false)
+            "drawT": 1,         // draw animation end (relative to line lenght: 0 to 1)
+            "drawT0": 0,        // draw animation start (relative: 0 to 1)
+            "mode": "second"    // first (first derivative), second (second derivative), both.
         }
         this.parse_params(params);
 
-        this.dxData0 = [];
-        this.dxData1 = [];
+        this.dxData0 = [];  // first derivative data
+        this.dxData1 = [];  // second derivative data
 
         this.get_data();
 
-        this.line0 = new LineObj(this.id+"0", this.data, {"color": this.params.color0}, canvas);
+        this.line0 = new LineObj(this.id+"0", this.data, {"color": this.params.color0}, canvas);    
         this.line0.isDefined = (d, i )=>{ return this.definedPos( d, i ) };
         this.line1 = new LineObj(this.id+"1", this.data, {"color": this.params.color1}, canvas);
         this.line1.isDefined = (d, i )=>{ return this.definedNeg( d, i ) };
@@ -315,7 +315,7 @@ class DxColorObj extends ExstensionObj{
     }
 
 
-
+    /* defined for positive derivative */ 
     definedPos(i){
 
         if(this.params.mode === "first"){
@@ -339,6 +339,7 @@ class DxColorObj extends ExstensionObj{
     } 
 
 
+    /* defined for neagtive derivative */
     definedNeg(i){
 
 
@@ -362,7 +363,7 @@ class DxColorObj extends ExstensionObj{
 
     }
 
-
+    /* defined for derivative is 0 */
     definedZero(){
 
         if(this.params.mode === "first"){
@@ -388,23 +389,6 @@ class DxColorObj extends ExstensionObj{
 
     update(state){
    
-        /*
-        let duration = state.duration; 
-
-        this.parse_params(state.params);
-        this.resolve_update();
-
-        state.params["data"] = this.data;
-
-        
-        let state0 = new UpdateNode({...state.params});
-        state0.params["color"] = this.params.color0;
-
-        let state1 = new UpdateNode({...state.params});
-        state1.params["color"] = this.params.color1;
-
-        let node = state.next;
-        */
 
         let node = state;
         let state0 = new UpdateNode({});
@@ -476,12 +460,12 @@ class SlopeObj extends ExstensionObj{
         super(id);
 
         this.params = {
-            "fx": fx,           // reference function       
-             "h": 5 ,
-             "x0":  -2.5,  
-             "width":2.5 , 
-             "color":"red",
-             "draw": false
+            "fx": fx,           // function: (x)=>{return some function}
+             "h": 5 ,           // h value for calculating slope (x step betwee slope start and end)
+             "x0":  -2.5,       // slope line starting point (x)
+             "width":2.5 ,      
+             "color":"red", 
+             "draw": false      // specifiy line should animated as if drawn (true || false)
             };   
         this.parse_params(params); 
 
