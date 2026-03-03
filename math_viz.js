@@ -13,7 +13,7 @@ class CanvasObj {
 
     constructor (id, width, height, margin, xRange, yRange, parentId=null){
 
-        this.ID = id;           // canvas id; also used as svg id; for selecting svg element
+        this.id = id;           // canvas id; also used as svg id; for selecting svg element
         this.parentId;          // id of div container; svg parent div 
         this.children = [];     // canvas child objects / elements [ class-objet, callback]
 
@@ -52,6 +52,7 @@ class CanvasObj {
 
         this.parentId = targetDivId;
 
+        /*
         this.svg = d3.select("#"+targetDivId)
             .append("svg")
                 .attr("id", this.ID)
@@ -61,7 +62,19 @@ class CanvasObj {
                 .append("g")
                     .attr("class", "transform")
                     .attr("transform", "translate("+ this.params.margin.left + "," + this.params.margin.top +")");
+        */
 
+        this.svg = d3.select("#"+targetDivId)
+            .append("svg")
+                .attr("id", this.id)
+                .attr("class", "viz_svg")
+                .attr("preserveAspectRatio", "xMinyMin mett")
+                .attr("viewBox", `0 0 ${width+margin.left*1.1} ${height+margin.top*1.1}`)
+                .append("g")
+                    .attr("class", "transform")
+                    .attr("transform", "translate("+ this.params.margin.left + "," + this.params.margin.top +")");
+
+        
         this.svg.append("clipPath")
                 .attr("id", "clip")
                 .append("rect")
@@ -91,7 +104,7 @@ class CanvasObj {
     remove_from_div (){
 
         let container = document.getElementById(this.parentId);   // get conatining div
-        let element = document.getElementById(this.ID);         // get svg element (as node)
+        let element = document.getElementById(this.id);         // get svg element (as node)
 
         container.removeChild(element);             
 

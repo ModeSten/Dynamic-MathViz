@@ -12,11 +12,12 @@ function main(){
 
     let root = document.getElementById("root");
 
-    let div = new DivObj("testDiv1", root);
+    let div = new DivObj("testDiv1", root, "viz_container");
+    let svgDiv = new DivObj("svgDiv1", div.div, "svg_container");
 
     let button = new ButtonObj("testButton", "test", div.div);
 
-    let canvas = new CanvasObj("canvas1", width, height, margin, [-10, 10], [-10, 10], "testDiv1");
+    let canvas = new CanvasObj("canvas1", width, height, margin, [-10, 10], [-10, 10], "svgDiv1");
     let chart = new ChartObj("chart1", {}, canvas);
     
     //let graph = new GraphObj("graph1", fx[fI], [-7, 7], {}, canvas);
@@ -25,17 +26,19 @@ function main(){
 
 
     let graphColor = new DxColorObj("dxColorGraph", fx[fI], [-10, 10], {"draw": true}, canvas);
-    let fDx = new DerivativeApxObj("dx", fx[fI], [-10, 10], {"color": "blue", "draw":true}, canvas, graphColor);
-    //let fDdx = new DxApxDataObj("ddx", {"color": "purple", "draw": true}, canvas, fDx);
+    let fDx = new DerivativeApxObj("dx", fx[fI], [-10, 10], {"color": "blue", "draw":false}, null, graphColor);
+    let fDdx = new DxApxDataObj("ddx", {"color": "purple", "draw": false}, canvas, fDx);
 
 
+    ///*
     let btnRm = button.addListener( (obj)=>{
         
         fI ++;
-        let update = new UpdateNode({"fx": fx[fI%fx.length]}, 1000);
+        let update = new UpdateNode({"fx": fx[fI%fx.length], "draw": true}, 1000);
         graphColor.update(update);
     
     } );
+     //*/
 
 
 }
