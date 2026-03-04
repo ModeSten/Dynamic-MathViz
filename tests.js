@@ -4,30 +4,26 @@ height = 600 - margin.top - margin.bottom;
 
 var fx = [ (x)=>{return 2*x} , (x)=>{return x**2/5}, (x)=>{return x**3/50}, (x)=>{ return 5*Math.sin(x/3)}, (x)=>{return 5*Math.cos(x/3)} ];
 //var fx = [ (x)=>{ return 1.5*x}, (x)=>{ return 1.5*x**2 / 5}, (x)=>{ return 1.5*x**3 / 10}, (x)=>{ return 1.5 * x**4 / 100} ];
-var fI = 2;
+var fI = 1;
 
 
 
-function main(){
+function derivative_color(){
 
     let root = document.getElementById("root");
 
-    let div = new DivObj("testDiv1", root, "viz_container");
-    let svgDiv = new DivObj("svgDiv1", div.div, "svg_container");
+    let div = new DivObj("dxColorContainer", root, "viz_container");
+    let svgDiv = new DivObj("dxColorSvgDiv", div.div, "svg_container");
 
     let button = new ButtonObj("testButton", "test", div.div);
 
-    let canvas = new CanvasObj("canvas1", width, height, margin, [-10, 10], [-10, 10], "svgDiv1");
-    let chart = new ChartObj("chart1", {}, canvas);
+    let canvas = new CanvasObj("dxColorCanvas", width, height, margin, [-15, 15], [-10, 10], "dxColorSvgDiv");
+    let chart = new ChartObj("dxColorChart", {}, canvas);
     
-    //let graph = new GraphObj("graph1", fx[fI], [-7, 7], {}, canvas);
-    //let dx = new DxApxDataObj("derivative1", {}, canvas, graph);
-    //let dxdx = new DxApxDataObj("derivative2", {"color":"green"}, canvas, dx);
 
-
-    let graphColor = new DxColorObj("dxColorGraph", fx[fI], [-10, 10], {"draw": true}, canvas);
-    let fDx = new DerivativeApxObj("dx", fx[fI], [-10, 10], {"color": "blue", "draw":false}, null, graphColor);
-    let fDdx = new DxApxDataObj("ddx", {"color": "purple", "draw": false}, canvas, fDx);
+    let graphColor = new DxColorObj("dxColorGraph", fx[fI], [-15, 15], {"draw": true}, canvas);
+    let fDx = new DerivativeApxObj("dx", fx[fI], [-15, 15], {"color": "blue", "draw":false}, null, graphColor);
+    //let fDdx = new DxApxDataObj("ddx", {"color": "purple", "draw": false}, canvas, fDx);
 
 
     ///*
@@ -44,5 +40,69 @@ function main(){
 }
 
 
+function tangent(){
 
-main();
+    let root = document.getElementById("root");
+
+    let div = new DivObj("tangentContainer", root, "viz_container");
+    let svgDiv = new DivObj("tangentSvgDiv", div.div, "svg_container");
+
+    let canvas = new CanvasObj("tangentCanvas", width, height, margin, [-10, 10], [-10, 10], svgDiv.id);
+    let chart = new ChartObj("tangentChart", {}, canvas);
+
+
+    let graph = new GraphObj("tangentGraph", fx[fI], [-10, 10], {}, canvas);
+    let tangent = new TangentObj("tangentLine", fx[fI], {"length": 100, "origin":2}, canvas, graph);
+
+
+    canvas.svg.append("text")
+        .text(`k= ${get_slope(tangent.fx, 2)}`)
+        .attr("x", canvas.xScale(7))
+        .attr("y", canvas.yScale(7))
+        .attr("id", "kLabel");
+
+    let slider = new SliderObj("tanSlider", [-10, 10], 2, "x= ", div.div);
+
+    slider.addListener(
+        (x)=>{
+            tangent.translate_center(x);
+            let slope = get_slope(tangent.fx, x).toFixed(5);
+            ///*
+            canvas.svg.select("#kLabel")
+                .transition()
+                    .duration(10)
+                    .text(`k= ${slope}`)
+                    .attr("x", canvas.xScale(x))
+                    .attr("y", canvas.yScale(graph.params.fx(x)))
+                    .attr("dx", 10)
+                    .attr("dy", 10);
+            //*/
+        }
+    )
+
+
+}
+
+
+function slope(){
+
+    let root = document.getElementById("root");
+
+    let div = new DivObj("slopeContainer", root, "viz_container");
+    let svgDiv = new DivObj("slopeSvgDiv", div.div, "svg_container");
+
+    let canvas = new CanvasObj("slopeCanvas", width, height, margin, [-10, 10], [-10, 10], svgDiv.id);
+    let chart = new ChartObj("slopeChart", {}, canvas);
+
+
+    let graph = new GraphObj("slopeGraph", fx[fI], [-10, 10], {}, canvas);
+    let slope = new SlopeObj("slopeLine", fx[fI], {"x0": 0}, canvas, graph);
+
+
+}
+
+
+
+derivative_color();
+tangent();
+slope();

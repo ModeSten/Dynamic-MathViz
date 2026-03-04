@@ -12,9 +12,10 @@ class TangentObj extends ExstensionObj{
         super(id);
 
         this.fx = fx;       // tangent reference function
+        this.slope = 0;
         this.params = {
             "fx": fx,                  // reference function 
-             "centerX":0 ,             // tangent 'origin' x value
+             "origin":0 ,             // tangent 'origin' x value
              "length": 10 ,            // tangent-line lenght
              "width":2.5 ,             // line width
              "color":"red",            // line (stroke) color
@@ -50,8 +51,8 @@ class TangentObj extends ExstensionObj{
     
     get_data(){
 
-        let func = get_tangent_function(this.params.fx, this.params.centerX, this.params.h);     // tangent-line function
-        this.data = get_points_from_lenght(func, this.params.centerX, this.params.length, 0.5);
+        let func = get_tangent_function(this.params.fx, this.params.origin, this.params.h);     // tangent-line function
+        this.data = get_points_from_lenght(func, this.params.origin, this.params.length, 0.5);
 
     }
 
@@ -59,27 +60,26 @@ class TangentObj extends ExstensionObj{
     // Create update chain for changing tangent origin x value
     translate_center(center, stepSize=0.05, duration=this.duration){
 
-
-        let direction = Math.sign( center - this.params.centerX );  // translate direction: new center is left (negative) or right (positive) of old
-        let x = this.params.centerX + direction * stepSize;         
+        let direction = Math.sign( center - this.params.origin );  // translate direction: new center is left (negative) or right (positive) of old
+        let x = this.params.origin + direction * stepSize;         
 
         let T = duration; // transition duration 
 
 
-        let root = new UpdateNode({"centerX": x}, T);
+        let root = new UpdateNode({"origin": x}, T);
         let node = root;
         x +=  direction * stepSize;
 
 
         while ( Math.abs(center-x) > 0.05 ){
 
-            node.next = new UpdateNode({"centerX": x}, T);
+            node.next = new UpdateNode({"origin": x}, T);
             node = node.next;
 
             x +=  direction * stepSize;
-            if( (x > center && center > this.params.centerX) || (x < center && center < this.params.centerX) ){
+            if( (x > center && center > this.params.origin) || (x < center && center < this.params.origin) ){
                 x = center;
-                node.next = new UpdateNode({"centerX": x}, T);
+                node.next = new UpdateNode({"origin": x}, T);
                 break;
             }
 
@@ -270,7 +270,7 @@ class DxColorObj extends ExstensionObj{
         this.params = {
             "fx": fx,           // function
             "xRange": xRange,   // line x start and en values ([start, end])
-            "step": 0.1,        // x step size between each data pair
+            "step": 0.01,        // x step size between each data pair
             "color0": "red",    // color when derivative is negative  
             "color1": "green",  // color when derivative is positive
             "width": 2,         
@@ -290,6 +290,8 @@ class DxColorObj extends ExstensionObj{
         this.line0.isDefined = (d, i )=>{ return this.definedPos( d, i ) };
         this.line1 = new LineObj(this.id+"1", this.data, {"color": this.params.color1}, canvas);
         this.line1.isDefined = (d, i )=>{ return this.definedNeg( d, i ) };
+        this.line3 = new LineObj(this.id+"3", this.data, {"color": "black"}, canvas);
+        this.line3.isDefined = (d, i)=>{ return this.definedZero( d, i) };
 
         
         this.update(new UpdateNode({}));
@@ -364,7 +366,7 @@ class DxColorObj extends ExstensionObj{
     }
 
     /* defined for derivative is 0 */
-    definedZero(){
+    definedZero(d, i){
 
         if(this.params.mode === "first"){
 
@@ -372,7 +374,7 @@ class DxColorObj extends ExstensionObj{
                 return false
             }
 
-            return ( this.dxData0[i][1] === 0 );
+            return ( Math.abs(this.dxData0[i][1]) < 0.01 );
 
         } else{
 
@@ -380,7 +382,7 @@ class DxColorObj extends ExstensionObj{
                 return false
             }
 
-            return ( this.dxData1[i][1] === 0 );
+            return ( Math.abs(this.dxData1[i][1]) < 0.01 );
 
         }
 
@@ -393,6 +395,7 @@ class DxColorObj extends ExstensionObj{
         let node = state;
         let state0 = new UpdateNode({});
         let state1 = new UpdateNode({});
+        let state3 = new UpdateNode({});
 
         let duration = 0;
 
@@ -416,20 +419,22 @@ class DxColorObj extends ExstensionObj{
             update0.params["color"] = this.params.color0;
             let update1 = new UpdateNode({...node.params}, node.duration, node.delay);
             update1.params["color"] = this.params.color1;
-            
+            let update3 = new UpdateNode({...node.params}, node.duration, node.delay);
+            update3.params["color"] = "black";
 
             state0.append(update0);
             state1.append(update1);
+            state3.append(update3);
 
             
             duration += node.duration;
             node = node.next;
 
         }
-        
 
         this.line0.update(state0.next);            // update child (visual) object; pass root update node
         this.line1.update(state1.next);
+        this.line3.update(state3.next);
         this.notify_children(duration);
 
     }
