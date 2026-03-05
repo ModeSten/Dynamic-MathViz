@@ -551,6 +551,55 @@ class SlopeObj extends ExstensionObj{
 }
 
 
+class SlopeSuportObj extends ExstensionObj{
+
+    constructor(id, slope, params={}, canvas=null){
+
+        super(id);
+        this.params = {
+            "width": 2.5,
+            "color": "black",
+            "draw": false
+        };
+        this.parse_params(params);
+
+        this.set_parent(slope);
+
+        this.get_data();
+
+        this.svgObj = new LineObj(this.id+"Line", this.data, this.params, canvas);
+
+    }
+
+
+    get_data(){
+
+        this.data = [];
+
+        if(this.parent === null){
+            return
+        }
+
+        let x0 = this.parent.data[0][0];
+        let y0 = this.parent.data[0][1];
+        let x1 = this.parent.data[1][0];
+        let y1 = this.parent.data[1][1];
+
+        this.data.push([x0, y0]);
+        this.data.push([x1, y0]);
+        this.data.push([x1, y1]);
+
+
+    }
+
+
+   resolve_update(){
+    this.get_data();
+   } 
+
+}
+
+
 
 // Class creating series of lines aproximating orginal graph
 class SlopeChainObj extends ExstensionObj{

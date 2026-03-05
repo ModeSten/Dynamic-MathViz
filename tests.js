@@ -61,7 +61,7 @@ function tangent(){
         .attr("y", canvas.yScale(7))
         .attr("id", "kLabel");
 
-    let slider = new SliderObj("tanSlider", [-10, 10], 2, "x= ", div.div);
+    let slider = new SliderObj("tanSlider", [-10, 10], 2, "x= ", div.div, "viz_slider", 1000);
 
     slider.addListener(
         (x)=>{
@@ -96,8 +96,31 @@ function slope(){
 
 
     let graph = new GraphObj("slopeGraph", fx[fI], [-10, 10], {}, canvas);
-    let slope = new SlopeObj("slopeLine", fx[fI], {"x0": 0}, canvas, graph);
+    let slope = new SlopeObj("slopeLine", fx[fI], {"x0": 2, "h":3}, canvas, graph);
+    let slopeSup = new SlopeSuportObj("slopeSup", slope, {}, canvas);
 
+
+    /* test function for zooming o mouse click
+    let defXrange = canvas.params.xRange;
+    let defYrange = canvas.params.yRange;
+
+    svgDiv.div.addEventListener("click", (e)=>{
+
+        let bounds = e.target.getBoundingClientRect();
+        let x = e.clientX - bounds.left;
+        x /= svgDiv.div.offsetWidth;
+        let y = e.clientY - bounds.top;
+        y /= svgDiv.div.offsetHeight; 
+        y = 1-y;
+
+        let xOrigin = defXrange[0] * (1-x) + defXrange[1]*x;
+        let xRange = [xOrigin-5, xOrigin+5];
+        let yOrigin = defYrange[0] * (1-y) + defYrange[1]*x;
+        let yRange = [yOrigin-5, yOrigin+5];
+
+        canvas.update({"xRange":xRange, "yRange": yRange});
+    });
+    */
 
 }
 
