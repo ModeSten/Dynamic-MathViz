@@ -25,6 +25,7 @@ function derivative_color(){
     let fDx = new DerivativeApxObj("dx", fx[fI], [-15, 15], {"color": "blue", "draw":false}, null, graphColor);
     //let fDdx = new DxApxDataObj("ddx", {"color": "purple", "draw": false}, canvas, fDx);
 
+    let label = new LabelObj("slope", [5, 5], "text", {}, canvas);
 
     ///*
     let btnRm = button.addListener( (obj)=>{
@@ -32,6 +33,10 @@ function derivative_color(){
         fI ++;
         let update = new UpdateNode({"fx": fx[fI%fx.length], "draw": true}, 1000);
         graphColor.update(update);
+
+        let txtUpdate = new UpdateNode({"text": "updated", "position": [-5, 5]}, 1500);
+        txtUpdate.append(new UpdateNode({"text": "text", "position": [-5, -5]}, 500));
+        label.update(txtUpdate);
     
     } );
      //*/

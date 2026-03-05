@@ -760,6 +760,98 @@ class MarkerObj extends VisualObj{
 }
 
 
+class LabelObj extends VisualObj{
+
+    constructor(id, pos, text, params={}, canvas=null, classname=""){
+
+        super(id);
+
+        this.params={
+            "position": pos,
+            "text": text,
+            "dx": 15,
+            "dy": 15,
+            "anchor": "start"
+        }
+        this.parse_params(params);
+    
+        this.classname = classname;
+        this.textObj = null;
+
+        this.assigne_to_canvas(canvas);
+
+    }
+
+
+    svg_init(duration, delay, callback){
+
+        if(this.canvas === null || this.canvas.svg === null){
+            return
+        } else if(this.textObj !== null){
+            this.svg_update(duration, delay, callback);
+            return
+        }
+
+        let pX = this.canvas.xScale(this.params.position[0]);
+        let pY = this.canvas.yScale(this.params.position[1]);
+
+        this.textObj = this.canvas.svg.append("text")
+            .text(this.params.text)
+            .attr("id", this.id)
+            .attr("class", this.classname)
+            .attr("x", pX)
+            .attr("y", pY)
+            .attr("dx", this.params.dx)
+            .attr("dy", this.params.dy)
+            .attr("text_anchor", this.params.anchor);
+
+    }
+
+
+    svg_update(duration, delay, callback){
+
+        if(this.canvas === null || this.canvas.svg === null){
+            return
+        }
+
+        let pX = this.canvas.xScale(this.params.position[0]);
+        let pY = this.canvas.yScale(this.params.position[1]);
+
+        this.textObj.transition()
+            .duration(duration)
+            .delay(delay)
+            .text(this.params.text)
+            .attr("x", pX)
+            .attr("y", pY)
+            .attr("dx", this.params.dx)
+            .attr("dy", this.params.dy)
+            .attr("text_anchor", this.params.anchor)
+            .on("end", callback);
+
+    }
+
+
+    set_text(){
+
+    }
+
+    
+    on_remove(){
+
+        this.textObj = null;
+
+    }
+
+
+    on_canvas_update(){
+
+        this.svg_init();
+
+    }
+
+}
+
+
 
 
 // Base class for classes extending visual classes; cotnain visualObj (ex line) as parameter 
