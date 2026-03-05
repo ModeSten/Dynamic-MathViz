@@ -25,18 +25,12 @@ function derivative_color(){
     let fDx = new DerivativeApxObj("dx", fx[fI], [-15, 15], {"color": "blue", "draw":false}, null, graphColor);
     //let fDdx = new DxApxDataObj("ddx", {"color": "purple", "draw": false}, canvas, fDx);
 
-    let label = new LabelObj("slope", [5, 5], "text", {}, canvas);
-
     ///*
     let btnRm = button.addListener( (obj)=>{
         
         fI ++;
         let update = new UpdateNode({"fx": fx[fI%fx.length], "draw": true}, 1000);
         graphColor.update(update);
-
-        let txtUpdate = new UpdateNode({"text": "updated", "position": [-5, 5]}, 1500);
-        txtUpdate.append(new UpdateNode({"text": "text", "position": [-5, -5]}, 500));
-        label.update(txtUpdate);
     
     } );
      //*/
@@ -59,29 +53,21 @@ function tangent(){
     let graph = new GraphObj("tangentGraph", fx[fI], [-10, 10], {}, canvas);
     let tangent = new TangentObj("tangentLine", fx[fI], {"length": 100, "origin":2}, canvas, graph);
 
-
-    canvas.svg.append("text")
-        .text(`k= ${get_slope(tangent.fx, 2)}`)
-        .attr("x", canvas.xScale(7))
-        .attr("y", canvas.yScale(7))
-        .attr("id", "kLabel");
-
     let slider = new SliderObj("tanSlider", [-10, 10], 2, "x= ", div.div, "viz_slider", 1000);
+    let px = tangent.params.origin;
+    let py = tangent.params.fx(px);
+    let slope = get_slope(tangent.fx, px).toFixed(5);
+    
+    let label = new LabelObj("kLabel", [px, py], `k= ${slope}`, {}, canvas);
 
     slider.addListener(
         (x)=>{
             tangent.translate_center(x);
-            let slope = get_slope(tangent.fx, x).toFixed(5);
-            ///*
-            canvas.svg.select("#kLabel")
-                .transition()
-                    .duration(10)
-                    .text(`k= ${slope}`)
-                    .attr("x", canvas.xScale(x))
-                    .attr("y", canvas.yScale(graph.params.fx(x)))
-                    .attr("dx", 10)
-                    .attr("dy", 10);
-            //*/
+            slope = get_slope(tangent.fx, x).toFixed(5);
+            let y = tangent.params.fx(x);
+            let txt = `k= ${slope}`;
+            let update = new UpdateNode({"text": txt, "position": [x, y]}, 10);
+            label.update(update);
         }
     )
 

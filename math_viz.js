@@ -775,7 +775,7 @@ class LabelObj extends VisualObj{
         }
         this.parse_params(params);
     
-        this.classname = classname;
+        this.classname = this.id + " " + classname;
         this.textObj = null;
 
         this.assigne_to_canvas(canvas);
@@ -831,7 +831,13 @@ class LabelObj extends VisualObj{
     }
 
 
-    set_text(){
+    set_text(text){
+
+        if(this.textObj = null){
+            return
+        }
+
+        this.textObj.text(text);
 
     }
 
