@@ -507,9 +507,9 @@ class SlopeObj extends ExstensionObj{
     }
 
 
-    on_parent_update(obj, msg){
+    on_parent_update(obj, msg, duration){
 
-        let update = new UpdateNode({"fx": obj.params.fx});
+        let update = new UpdateNode({"fx": obj.params.fx}, duration);
         this.update(update);
 
     }
@@ -573,7 +573,6 @@ class SlopeSuportObj extends ExstensionObj{
         this.get_data();
 
         this.svgObj = new LineObj(this.id+"Line", this.data, this.params, canvas);
-        this.labels = new LabelObj(this.id+"Label", this.labelPos, this.labelText, {"anchors": this.params.lAnchors}, canvas);
 
     }
 
@@ -581,8 +580,6 @@ class SlopeSuportObj extends ExstensionObj{
     get_data(){
 
         this.data = [];
-        this.labelPos = [];
-        this.labelText = [];
 
         if(this.parent === null){
             return
@@ -597,48 +594,16 @@ class SlopeSuportObj extends ExstensionObj{
         this.data.push([x1, y0]);
         this.data.push([x1, y1]);
 
-        // get h label position and display text
-        let hx = this.data[0][0]*0.5 + this.data[1][0]*0.5;
-        let hy = this.data[0][1];
-        if(this.data[2][1]-this.data[0][1] < 0){ 
-            hy = this.data[2][1];
-        }
-        this.labelPos.push([hx, hy]);
-        let hTxt = `h=${this.parent.params.h}`;
-        this.labelText.push(hTxt);
-
-        // get delta y label position and display text
-        let yx = this.data[1][0];
-        let yy = this.data[0][1]*0.5 + this.data[2][1]*0.5;
-        this.labelPos.push([yx, yy]);
-        let vY = (this.data[2][1]-this.data[0][1]).toFixed(1);
-        let yTxt = `∆y=${vY}`;
-        this.labelText.push(yTxt);
-
-        // get f(x) label position and display text
-        let fxX = this.data[0][0];
-        let fxY = this.data[0][1]+0.5;
-        this.labelPos.push([fxX, fxY]);
-        this.fxTxt = `f(x)=${this.data[0][1].toFixed(1)}`;
-        this.labelText.push(this.fxTxt);
-
-        // get f(x+h) label position and dispaly text
-        let fxhX = this.data[2][0];
-        let fxhY = this.data[2][1];
-        this.labelPos.push([fxhX, fxhY]);
-        this.fxhTxt = `f(x+h)=${(this.data[2][1]).toFixed(1)}`;
-        this.labelText.push(this.fxhTxt);
-
     }
 
 
-   resolve_update(){
+   resolve_update(node){
     this.get_data();
 
     if(this.labels === null){
         return
     }
-    let labelUpdate = new UpdateNode({"anchors":this.params.lAnchors, "text": this.labelText, "position": this.labelPos});
+    let labelUpdate = new UpdateNode({"anchors":this.params.lAnchors, "text": this.labelText, "position": this.labelPos}, node.duration);
     this.labels.update(labelUpdate);
    } 
 

@@ -10,14 +10,16 @@ function viz1(root){
     let chart = new ChartObj("chart1", {}, canvas);
 
     let fx = (x)=>{return x**2 / 4 - 2};
-    let graph = new GraphObj("graph1", fx, [-10, 10], {}, canvas );
+    let graph = new GraphObj("graph1", fx, [-10, 10], {} , canvas);
     let secant = new SlopeObj("slope1", fx, {"x0":4, "h": 2}, canvas, graph);
     let slopeSup = new SlopeSuportObj("slopeSup1", secant, {"width": 1}, canvas);
+    let label = new slopeLabels("slopeLabels", secant, {}, canvas);
 
 
     let btn = new ButtonObj("testBtn", "test", vizDiv1.containerDiv.div);
     btn.addListener(()=>{
-        let update = new UpdateNode({"fx": (x)=>{return 5*Math.sin(x/3)}});
+        let update = new UpdateNode({"fx": (x)=>{return 2*Math.sin(x/3)}});
+        update.append( new UpdateNode({"fx": (x)=>{return 6*Math.sin(x/3)}}) );
         graph.update(update);
     });
 

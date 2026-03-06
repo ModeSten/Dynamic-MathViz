@@ -767,7 +767,7 @@ class LabelObj extends VisualObj{
         super(id);
 
         this.params={
-            "position": pos,
+            "data": pos,
             "text": text,
             "dx": 0,
             "dy": 0,
@@ -790,8 +790,9 @@ class LabelObj extends VisualObj{
             return
         } 
 
+
         let u = this.canvas.svg.selectAll("."+this.id)
-            .data(this.params.position);
+            .data(this.params.data);
 
         u.enter()
             .append("text")
@@ -887,9 +888,8 @@ class ExstensionObj{
         while( node !== null){              // loop through update nodes
     
             this.parse_params(node.params);
-            this.resolve_update();
+            this.resolve_update(node);
             node.params.data = this.data;   // add data to update node
-
             if(node.duration === null){
                 node.duration = this.duration;
             } 
@@ -899,7 +899,7 @@ class ExstensionObj{
 
             duration += node.duration;
             node = node.next;
-
+            
         }
 
         if(this.svgObj !== null){
