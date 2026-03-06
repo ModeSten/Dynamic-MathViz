@@ -3,7 +3,7 @@
 // for creating and managing divs
 class DivObj {
 
-    constructor(id, parentDiv, className="" ){
+    constructor(id, parentDiv=null, className="" ){
 
         this.id = id;
         this.div = document.createElement("div");
@@ -23,6 +23,7 @@ class DivObj {
         if(parentDiv === null){
             return
         }
+        
 
         this.parentDiv = parentDiv;
         this.parentDiv.appendChild(this.div);
@@ -293,6 +294,51 @@ class ButtonStepObj{
     removeAllListeners(){
 
         this.listener = [];
+
+    }
+
+
+}
+
+
+
+
+class VizContainerObj{
+
+    constructor(id, parentDiv=null){
+
+        this.id = id;
+        this.parentDiv = parentDiv;
+
+        let contaienrId = this.id+"conatiner";
+        this.containerDiv = new DivObj(contaienrId, parentDiv, "viz_container");
+        
+        let svgDivId = this.id+"svgdiv";
+        this.svgDiv = new DivObj(svgDivId, this.containerDiv.div, "svg_div");
+        
+    }
+
+
+    assignToDiv(div){
+
+        if(Div === null){
+            return
+        }
+
+        this.parentDiv = div
+        this.containerDiv.assignToDiv(div);
+
+    }
+
+
+    removeFromDiv(){
+
+        if(this.parentDiv === null){
+            return
+        }
+
+        this.parentDiv = null;
+        this.containerDiv.removeFromDiv();
 
     }
 

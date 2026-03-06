@@ -1,0 +1,49 @@
+#root{
+    position: relative;
+    width: 100%;
+}
+
+.viz_container{
+
+    display: inline-flex;
+    position: relative;
+
+    width: 95%;
+    margin-left: 2%;
+    margin-top: 20px;
+    padding: 10px;
+
+    background-color:antiquewhite;
+    border-style: solid;
+
+}
+
+
+.svg_div{
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 20px;
+
+  border-right: solid 1px;
+  
+}
+
+
+.viz_svg{
+
+  display: flex;
+  position: relative;
+  width: 800px;
+
+  padding-bottom: 15px;
+
+}
+
+
+.viz_container p{
+
+    margin-left: 40px;
+
+}

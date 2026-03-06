@@ -769,9 +769,9 @@ class LabelObj extends VisualObj{
         this.params={
             "position": pos,
             "text": text,
-            "dx": 15,
-            "dy": 15,
-            "anchor": "start"
+            "dx": 0,
+            "dy": 0,
+            "anchors": ["middle"]
         }
         this.parse_params(params);
     
@@ -779,54 +779,33 @@ class LabelObj extends VisualObj{
         this.textObj = null;
 
         this.assigne_to_canvas(canvas);
+        this.svg_init(0);
 
     }
 
 
-    svg_init(duration, delay, callback){
+    svg_init(duration=this.duration, delay=this.delay, callbac=()=>{}){
 
         if(this.canvas === null || this.canvas.svg === null){
             return
-        } else if(this.textObj !== null){
-            this.svg_update(duration, delay, callback);
-            return
-        }
+        } 
 
-        let pX = this.canvas.xScale(this.params.position[0]);
-        let pY = this.canvas.yScale(this.params.position[1]);
+        let u = this.canvas.svg.selectAll("."+this.id)
+            .data(this.params.position);
 
-        this.textObj = this.canvas.svg.append("text")
-            .text(this.params.text)
-            .attr("id", this.id)
+        u.enter()
+            .append("text")
             .attr("class", this.classname)
-            .attr("x", pX)
-            .attr("y", pY)
-            .attr("dx", this.params.dx)
-            .attr("dy", this.params.dy)
-            .attr("text_anchor", this.params.anchor);
-
-    }
-
-
-    svg_update(duration, delay, callback){
-
-        if(this.canvas === null || this.canvas.svg === null){
-            return
-        }
-
-        let pX = this.canvas.xScale(this.params.position[0]);
-        let pY = this.canvas.yScale(this.params.position[1]);
-
-        this.textObj.transition()
+        .merge(u)
+            .transition()
             .duration(duration)
             .delay(delay)
-            .text(this.params.text)
-            .attr("x", pX)
-            .attr("y", pY)
-            .attr("dx", this.params.dx)
-            .attr("dy", this.params.dy)
-            .attr("text_anchor", this.params.anchor)
-            .on("end", callback);
+                .text((d, i)=>{ return this.params.text[i] })
+                .attr("x", (d)=>{ return this.canvas.xScale(d[0]) })
+                .attr("y", (d)=>{ return this.canvas.yScale(d[1]) })
+                .attr("dx", this.params.dx)
+                .attr("dy", this.params.dy)
+                .attr("text-anchor", (d, i)=>{ return this.params.anchors[i%this.params.anchors.length]});
 
     }
 
@@ -923,8 +902,11 @@ class ExstensionObj{
 
         }
 
-        
-        this.svgObj.update(state);            // update child (visual) object; pass root update node
+        if(this.svgObj !== null){
+            this.svgObj.update(state);   
+        }
+
+        // update child (visual) object; pass root update node
         this.notify_children(duration);
 
     }

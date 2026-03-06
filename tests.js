@@ -58,7 +58,7 @@ function tangent(){
     let py = tangent.params.fx(px);
     let slope = get_slope(tangent.fx, px).toFixed(5);
     
-    let label = new LabelObj("kLabel", [px, py], `k= ${slope}`, {}, canvas);
+    let label = new LabelObj("kLabel", [px, py], `k= ${slope}`, {}, canvas, "label");
 
     slider.addListener(
         (x)=>{
