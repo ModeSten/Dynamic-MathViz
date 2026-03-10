@@ -180,7 +180,8 @@ class DerivativeApxObj extends ExstensionObj{
              "xRange": xRange,  // x value range
              "h": 0.05,            // h value for caclulating slope and for sgement lenght
              "draw": false,
-             "discrete": false
+             "discrete": false,
+             "step": 0.05
             };   
         this.parse_params(params); 
 
@@ -207,8 +208,9 @@ class DerivativeApxObj extends ExstensionObj{
         let xEnd = this.params.xRange[1];
         let h = this.params.h;
 
+        console.log(h);
 
-        for(let x=xStart; x<=xEnd; x+=h){
+        for(let x=xStart; x<=xEnd; x+=this.params.step){
 
             let k = get_slope(this.params.fx, x, h);
 
