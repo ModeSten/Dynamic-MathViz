@@ -776,14 +776,17 @@ class LabelObj extends VisualObj{
         this.params={
             "data": pos,
             "text": text,
-            "dx": 0,
-            "dy": 0,
-            "anchors": ["middle"]
+            "dx": [0],
+            "dy": [0],
+            "anchors": ["middle"], 
+            "show": [true]
         }
         this.parse_params(params);
     
         this.classname = this.id + " " + classname;
         this.textObj = null;
+
+        this.data = this.params.data;
 
         this.assigne_to_canvas(canvas);
         this.svg_init(0);
@@ -797,6 +800,11 @@ class LabelObj extends VisualObj{
             return
         } 
 
+        let dxL = this.params.dx.length;
+        let dyL = this.params.dy.length;
+        let showL = this.params.show.length;
+
+        console.log(this.params.show);
 
         let u = this.canvas.svg.selectAll("."+this.id)
             .data(this.params.data);
@@ -808,11 +816,11 @@ class LabelObj extends VisualObj{
             .transition()
             .duration(duration)
             .delay(delay)
-                .text((d, i)=>{ return this.params.text[i] })
+                .text((d, i)=>{ if(this.params.show[i%showL]){return this.params.text[i]} else{return ""} })
                 .attr("x", (d)=>{ return this.canvas.xScale(d[0]) })
                 .attr("y", (d)=>{ return this.canvas.yScale(d[1]) })
-                .attr("dx", this.params.dx)
-                .attr("dy", this.params.dy)
+                .attr("dx", (d, i)=>{ return this.params.dx[i%dxL] })
+                .attr("dy", (d, i)=>{ return this.params.dy[i%dyL] })
                 .attr("text-anchor", (d, i)=>{ return this.params.anchors[i%this.params.anchors.length]});
 
     }
@@ -840,6 +848,11 @@ class LabelObj extends VisualObj{
 
         this.svg_init();
 
+    }
+
+
+    resolve_update(){
+        this.data = this.params.data;
     }
 
 }

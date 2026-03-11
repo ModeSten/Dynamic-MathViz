@@ -72,7 +72,10 @@ class LabelAxisLineObj extends ExstensionObj{
 
 }
 
-
+/* 
+"dx" : [ -35, -35, 0, 20, 0, 0 ],
+"dy" : [ 0, 0, 20, 0, 25, 25 ]
+*/
 
 class slopeLabels extends ExstensionObj{
 
@@ -80,17 +83,18 @@ class slopeLabels extends ExstensionObj{
 
         super(id);
         this.labelText = [];
-        this.labelBaseTxt = ["f(x)", "f(x+h)", "h", "∆y", "x", "x+h"];
+        this.baseLabelTxt = ["f(x)", "f(x+h)", "h", "∆y", "x", "x+h"];
         this.labelTxt = [];
         this.params={
             "anchors": ["middle"],
-            "showVal": [false],
-            "dx" : [ -35, -35, 0, 20, 0, 0 ],
-            "dy" : [ 0, 0, 20, 0, 25, 25 ]
+            "showVal": [false, false, true, true, false, false],
+            "dx" : [ 40, 40, 0, 25, 0, 0 ],
+            "dy" : [ 0, 0, 20, 0, 25, 25 ],
+            "show": [true]
         };
         this.parse_params(params);
 
-        this.set_parent(slope);
+        this.set_parent(slope.svgObj);
 
         this.get_data();
 
@@ -104,7 +108,7 @@ class slopeLabels extends ExstensionObj{
     get_data(){
 
         this.data = [];
-        this.labelTxt = [...this.labelBaseTxt];
+        this.labelTxt = [...this.baseLabelTxt];
 
         if(this.parent === null){
             return
@@ -140,7 +144,7 @@ class slopeLabels extends ExstensionObj{
         let fx = this.parent.data[0][1];
         let fxh = this.parent.data[1][1];
         let dy = fxh - fx;
-        let h = this.parent.params.h;
+        let h = xh-x;
 
         let labelVal = [fx, fxh, h, dy, x, xh];
         let l = this.labelTxt.length;
@@ -168,8 +172,11 @@ class slopeLabels extends ExstensionObj{
 
         if(x >= 0 ){
             negateX[0] = true;
-            negateX[1] = true;
         } 
+
+        if(xh >= 0){
+            negateX[1] = true;
+        }
 
         if(fx < 0){
             negateY[4] = true;
@@ -215,7 +222,7 @@ class slopeLabels extends ExstensionObj{
     }
 
 
-    on_parent_update(duration){
+    on_parent_update(obj, msg, duration){
         this.update(new UpdateNode({}, duration));
     }
 

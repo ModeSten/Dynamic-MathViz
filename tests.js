@@ -16,17 +16,17 @@ function main(){
     let canvas = new CanvasObj("testCanvas", width, height, main, [-10, 10], [-10, 10], vizDiv.svgDiv.id);
     let chart = new ChartObj("testChart", {}, canvas);
 
-    let graph = new GraphObj("testGraph", (x)=>{return x**2/4}, [-10, 10], {}, canvas);
+    let graph = new GraphObj("testGraph", (x)=>{return 4*Math.sin(x/2)}, [-10, 10], {}, canvas);
     let secant = new SecantObj("testSecant", graph.params.fx, {"x0": -4, "h": 2}, canvas, graph);
 
     let labelSupLine = new LabelAxisLineObj("labelLines", secant.data, {}, canvas, secant.svgObj);
-    let supLine = new SecantSuportObj("secantTri", secant, {}, canvas);
-
+    //let supLine = new SecantSuportObj("secantTri", secant, {}, canvas);
+    let labels = new slopeLabels("labels", secant, {}, canvas);
 
     let btn = new ButtonObj("testBtn", "test", vizDiv.containerDiv.div);
     btn.addListener(()=>{
 
-        let update = new UpdateNode({"x0":2}, 2000);
+        let update = new UpdateNode({"x0":-2}, 2000);
         update.append(new UpdateNode({"h":4}, 1000));
         secant.update(update);
 
