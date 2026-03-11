@@ -39,17 +39,18 @@ class SpacedMarkerObj extends ExstensionObj{
         }
 
         this.data = [];
-        let len = Object.keys(this.parent.data).length;
+        let p = this.parent.data;
+        let len = p.length;
         let space = this.params.space;
 
-        let d0 = this.parent.data[0];
+        let d0 = p[0];
         this.data.push(d0);
 
         let d1;
         let L = 0;
         for(let i=1; i<len; i++){
             
-            d1 = this.parent.data[i];
+            d1 = p[i];
             L += Math.sqrt( (d1[0]-d0[0])**2 + (d1[1]-d0[1])**2 );
             if(L >= space){ 
                 this.data.push(d1);

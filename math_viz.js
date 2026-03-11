@@ -180,6 +180,8 @@ class VisualObj{
 
         this.parent = null;
 
+        this.data = [];
+
     }
 
 
@@ -213,9 +215,9 @@ class VisualObj{
 
 
     // notify child objects (on update)
-    notify_children(){
+    notify_children(duration){
 
-        this.children.forEach( (c) => { c.callback( this, "" );} );
+        this.children.forEach( (c) => { c.callback( this, "", duration );} );
 
     }
 
@@ -292,7 +294,7 @@ class VisualObj{
 
         this.parse_params(state.params);
         this.resolve_update();              // resolve update 'side-efects'; Custome for each child class (ex update data)
-        this.notify_children();
+        this.notify_children( state.duration );
 
         if(state.duration === null){
             state.duration = this.duration;
@@ -671,6 +673,11 @@ class LineObj extends VisualObj{
         }
 
     }
+
+
+    resolve_update(){
+        this.data = this.params.data;
+    }
     
 
 }
@@ -886,7 +893,7 @@ class ExstensionObj{
         let duration = 0; 
 
         while( node !== null){              // loop through update nodes
-    
+
             this.parse_params(node.params);
             this.resolve_update(node);
             node.params.data = this.data;   // add data to update node
@@ -1040,7 +1047,6 @@ class GraphObj extends ExstensionObj{
     }
 
 }
-
 
 
 /* other classes */

@@ -1,51 +1,52 @@
 
-class PointAxisLines extends ExstensionObj{
+class LabelAxisLineObj extends ExstensionObj{
 
-    constructor(id, points, params={}, canvas=null, label=null){
-        
+    constructor(id, points, params={}, canvas=null, parent=null){
 
         super(id);
-        this.data = [];
+
         this.params = {
             "points": points,
-            "width": 1,
-            "axxisOffset": [0.2, 0.2]
-        }
+            "axisOfset": [0.2, 0.2],
+            "width": 0.5
+        };
         this.parse_params(params);
-
-        this.set_parent(label);
-
         this.get_data();
 
-        this.svgObj = new LineObj(id+"Line", this.data, this.params);
-
+        this.svgObj = new LineObj(id+"Lines", this.data, this.params);
         this.assigne_to_canvas(canvas);
+
+        this.set_parent(parent);
 
     }
 
+
     get_data(){
-
-        if(this.parent !== null){
-
-            this.params.points = this.parent.data;
-
-        }
-
 
         this.data = [];
 
-        for( let i=0; i<this.params.points.length; i++ ){
+        let l = this.params.points.length;
+        let p = this.params.points;
 
-            let x0 = 0
-            let y0 = this.params.points[i][1];
-            let x1 = this.params.points[i][0];
+        for(let i=0; i<l; i++){
+
+            let px = p[i][0];
+            let py = p[i][1];
+
+            let x0 = 0;
+            if(px < 0){
+                 x0 += this.params.axisOfset[0];
+            } else{
+                x0 -= this.params.axisOfset[0];
+            }
+            let y0 = py;
+            let x1 = px;
             let y1 = 0;
-
-            if(this.params.points[i][0] > 0){ x0 -= this.params.axxisOffset[0] }
-            else{ x0 += this.params.axxisOffset[0] }
-
-            if( this.params.points[i][1] >  0){ y1 -= this.params.axxisOffset[1] }
-            else{  y1 += this.params.axxisOffset[1] }
+            if(py < 0){
+                 y1 += this.params.axisOfset[1];
+            } else{
+                y1 -= this.params.axisOfset[1];
+            }
 
             this.data.push([x0, y0]);
             this.data.push([x1, y0]);
@@ -57,19 +58,20 @@ class PointAxisLines extends ExstensionObj{
     }
 
 
-
-    resolve_update(node){
+    resolve_update(){
         this.get_data();
     }
-    
 
 
     on_parent_update(obj, msg, duration){
-        this.update(new UpdateNode({}, duration));
+    
+        this.update( new UpdateNode({"points":this.parent.params.data}, duration));
+
     }
 
 
 }
+
 
 
 class slopeLabels extends ExstensionObj{

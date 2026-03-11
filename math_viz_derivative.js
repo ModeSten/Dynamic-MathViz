@@ -208,8 +208,6 @@ class DerivativeApxObj extends ExstensionObj{
         let xEnd = this.params.xRange[1];
         let h = this.params.h;
 
-        console.log(h);
-
         for(let x=xStart; x<=xEnd; x+=this.params.step){
 
             let k = get_slope(this.params.fx, x, h);
@@ -226,7 +224,7 @@ class DerivativeApxObj extends ExstensionObj{
     }
 
 
-    on_parent_update(obj, msg, duration=this.duration){
+    on_parent_update(obj, msg, duration){
 
         let update = new UpdateNode({"fx": obj.params.fx}, duration);
         this.update(update);
@@ -460,7 +458,7 @@ class DxColorObj extends ExstensionObj{
 
 
 // Class creating series of (n) lines, aproximating orginal graph
-class SlopeObj extends ExstensionObj{
+class SecantObj extends ExstensionObj{
 
  constructor(id, fx, params={}, canvas=null, graph=null){
 
@@ -553,9 +551,9 @@ class SlopeObj extends ExstensionObj{
 }
 
 
-class SlopeSuportObj extends ExstensionObj{
+class SecantSuportObj extends ExstensionObj{
 
-    constructor(id, slope, params={}, canvas=null){
+    constructor(id, secant, params={}, canvas=null){
 
         super(id);
         this.labels = null;
@@ -570,7 +568,7 @@ class SlopeSuportObj extends ExstensionObj{
         };
         this.parse_params(params);
 
-        this.set_parent(slope);
+        this.set_parent(secant.svgObj);
 
         this.get_data();
 
@@ -587,10 +585,12 @@ class SlopeSuportObj extends ExstensionObj{
             return
         }
 
-        let x0 = this.parent.data[0][0];
-        let y0 = this.parent.data[0][1];
-        let x1 = this.parent.data[1][0];
-        let y1 = this.parent.data[1][1];
+        let points = this.parent.data;
+
+        let x0 = points[0][0];
+        let y0 = points[0][1];
+        let x1 = points[1][0];
+        let y1 = points[1][1];
 
         this.data.push([x0, y0]);
         this.data.push([x1, y0]);
@@ -601,18 +601,12 @@ class SlopeSuportObj extends ExstensionObj{
 
    resolve_update(node){
     this.get_data();
-
-    if(this.labels === null){
-        return
-    }
-    let labelUpdate = new UpdateNode({"anchors":this.params.lAnchors, "text": this.labelText, "position": this.labelPos}, node.duration);
-    this.labels.update(labelUpdate);
    } 
 
 
-   on_parent_update(){
+   on_parent_update(obj, msg, duration){
 
-        this.update(new UpdateNode({}));
+        this.update(new UpdateNode({}, duration));
 
    }
 

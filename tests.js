@@ -8,115 +8,32 @@ var fI = 1;
 
 
 
-function derivative_color(){
+function main(){
 
     let root = document.getElementById("root");
 
-    let div = new DivObj("dxColorContainer", root, "viz_container");
-    let svgDiv = new DivObj("dxColorSvgDiv", div.div, "svg_container");
+    let vizDiv = new VizContainerObj("testViz", root);
+    let canvas = new CanvasObj("testCanvas", width, height, main, [-10, 10], [-10, 10], vizDiv.svgDiv.id);
+    let chart = new ChartObj("testChart", {}, canvas);
 
-    let button = new ButtonObj("testButton", "test", div.div);
+    let graph = new GraphObj("testGraph", (x)=>{return x**2/4}, [-10, 10], {}, canvas);
+    let secant = new SecantObj("testSecant", graph.params.fx, {"x0": -4, "h": 2}, canvas, graph);
 
-    let canvas = new CanvasObj("dxColorCanvas", width, height, margin, [-15, 15], [-10, 10], "dxColorSvgDiv");
-    let chart = new ChartObj("dxColorChart", {}, canvas);
-    
-
-    let graphColor = new DxColorObj("dxColorGraph", fx[fI], [-15, 15], {"draw": true}, canvas);
-    let fDx = new DerivativeApxObj("dx", fx[fI], [-15, 15], {"color": "blue", "draw":false}, null, graphColor);
-    //let fDdx = new DxApxDataObj("ddx", {"color": "purple", "draw": false}, canvas, fDx);
-
-    ///*
-    let btnRm = button.addListener( (obj)=>{
-        
-        fI ++;
-        let update = new UpdateNode({"fx": fx[fI%fx.length], "draw": true}, 1000);
-        graphColor.update(update);
-    
-    } );
-     //*/
+    let labelSupLine = new LabelAxisLineObj("labelLines", secant.data, {}, canvas, secant.svgObj);
+    let supLine = new SecantSuportObj("secantTri", secant, {}, canvas);
 
 
-}
+    let btn = new ButtonObj("testBtn", "test", vizDiv.containerDiv.div);
+    btn.addListener(()=>{
 
+        let update = new UpdateNode({"x0":2}, 2000);
+        update.append(new UpdateNode({"h":4}, 1000));
+        secant.update(update);
 
-function tangent(){
-
-    let root = document.getElementById("root");
-
-    let div = new DivObj("tangentContainer", root, "viz_container");
-    let svgDiv = new DivObj("tangentSvgDiv", div.div, "svg_container");
-
-    let canvas = new CanvasObj("tangentCanvas", width, height, margin, [-10, 10], [-10, 10], svgDiv.id);
-    let chart = new ChartObj("tangentChart", {}, canvas);
-
-
-    let graph = new GraphObj("tangentGraph", fx[fI], [-10, 10], {}, canvas);
-    let tangent = new TangentObj("tangentLine", fx[fI], {"length": 100, "origin":2}, canvas, graph);
-
-    let slider = new SliderObj("tanSlider", [-10, 10], 2, "x= ", div.div, "viz_slider", 1000);
-    let px = tangent.params.origin;
-    let py = tangent.params.fx(px);
-    let slope = get_slope(tangent.fx, px).toFixed(5);
-    
-    let label = new LabelObj("kLabel", [px, py], `k= ${slope}`, {}, canvas, "label");
-
-    slider.addListener(
-        (x)=>{
-            tangent.translate_center(x);
-            slope = get_slope(tangent.fx, x).toFixed(5);
-            let y = tangent.params.fx(x);
-            let txt = `k= ${slope}`;
-            let update = new UpdateNode({"text": txt, "position": [x, y]}, 10);
-            label.update(update);
-        }
-    )
-
-
-}
-
-
-function slope(){
-
-    let root = document.getElementById("root");
-
-    let div = new DivObj("slopeContainer", root, "viz_container");
-    let svgDiv = new DivObj("slopeSvgDiv", div.div, "svg_container");
-
-    let canvas = new CanvasObj("slopeCanvas", width, height, margin, [-10, 10], [-10, 10], svgDiv.id);
-    let chart = new ChartObj("slopeChart", {}, canvas);
-
-
-    let graph = new GraphObj("slopeGraph", fx[fI], [-10, 10], {}, canvas);
-    let slope = new SlopeObj("slopeLine", fx[fI], {"x0": 2, "h":3}, canvas, graph);
-    let slopeSup = new SlopeSuportObj("slopeSup", slope, {}, canvas);
-
-
-    /* test function for zooming o mouse click
-    let defXrange = canvas.params.xRange;
-    let defYrange = canvas.params.yRange;
-
-    svgDiv.div.addEventListener("click", (e)=>{
-
-        let bounds = e.target.getBoundingClientRect();
-        let x = e.clientX - bounds.left;
-        x /= svgDiv.div.offsetWidth;
-        let y = e.clientY - bounds.top;
-        y /= svgDiv.div.offsetHeight; 
-        y = 1-y;
-
-        let xOrigin = defXrange[0] * (1-x) + defXrange[1]*x;
-        let xRange = [xOrigin-5, xOrigin+5];
-        let yOrigin = defYrange[0] * (1-y) + defYrange[1]*x;
-        let yRange = [yOrigin-5, yOrigin+5];
-
-        canvas.update({"xRange":xRange, "yRange": yRange});
     });
-    */
+    
 
 }
 
 
-
-derivative_color();
-tangent();
-slope();
+main();
