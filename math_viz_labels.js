@@ -88,8 +88,8 @@ class slopeLabels extends ExstensionObj{
         this.params={
             "anchors": ["middle"],
             "showVal": [false, false, true, true, false, false],
-            "dx" : [ 40, 40, 0, 25, 0, 0 ],
-            "dy" : [ 0, 0, 20, 0, 25, 25 ],
+            "dx" : [ 25, 35, 0, 25, 0, 0 ],
+            "dy" : [ 0, 0, 20, 0, 20, 20 ],
             "show": [true]
         };
         this.parse_params(params);
@@ -117,19 +117,28 @@ class slopeLabels extends ExstensionObj{
         let y0 = this.parent.data[0][1];
         let y1 = this.parent.data[1][1];
         let dy = y1 - y0;
-        let h = this.parent.params.h;
 
         let x0 = this.parent.data[0][0];
         let x1 =  this.parent.data[1][0];
         let xC = x0*0.5 + x1*0.5;
         let yC = y0*0.5 + y1*0.5;
 
-        this.data.push([0, y0]);
+        let x1y = 0;
+        if( (y0 < 0 && y1 > 0) || (y0 > 0 && y1 < 0)){
+            x1y = y0;
+        }
+
+        let y1x = 0;
+        if( (x0>0 && x1<0) || (x0<0 && x1>0)){
+            y1x = x1;
+        }
+
+        this.data.push([y1x, y0]);
         this.data.push([0, y1]);
         this.data.push([xC, y0]);
         this.data.push([x1, yC]);
         this.data.push([x0, 0]);
-        this.data.push([x1, 0]);
+        this.data.push([x1, x1y]);
 
         this.get_label_text();
         this.adjust_offset();
