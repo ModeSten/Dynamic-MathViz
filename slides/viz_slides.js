@@ -3,6 +3,10 @@ const margin = { top: 50, right: 0, bottom: 20, left: 30 },
 width = 700;
 height = 400;
 
+var fx = [(x)=>{return x**2 / 4}, (x)=>{return x**3/12}, (x)=>{ return 3*Math.sin(x/2)}];
+var Dx = [(x)=>{return x/2}, (x)=>{return 3*x**2/12}, (x)=>{return 3/2*Math.cos(x/2)}];
+var fxTxt = ["f(x)= x^2 / 4", "f(x)= x^3 / 12", "f(x)= 3*sin(x/2)"];
+
 class Slide{
 
     constructor(id, svgN){
@@ -98,6 +102,9 @@ function set_slide1( slide=null ){
         slide.inputs["xSlider"] = new SliderObj("dxIntroSliderX", [-10, 10], -2, "x=", slide.ctrlContainer, "viz_slider", 1000);
         slide.inputs["hSlider"] = new SliderObj("dxIntroSliderH", [0.1, 7], 2, "h=", slide.ctrlContainer, "viz_slider", 1000);
 
+        let select = new SelectorObj("dxIntroFxSelect", fxTxt, [0, 1, 2], slide.ctrlContainer);
+        slide.inputs["fxSelect"] = select;
+
         slides[0] = slide;
 
     }
@@ -111,8 +118,8 @@ function set_slide1( slide=null ){
 
         let canvas = new CanvasObj("dxIntoCanvas", width, height, margin, [-10, 10], [-10, 10], slide.svgDiv[0].id);
         let chart = new ChartObj("dxIntroChart", {}, canvas);
-        let graph = new GraphObj("dxIntroGraph", (x)=>{return x**3/10}, [-20, 20], {}, canvas);
-        let secant = new SecantObj("dxIntroSlope", (x)=>{return x**3/10}, {"width": 1.5}, canvas, graph);
+        let graph = new GraphObj("dxIntroGraph", fx[0], [-20, 20], {}, canvas);
+        let secant = new SecantObj("dxIntroSlope", fx[0], {"x0": 2, "h": 3}, canvas, graph);
         let slopeSup = new SecantSuportObj("dxIntroSlopeBase", secant, {}, canvas);
         let labels = new slopeLabels("dxIntroLabels", secant, {}, canvas);
         let LabelLines = new LabelAxisLineObj("dxIntroLabelL", secant.data, {}, canvas, secant.svgObj);
@@ -124,6 +131,13 @@ function set_slide1( slide=null ){
         slide.inputs.hSlider.addListener((val)=>{
             let update = new UpdateNode({"h": val}, 10);
             secant.update(update);
+        });
+
+        slide.inputs.fxSelect.addListener((val)=>{
+
+            let update = new UpdateNode({"fx": fx[val]}, 1500);
+            graph.update(update);
+
         });
 
     }
@@ -149,6 +163,9 @@ function set_slide2(slide=null){
         slide.inputs["xSlider"] = new SliderObj("dxIntroSliderX", [-10, 10], -2, "x=", slide.ctrlContainer, "viz_slider", 1000);
         slide.inputs["hSlider"] = new SliderObj("dxIntroSliderH", [0.1, 7], 2, "h=", slide.ctrlContainer, "viz_slider", 1000);
 
+        let select = new SelectorObj("dxCtnFxSelect", fxTxt, [0, 1, 2], slide.ctrlContainer);
+        slide.inputs["fxSelect"] = select;
+
         slides[1] = slide;
 
     }
@@ -162,17 +179,17 @@ function set_slide2(slide=null){
 
         let canvas1 = new CanvasObj("dxCtnCanvas1", width, height, margin, [-10, 10], [-10, 10], slide.svgDiv[0].id);
         let chart1 = new ChartObj("dxCtnChart1", {}, canvas1);
-        let graph1 = new GraphObj("dxCtnG1", (x)=>{return x**3/10}, [-20, 20], {}, canvas1);
-        let secant = new SecantObj("dxCtnSlope", (x)=>{return x**3/10}, {"width": 1.5}, canvas1, graph1);
+        let graph1 = new GraphObj("dxCtnG1", fx[0], [-20, 20], {}, canvas1);
+        let secant = new SecantObj("dxCtnSlope", fx[0], {"width": 1.5}, canvas1, graph1);
         let slopeSup = new SecantSuportObj("dxCtnSlopeBase", secant, {}, canvas1);
         let labels = new slopeLabels("dxCtnLabels", secant, {}, canvas1);
         let LabelLines = new LabelAxisLineObj("dxCtnLabelL", secant.data, {}, canvas1, secant.svgObj);
 
         let canvas2 = new CanvasObj("dxCtnCanvas2", width, height, margin, [-10, 10], [-10, 10], slide.svgDiv[1].id);
         let chart2 = new ChartObj("dxCtnChart2", {}, canvas2);
-        let graph2 = new GraphObj("dxCtnG2", (x)=>{return x**3/10}, [-20, 20], {}, canvas2);
-        let derivative = new DerivativeApxObj("dxCtnDx", (x)=>{return x**3/10}, [-20, 20], {"h": 1}, canvas2);
-        let trueDx = new GraphObj("dxCtnTrueDx", (x)=>{return 3*x**2/10}, [-20, 20], {"color": "green"}, canvas2);
+        let graph2 = new GraphObj("dxCtnG2", fx[0], [-20, 20], {}, canvas2);
+        let derivative = new DerivativeApxObj("dxCtnDx", fx[0], [-20, 20], {"color": "red"}, canvas2, graph2);
+        let trueDx = new GraphObj("dxCtnTrueDx", Dx[0], [-20, 20], {"color": "green"}, canvas2);
 
         slide.inputs.xSlider.addListener((val)=>{
             let update = new UpdateNode({"x0": val}, 10);
@@ -184,6 +201,16 @@ function set_slide2(slide=null){
             secant.update(update);
             derivative.update(update);
         })
+
+        slide.inputs.fxSelect.addListener((val)=>{
+
+            let update = new UpdateNode({"fx": fx[val]}, 1500);
+            let updateDx = new UpdateNode({"fx": Dx[val]});
+            graph1.update(update);
+            graph2.update(update);
+            trueDx.update(updateDx);
+
+        });
 
     }
 
@@ -207,6 +234,9 @@ function set_slide3(slide=null){
 
         slide.inputs["xSlider"] = new SliderObj("dxIntroSliderX", [-10, 10], -2, "x=", slide.ctrlContainer, "viz_slider", 1000);
 
+        let select = new SelectorObj("tangentFxSelect", fxTxt, [0, 1, 2], slide.ctrlContainer);
+        slide.inputs["fxSelect"] = select;
+
         slides[2] = slide;
 
     }
@@ -219,14 +249,21 @@ function set_slide3(slide=null){
 
         let canvas = new CanvasObj("tangentCanvas", width, height, margin, [-10, 10], [-10, 10], slide.svgDiv[0].id);
         let chart = new ChartObj("tangentChart", {}, canvas);
-        let graph = new GraphObj("tangentG", (x)=>{return x**2/10}, [-20, 20], {}, canvas);
-        let tangent = new TangentObj("tangent", (x)=>{return x**2/10}, {"origin": 2, "length": 100}, canvas, graph);
+        let graph = new GraphObj("tangentG", fx[0], [-20, 20], {}, canvas);
+        let tangent = new TangentObj("tangent", fx[0], {"origin": 2, "length": 100}, canvas, graph);
         let marker = new SegmentMarkerObj("tangentMarker", tangent, {"p":[0.5], "color": "blue"}, canvas);
         let label = new TangentLabel("tangentLabel", tangent, {}, canvas);
 
         slide.inputs.xSlider.addListener((val)=>{
             let update = new UpdateNode({"origin": val}, 10);
             tangent.update(update);
+        });
+
+        slide.inputs.fxSelect.addListener((val)=>{
+
+            let update = new UpdateNode({"fx": fx[val]}, 1500);
+            graph.update(update);
+
         });
 
     }
@@ -249,6 +286,9 @@ function set_slide4(slide = null){
         txt.innerHTML = figTxt;
         slide.txtContainer.appendChild(txt);
 
+        let select = new SelectorObj("dxClFxSelect", fxTxt, [0, 1, 2], slide.ctrlContainer);
+        slide.inputs["fxSelect"] = select;
+
         slides[3] = slide;
 
     }
@@ -261,7 +301,14 @@ function set_slide4(slide = null){
 
         let canvas = new CanvasObj("dxColorCanvas", width, height, margin, [-10, 10], [-10, 10], slide.svgDiv[0].id);
         let chart = new ChartObj("dxColorChart", {}, canvas);
-        let dxColor = new DxColorObj("dxColorG", (x)=>{return x**3/10}, [-20, 20], {"draw": true}, canvas);
+        let dxColor = new DxColorObj("dxColorG", fx[0], [-20, 20], {"draw": true}, canvas);
+
+        slide.inputs.fxSelect.addListener((val)=>{
+
+            let update = new UpdateNode({"fx": fx[val]}, 1500);
+            dxColor.update(update);
+
+        });
 
     }
 

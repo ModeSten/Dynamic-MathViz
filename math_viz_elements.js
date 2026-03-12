@@ -303,11 +303,78 @@ class ButtonStepObj{
 
 class SelectorObj{
 
-    constructor(){
+    constructor(id, labels, values, parentDiv=null, className=""){
 
-        
+        this.id = id;
+
+        this.listener = [];
+
+        this.select = document.createElement("select");
+        this.select.name = this.id;
+        this.select.id = this.id;
+        this.className = "selector";
+
+
+        this.labels = labels;
+        this.values = values;
+
+        this.options = [];
+
+        for(let i=0; i<Object.keys(values).length; i++){
+
+            let opt = document.createElement("option");
+            opt.value = values[i];
+            opt.innerHTML = labels[i];
+
+            this.options.push(opt);
+            this.select.appendChild(opt);
+
+        }
+
+        this.select.onchange = () => {this.on_change()};
+
+
+
+        this.assignToDiv(parentDiv);
+
+
 
     }
+
+
+    assignToDiv(parentDiv){
+
+        if(parentDiv===null){
+            return
+        }
+
+        parentDiv.appendChild(this.select);
+
+    }
+
+
+    on_change(){
+
+        this.listener.forEach( (func)=>{ func(this.select.value) } ); 
+
+    }
+
+
+    addListener(callback){
+
+        this.listener.push(callback);
+        return ()=>{ this.listener = this.listener.filter( (func)=>{func !== callback}) };
+
+    }
+
+
+    removeAllListeners(){
+
+        this.listener = [];
+
+    }
+
+
 
 }
 
@@ -354,4 +421,5 @@ class VizContainerObj{
 
 
 }
+
 

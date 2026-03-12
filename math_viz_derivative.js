@@ -38,9 +38,9 @@ class TangentObj extends ExstensionObj{
     }
 
 
-    on_parent_update( obj, msg){
+    on_parent_update( obj, msg, duration){
 
-        let update = new UpdateNode({"fx": obj.params.fx});
+        let update = new UpdateNode({"fx": obj.params.fx}, duration);
         this.update(update);
 
     }
