@@ -286,15 +286,25 @@ class DxColorObj extends ExstensionObj{
 
         this.get_data();
 
-        this.line0 = new LineObj(this.id+"0", this.data, {"color": this.params.color0}, canvas);    
+        this.line0 = new LineObj(this.id+"0", this.data, {"color": this.params.color0});    
         this.line0.isDefined = (d, i )=>{ return this.definedPos( d, i ) };
-        this.line1 = new LineObj(this.id+"1", this.data, {"color": this.params.color1}, canvas);
+        this.line1 = new LineObj(this.id+"1", this.data, {"color": this.params.color1});
         this.line1.isDefined = (d, i )=>{ return this.definedNeg( d, i ) };
-        this.line3 = new LineObj(this.id+"3", this.data, {"color": "black"}, canvas);
+        this.line3 = new LineObj(this.id+"3", this.data, {"color": "black"});
         this.line3.isDefined = (d, i)=>{ return this.definedZero( d, i) };
 
         
-        this.update(new UpdateNode({}));
+        this.update(new UpdateNode(this.params));
+        this.assigne_to_canvas(canvas);
+
+    }
+
+
+    assigne_to_canvas(canvas){
+
+        this.line0.assigne_to_canvas(canvas);
+        this.line1.assigne_to_canvas(canvas);
+        this.line3.assigne_to_canvas(canvas);
 
     }
 

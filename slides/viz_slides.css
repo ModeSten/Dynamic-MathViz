@@ -65,6 +65,8 @@ h3{
     width: 100%;
     height: fit-content;
     background-color: antiquewhite;
+
+    border: 0.5px solid;
 }
 
 .svg_div{
@@ -105,10 +107,8 @@ h3{
     display: flex;
     width: 65%;
 
-    height: 100%;
+    height: fit-content;
     padding-left: 20px;
-
-    border-right: 0.5px solid;
 
 }
 
@@ -121,4 +121,5 @@ h3{
     height: 100%;
 
     padding-left: 20px;
+    border-left: 0.5px solid;
 }

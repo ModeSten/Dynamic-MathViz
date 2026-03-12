@@ -47,16 +47,16 @@ class Slide{
 
 }
 
-var slides = [null, null, null];
+var slides = [null, null, null, null];
 var slideN = 0;
-var slideF = [set_slide1, set_slide2, set_slide3];
+var slideF = [set_slide1, set_slide2, set_slide3, set_slide4];
 
 
 
 function set_header(){
 
     let header = document.getElementById("header");
-    let btn = new ButtonStepObj("testStep", "slide ", [1, 10], 1, 1, "back", "next", header);
+    let btn = new ButtonStepObj("testStep", "slide ", [1, 4], 1, 1, "back", "next", header);
     btn.addListener((val)=>{
         toggle_slide(val-1);
     });
@@ -232,6 +232,41 @@ function set_slide3(slide=null){
     }
 
 }
+
+
+function set_slide4(slide = null){
+
+    let div = document.getElementById("content");
+
+    /* create slide object and 'html' elements */ 
+    if(slide===null){
+
+        slide = new Slide("dxColorSlide", 1 );
+
+        let figTxt = "<b>figure4:</b> this is a figure";
+
+        let txt = document.createElement("p");
+        txt.innerHTML = figTxt;
+        slide.txtContainer.appendChild(txt);
+
+        slides[3] = slide;
+
+    }
+
+    div.appendChild(slide.root);
+
+    /* create SVG elements */ 
+    if(!slide.init){
+        slide.init = true;
+
+        let canvas = new CanvasObj("dxColorCanvas", width, height, margin, [-10, 10], [-10, 10], slide.svgDiv[0].id);
+        let chart = new ChartObj("dxColorChart", {}, canvas);
+        let dxColor = new DxColorObj("dxColorG", (x)=>{return x**3/10}, [-20, 20], {"draw": true}, canvas);
+
+    }
+
+}
+
 
 
 set_header();
