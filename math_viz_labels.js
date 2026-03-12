@@ -237,3 +237,86 @@ class slopeLabels extends ExstensionObj{
 
 
 }
+
+
+
+class TangentLabel extends ExstensionObj{
+
+    constructor(id, tangent, params={}, canvas=null){
+
+        super(id);
+
+        this.LabelTxt=[""];
+
+        this.params={
+            "anchors": ["middle"],
+            "showVal": [true],
+            "dx" : [ 30 ],
+            "dy" : [ 20 ],
+            "show": [true]
+        };
+        this.parse_params(params);   
+        
+        this.set_parent(tangent.svgObj);
+
+        this.get_data();
+
+        this.svgObj = new LabelObj(this.id+"label", this.data, this.labelText, this.params, null);
+
+        this.assigne_to_canvas(canvas);
+
+    }
+
+
+    get_data(){
+
+        this.data=[];
+
+        if(this.parent === null){
+            return;
+        }
+
+        let x0 = this.parent.data[0][0];
+        let y0 = this.parent.data[0][1];
+        let x1 = this.parent.data[1][0];
+        let y1 = this.parent.data[1][1];
+
+        let x = 0.5*x0 + 0.5*x1;
+        let y = 0.5*y0 + 0.5*y1;
+
+        this.data.push([x, y]);
+
+        let k = 0.0;
+        if( x0!==x1 ){
+            k = (y1-y0) / (x1-x0);
+        }
+
+        this.labelText = [`k=${k.toFixed(2)}`];
+
+
+        let dx = this.params.dx[0];
+        dx = Math.abs(dx);
+        if(k<0){
+            dx = -dx;
+        }
+        this.params.dx[0] = dx;
+
+    }
+
+
+    resolve_update(node){
+
+        this.get_data();
+        node.params.text = this.labelText;
+
+    }
+
+
+    on_parent_update(obj, msg, duration){
+
+        this.update( new UpdateNode({}, duration));
+
+    }
+
+
+}

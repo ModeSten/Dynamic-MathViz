@@ -1,7 +1,7 @@
 
 const margin = { top: 50, right: 0, bottom: 20, left: 30 },
 width = 700;
-height = 500;
+height = 400;
 
 class Slide{
 
@@ -65,6 +65,10 @@ function set_header(){
 
 
 function toggle_slide(n){
+
+    if(n >= slides.length){
+        return;
+    }
 
     if(slides[slideN] !== null){
         slides[slideN].root.remove();
@@ -215,9 +219,10 @@ function set_slide3(slide=null){
 
         let canvas = new CanvasObj("tangentCanvas", width, height, margin, [-10, 10], [-10, 10], slide.svgDiv[0].id);
         let chart = new ChartObj("tangentChart", {}, canvas);
-        let graph = new GraphObj("tangentG", (x)=>{return x**3/10}, [-20, 20], {}, canvas);
-        let tangent = new TangentObj("tangent", (x)=>{return x**3/10}, {"origin": 2, "length": 100}, canvas, graph);
+        let graph = new GraphObj("tangentG", (x)=>{return x**2/10}, [-20, 20], {}, canvas);
+        let tangent = new TangentObj("tangent", (x)=>{return x**2/10}, {"origin": 2, "length": 100}, canvas, graph);
         let marker = new SegmentMarkerObj("tangentMarker", tangent, {"p":[0.5], "color": "blue"}, canvas);
+        let label = new TangentLabel("tangentLabel", tangent, {}, canvas);
 
         slide.inputs.xSlider.addListener((val)=>{
             let update = new UpdateNode({"origin": val}, 10);
