@@ -838,7 +838,6 @@ class LabelObj extends VisualObj{
 
     resolve_update(){
         this.data = this.params.data;
-        console.log(this.params.dx);
     }
 
 }
