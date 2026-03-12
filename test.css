@@ -8,7 +8,7 @@
 
 
 .viz_container{
-  display: block;
+  display: flexbox;
   position: relative;
   width: 50%;
   margin-left: 20%;
@@ -24,21 +24,19 @@
 
 
 .svg_container{
-  display: flex;
+  display: block;
   justify-content: center;
   align-items: center;
 
   border-bottom: solid 1px;
-  
+  width: fit-content;
 
 }
 
 .viz_svg{
-  display: inline-block;
+  display: inline-flex;
   position: relative;
-  width: 800px;
-
-  padding-bottom: 15px;
+  width: 100%;
 }
 
 
@@ -55,6 +53,20 @@
   
 }
 
+
+.slider_container{
+
+  position: relative;
+  display: inline-flex ;
+  
+  justify-content: center;
+  align-items: center;
+
+  margin-left: 15px;
+  margin-right: 10px;
+
+
+}
 
 
 

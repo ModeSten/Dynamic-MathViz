@@ -22,7 +22,6 @@ class CanvasObj {
         this.xScale;            // canvas (svg) xScale; dependent on width and x value range
         this.yScale;            // canvas yScale yScale: dependent on height and y value range 
 
-
         this.params = {
             "width": width,
             "height": height,
@@ -52,24 +51,12 @@ class CanvasObj {
 
         this.parentId = targetDivId;
 
-        /*
-        this.svg = d3.select("#"+targetDivId)
-            .append("svg")
-                .attr("id", this.ID)
-                .attr("class", "viz_svg")
-                .attr("width", this.params.width + this.params.margin.left + this.params.margin.right)
-                .attr("height", this.params.height + this.params.margin.top + this.params.margin.bottom)
-                .append("g")
-                    .attr("class", "transform")
-                    .attr("transform", "translate("+ this.params.margin.left + "," + this.params.margin.top +")");
-        */
-
         this.svg = d3.select("#"+targetDivId)
             .append("svg")
                 .attr("id", this.id)
                 .attr("class", "viz_svg")
                 .attr("preserveAspectRatio", "xMinyMin mett")
-                .attr("viewBox", `0 0 ${width+margin.left*1.1} ${height+margin.top*1.1}`)
+                .attr("viewBox", `0 0 ${width+margin.left*2} ${height+margin.top*2}`)
                 .append("g")
                     .attr("class", "transform")
                     .attr("transform", "translate("+ this.params.margin.left + "," + this.params.margin.top +")");
@@ -803,8 +790,6 @@ class LabelObj extends VisualObj{
         let dxL = this.params.dx.length;
         let dyL = this.params.dy.length;
         let showL = this.params.show.length;
-
-        console.log(this.params.show);
 
         let u = this.canvas.svg.selectAll("."+this.id)
             .data(this.params.data);

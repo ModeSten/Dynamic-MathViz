@@ -243,7 +243,6 @@ class ButtonStepObj{
 
     assignToDiv( parentDiv ){
 
-
         if(parentDiv === null){
             return
         }
@@ -302,6 +301,17 @@ class ButtonStepObj{
 
 
 
+class SelectorObj{
+
+    constructor(){
+
+        
+
+    }
+
+}
+
+
 
 class VizContainerObj{
 
@@ -344,3 +354,4 @@ class VizContainerObj{
 
 
 }
+

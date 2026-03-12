@@ -147,10 +147,12 @@ constructor(id, parent, params={}, canvas=null){
         this.get_data();
     }
 
-    on_parent_update(){
+    on_parent_update(obj, msg, duration){
 
         this.get_data();
-        this.svgObj.update(new UpdateNode({"data":this.data}, this.parent.duration));
+        if(this.svgObj !==null){
+            this.svgObj.update(new UpdateNode({"data":this.data}, duration));
+        }
 
     }
 
@@ -226,12 +228,12 @@ constructor(id, parent, params={}, canvas=null){
     }
 
 
-    on_parent_update(obj, msg){
+    on_parent_update(obj, msg, duration){
         
         this.get_data();
 
         if(this.svgObj !== null){
-            this.svgObj.update(new UpdateNode({"data":this.data}, this.parent.duration));
+            this.svgObj.update(new UpdateNode({"data":this.data}, duration));
         }
 
     }

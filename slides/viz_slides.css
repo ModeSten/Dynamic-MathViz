@@ -1,0 +1,124 @@
+
+button{
+    border-radius: 5px;
+    background-color: lightblue;
+    height: 25px;
+    width: 50px;
+}
+
+.stepBtn{
+
+    font-size: small;
+
+}
+
+.stepBtn button{
+    height: 20px;
+    width: 40px;
+}
+
+h3{
+    margin: 5px;
+}
+
+.slider_container{
+
+    display: flex;
+}
+
+
+
+
+
+#header{
+    position: relative;
+    width: 96%;
+    margin-left: 1.5%;
+    margin-top: 10px;
+    height: fit-content;
+    background-color:aliceblue;
+}
+
+#header div{
+    position: relative;
+    display: flex;
+    width: 100%;
+    align-content: center;
+    justify-content: center;
+    height: fit-content;
+}
+
+
+#content{
+    position: relative;
+    width: 96%;
+    margin-left: 1.5%;
+    margin-top: 10px;
+    height: fit-content;
+}
+
+.viz_container{
+    position: relative;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    width: 100%;
+    height: fit-content;
+    background-color: antiquewhite;
+}
+
+.svg_div{
+    position: relative;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    height: fit-content;
+    margin-top: 5px;
+    margin-left: 0.5%;
+    width: 98%;
+    height: fit-content;
+}
+
+
+.viz_svg{
+
+    position: relative;
+    display: flex;
+    width: 100%;
+
+}
+
+.slide_footer{
+    position: relative;
+    display: flex;
+    width: 100%;
+    margin-top: 10px;
+    height: fit-content;
+    background-color: whitesmoke;
+
+    border: 1px solid;
+}
+
+.slide_txt{
+
+    position: relative;
+    display: flex;
+    width: 65%;
+
+    height: 100%;
+    padding-left: 20px;
+
+    border-right: 0.5px solid;
+
+}
+
+
+.slide_ctrl{
+
+    position: relative;
+    display: inline-block;
+    width: 35%;
+    height: 100%;
+
+    padding-left: 20px;
+}

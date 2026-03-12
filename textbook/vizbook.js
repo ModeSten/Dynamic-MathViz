@@ -11,8 +11,8 @@ function viz1(root){
 
     let fx = (x)=>{return -1*x**2 / 6 + 4};
     let graph = new GraphObj("graph1", fx, [-10, 10], {} , canvas);
-    let secant = new SlopeObj("slope1", fx, {"x0":4, "h": 2}, canvas, graph);
-    let slopeSup = new SlopeSuportObj("slopeSup1", secant, {"width": 2.5}, canvas);
+    let secant = new SecantObj("slope1", fx, {"x0":4, "h": 2}, canvas, graph);
+    let slopeSup = new SecantSuportObj("slopeSup1", secant, {"width": 2.5}, canvas);
     let label = new slopeLabels("slopeLabels", secant, {}, canvas);
     let labelLines = new PointAxisLines("labelInd", secant.data, {}, canvas, secant);
 
