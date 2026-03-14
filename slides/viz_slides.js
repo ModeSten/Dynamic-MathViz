@@ -51,16 +51,15 @@ class Slide{
 
 }
 
-var slides = [null, null, null, null, null];
 var slideN = 0;
-var slideF = [set_slide1, set_slide2, set_slide3, set_slide4, set_slide5];
-
+var slideF = [dx_intro_slide, dx_continued_slide, tangent_slide, multi_tangent_slide, dx_color_slide];
+var slides = Array(slideF.length).fill(null);
 
 
 function set_header(){
 
     let header = document.getElementById("header");
-    let btn = new ButtonStepObj("testStep", "slide ", [1, 5], 1, 1, "back", "next", header);
+    let btn = new ButtonStepObj("testStep", "slide ", [1, slideF.length], 1, 1, "back", "next", header);
     btn.addListener((val)=>{
         toggle_slide(val-1);
     });
@@ -79,12 +78,12 @@ function toggle_slide(n){
     }
 
     slideN = n;
-    slideF[n](slides[n]);
+    slideF[n](n, slides[n]);
 
 }
 
 
-function set_slide1( slide=null ){
+function dx_intro_slide(i, slide=null){
 
     let div = document.getElementById("content");
 
@@ -105,7 +104,7 @@ function set_slide1( slide=null ){
         let select = new SelectorObj("dxIntroFxSelect", fxTxt, [0, 1, 2], slide.ctrlContainer);
         slide.inputs["fxSelect"] = select;
 
-        slides[0] = slide;
+        slides[i] = slide;
 
     }
 
@@ -145,7 +144,7 @@ function set_slide1( slide=null ){
 }
 
 
-function set_slide2(slide=null){
+function dx_continued_slide(i, slide=null){
 
     let div = document.getElementById("content");
 
@@ -166,7 +165,7 @@ function set_slide2(slide=null){
         let select = new SelectorObj("dxCtnFxSelect", fxTxt, [0, 1, 2], slide.ctrlContainer);
         slide.inputs["fxSelect"] = select;
 
-        slides[1] = slide;
+        slides[i] = slide;
 
     }
 
@@ -217,7 +216,7 @@ function set_slide2(slide=null){
 }
 
 
-function set_slide3(slide=null){
+function tangent_slide(i, slide=null){
 
     let div = document.getElementById("content");
 
@@ -237,7 +236,7 @@ function set_slide3(slide=null){
         let select = new SelectorObj("tangentFxSelect", fxTxt, [0, 1, 2], slide.ctrlContainer);
         slide.inputs["fxSelect"] = select;
 
-        slides[2] = slide;
+        slides[i] = slide;
 
     }
 
@@ -271,7 +270,7 @@ function set_slide3(slide=null){
 }
 
 
-function set_slide4(slide = null){
+function dx_color_slide(i, slide = null){
 
     let div = document.getElementById("content");
 
@@ -289,7 +288,7 @@ function set_slide4(slide = null){
         let select = new SelectorObj("dxClFxSelect", fxTxt, [0, 1, 2], slide.ctrlContainer);
         slide.inputs["fxSelect"] = select;
 
-        slides[3] = slide;
+        slides[i] = slide;
 
     }
 
@@ -315,7 +314,7 @@ function set_slide4(slide = null){
 }
 
 
-function set_slide5(slide = null){
+function multi_tangent_slide(i, slide = null){
 
     let div = document.getElementById("content");
 
@@ -333,7 +332,7 @@ function set_slide5(slide = null){
         let select = new SelectorObj("tanChainFxSelect", fxTxt, [0, 1, 2], slide.ctrlContainer);
         slide.inputs["fxSelect"] = select;
 
-        slides[4] = slide;
+        slides[i] = slide;
 
     }
 
