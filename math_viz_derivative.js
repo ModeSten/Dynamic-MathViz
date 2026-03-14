@@ -108,7 +108,8 @@ class TangentChainObj extends ExstensionObj{
              "xRange": xRange,  // x value range 
              "h": 0.01,         // h value for calculating line slope
              "ofset": 0.5,       // 
-            "draw": false
+            "draw": false,
+            "lenght": 5
             };    
         this.parse_params(params);
 
@@ -139,10 +140,17 @@ class TangentChainObj extends ExstensionObj{
         for (let xi=x0; xi<this.params.xRange[1]; xi+=len){
 
             let func = get_tangent_function(this.params.fx, xi);
+            let points = get_points_from_lenght(func, xi, this.params.lenght, ofset);
 
+            this.data.push(points[0]);
+            this.data.push(points[1]);
+            this.data.push([points[1][0], null]);
+
+            /*
             this.data.push( [ xi-len*ofset, func(xi-len*ofset) ] );
             this.data.push( [ xi+len*(1-ofset), func(xi+len*(1-ofset)) ] );
             this.data.push( [ xi+len*(1-ofset), null ] );
+            */
 
         }
 
@@ -156,9 +164,9 @@ class TangentChainObj extends ExstensionObj{
     }
 
 
-    on_parent_update(){
+    on_parent_update(obj, msg, duration){
 
-        let update = new UpdateNode({"fx": this.parent.params.fx});
+        let update = new UpdateNode({"fx": this.parent.params.fx}, duration);
         this.update(update);
 
     }
@@ -181,7 +189,8 @@ class DerivativeApxObj extends ExstensionObj{
              "h": 0.05,            // h value for caclulating slope and for sgement lenght
              "draw": false,
              "discrete": false,
-             "step": 0.05
+             "step": 0.05,
+             "dashArray": "0, 0"
             };   
         this.parse_params(params); 
 
@@ -272,7 +281,7 @@ class DxColorObj extends ExstensionObj{
             "xRange": xRange,   // line x start and en values ([start, end])
             "step": 0.01,        // x step size between each data pair
             "color0": "red",    // color when derivative is negative  
-            "color1": "green",  // color when derivative is positive
+            "color1": "blue",  // color when derivative is positive
             "width": 2,         
             "draw": false,      // specifiy line should animated as if drawn (true || false)
             "drawT": 1,         // draw animation end (relative to line lenght: 0 to 1)

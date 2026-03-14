@@ -518,7 +518,8 @@ class LineObj extends VisualObj{
         "color": "black",   // line (stroke) color
         "draw": false,      // animate drawing of line
         "drawT0": 0,        // line draw (relative) start: between 0 & 1
-        "drawT": 1          // line draw (relative) end: between 0 & 1
+        "drawT": 1,          // line draw (relative) end: between 0 & 1
+        "dashArray": "0, 0"
         };
 
         this.lenght = 0;
@@ -577,6 +578,7 @@ class LineObj extends VisualObj{
                     .attr("fill", "none")
                     .attr("stroke", this.params.color)
                     .attr("stroke-width", this.params.width)
+                    .attr("stroke-dasharray", this.params.dashArray)
                     .delay(delay)
                 .on("end", callback)
 
@@ -1011,7 +1013,8 @@ class GraphObj extends ExstensionObj{
             "step": 0.1,        // x value steps between points
             "draw": false,      // animate drawing of graph
             "drawT0": 0,        // (relative) starting point for drawing graph: [0, 1]
-            "drawT": 1          // (relative) enpoint for drawing grpah: [0, 1]
+            "drawT": 1,          // (relative) enpoint for drawing grpah: [0, 1]
+            "dashArray": "0, 0"
         };
         this.parse_params(params);
 

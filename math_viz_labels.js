@@ -72,10 +72,7 @@ class LabelAxisLineObj extends ExstensionObj{
 
 }
 
-/* 
-"dx" : [ -35, -35, 0, 20, 0, 0 ],
-"dy" : [ 0, 0, 20, 0, 25, 25 ]
-*/
+
 
 class slopeLabels extends ExstensionObj{
 
@@ -160,7 +157,7 @@ class slopeLabels extends ExstensionObj{
         let sl =this.params.showVal.length;
         for(let i=0; i<l; i++){
             if(this.params.showVal[i%sl]){
-                this.labelTxt[i] += `=${labelVal[i].toFixed(1)}`;
+                this.labelTxt[i] += `= ${labelVal[i].toFixed(1)}`;
             }
         }
 
@@ -291,7 +288,7 @@ class TangentLabel extends ExstensionObj{
             k = (y1-y0) / (x1-x0);
         }
 
-        this.labelText = [`k=${k.toFixed(2)}`];
+        this.labelText = [`k= ${k.toFixed(2)}`];
 
 
         let dx = this.params.dx[0];
