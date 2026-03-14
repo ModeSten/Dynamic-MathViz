@@ -5,7 +5,7 @@ height = 400;
 
 var fx = [(x)=>{return x**3/12 - 0.9*x**2 + 2.5*x + 4}, (x)=>{return x**2/4 - 3*x/2 + 5 }, (x)=>{ return x**3/12 - 3*x**2/4 + 9*x/4 + 1}, (x)=>{ return 4*Math.sin(x)+5}];
 var Dx = [(x)=>{return x**2/4 - 1.8*x}, (x)=>{return x/2 - 3/2}, (x)=>{return x**2/4 - 3*x/2 +9/4}, (x)=>{ return 4*Math.cos(x) }];
-var fxTxt = ["f(x)= x^2 / 4", "f(x)= x^3 / 12", "f(x)= 3*sin(x/2)", "f(x)= 3*sin(x)+3"];
+var fxTxt = ["f(x)= 1/12*x^3 - 0.9x^2 + 2.5x +4", "f(x)= 1/4*x^2 - 3/2*x^2 +5", "f(x)= 1/12*x^3 - 3/4*x^2 +9/4*x +1", "f(x)= 4*sin(x)+5"];
 var Xrange = [-3, 10];
 var yRange = [-5, 10];
 
