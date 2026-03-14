@@ -3,9 +3,11 @@ const margin = { top: 50, right: 0, bottom: 20, left: 30 },
 width = 700;
 height = 400;
 
-var fx = [(x)=>{return x**2 / 4}, (x)=>{return x**3/12}, (x)=>{ return 3*Math.sin(x/2)}];
-var Dx = [(x)=>{return 2*x/4}, (x)=>{return 3*x**2/12}, (x)=>{return 3/2*Math.cos(x/2)}];
-var fxTxt = ["f(x)= x^2 / 4", "f(x)= x^3 / 12", "f(x)= 3*sin(x/2)"];
+var fx = [(x)=>{return (x-3)**3/12 - (x-2)**2/10 - x/2 + 7}, (x)=>{return (x-3)**2/4 +3 }, (x)=>{ return (x-3)**3/12 +3}, (x)=>{ return 4*Math.sin(x)+5}];
+var Dx = [(x)=>{return 2*x/4}, (x)=>{return 3*x**2/12}, (x)=>{return 3/2*Math.cos(x/2)}, (x)=>{ return 4*Math.cos(x) }];
+var fxTxt = ["f(x)= x^2 / 4", "f(x)= x^3 / 12", "f(x)= 3*sin(x/2)", "f(x)= 3*sin(x)+3"];
+var Xrange = [-3, 10];
+var yRange = [-5, 10];
 
 class Slide{
 
@@ -87,6 +89,7 @@ function dx_intro_slide(i, slide=null){
 
     let div = document.getElementById("content");
 
+
     /* create slide object and 'html' elements */ 
     if(slide === null){
 
@@ -98,10 +101,11 @@ function dx_intro_slide(i, slide=null){
         txt.innerHTML = figTxt;
         slide.txtContainer.appendChild(txt);
 
-        slide.inputs["xSlider"] = new SliderObj("dxIntroSliderX", [-10, 10], -2, "x=", slide.ctrlContainer, "viz_slider", 1000);
+        slide.inputs["xSlider"] = new SliderObj("dxIntroSliderX", [-5, 15], 2, "x=", slide.ctrlContainer, "viz_slider", 1000);
         slide.inputs["hSlider"] = new SliderObj("dxIntroSliderH", [0.1, 7], 2, "h=", slide.ctrlContainer, "viz_slider", 1000);
 
-        let select = new SelectorObj("dxIntroFxSelect", fxTxt, [0, 1, 2], slide.ctrlContainer);
+        let fxI = Array(fx.length).fill(null).map((x, i)=>{return i});
+        let select = new SelectorObj("dxIntroFxSelect", fxTxt, fxI, slide.ctrlContainer);
         slide.inputs["fxSelect"] = select;
 
         slides[i] = slide;
@@ -115,7 +119,7 @@ function dx_intro_slide(i, slide=null){
 
         slide.init = true;
 
-        let canvas = new CanvasObj("dxIntoCanvas", width, height, margin, [-10, 10], [-10, 10], slide.svgDiv[0].id);
+        let canvas = new CanvasObj("dxIntoCanvas", width, height, margin, Xrange, yRange, slide.svgDiv[0].id);
         let chart = new ChartObj("dxIntroChart", {}, canvas);
         let graph = new GraphObj("dxIntroGraph", fx[0], [-20, 20], {"draw": false}, canvas);
         let secant = new SecantObj("dxIntroSlope", fx[0], {"x0": 2, "h": 3}, canvas, graph);
@@ -162,7 +166,8 @@ function dx_continued_slide(i, slide=null){
         slide.inputs["xSlider"] = new SliderObj("dxIntroSliderX", [-10, 10], -2, "x=", slide.ctrlContainer, "viz_slider", 1000);
         slide.inputs["hSlider"] = new SliderObj("dxIntroSliderH", [0.1, 7], 2, "h=", slide.ctrlContainer, "viz_slider", 1000);
 
-        let select = new SelectorObj("dxCtnFxSelect", fxTxt, [0, 1, 2], slide.ctrlContainer);
+        let fxI = Array(fx.length).fill(null).map((x, i)=>{return i});
+        let select = new SelectorObj("dxCtnFxSelect", fxTxt, fxI, slide.ctrlContainer);
         slide.inputs["fxSelect"] = select;
 
         slides[i] = slide;
@@ -176,7 +181,7 @@ function dx_continued_slide(i, slide=null){
 
         slide.init = true;
 
-        let canvas1 = new CanvasObj("dxCtnCanvas1", width, height, margin, [-10, 10], [-10, 10], slide.svgDiv[0].id);
+        let canvas1 = new CanvasObj("dxCtnCanvas1", width, height, margin, Xrange, yRange, slide.svgDiv[0].id);
         let chart1 = new ChartObj("dxCtnChart1", {}, canvas1);
         let graph1 = new GraphObj("dxCtnG1", fx[0], [-20, 20], {}, canvas1);
         let secant = new SecantObj("dxCtnSlope", fx[0], {"width": 1.5, "x0": 2, "h":2}, canvas1, graph1);
@@ -184,11 +189,11 @@ function dx_continued_slide(i, slide=null){
         let labels = new slopeLabels("dxCtnLabels", secant, {}, canvas1);
         let LabelLines = new LabelAxisLineObj("dxCtnLabelL", secant.data, {}, canvas1, secant.svgObj);
 
-        let canvas2 = new CanvasObj("dxCtnCanvas2", width, height, margin, [-10, 10], [-10, 10], slide.svgDiv[1].id);
+        let canvas2 = new CanvasObj("dxCtnCanvas2", width, height, margin, Xrange, yRange, slide.svgDiv[1].id);
         let chart2 = new ChartObj("dxCtnChart2", {}, canvas2);
         let graph2 = new GraphObj("dxCtnG2", fx[0], [-20, 20], {}, canvas2);
         let derivative = new DerivativeApxObj("dxCtnDx", fx[0], [-20, 20], {"color": "red", "h":2}, canvas2, graph2);
-        let trueDx = new GraphObj("dxCtnTrueDx", Dx[0], [-20, 20], {"color": "blue", "dashArray": "6, 4"}, canvas2);
+        let trueDx = new GraphObj("dxCtnTrueDx", Dx[0], [-20, 20], {"color": "red", "dashArray": "6, 6"}, canvas2);
 
         slide.inputs.xSlider.addListener((val)=>{
             let update = new UpdateNode({"x0": val}, 10);
@@ -205,6 +210,7 @@ function dx_continued_slide(i, slide=null){
 
             let update = new UpdateNode({"fx": fx[val]}, 1500);
             let updateDx = new UpdateNode({"fx": Dx[val]});
+            console.log(Dx[val]);
             graph1.update(update);
             graph2.update(update);
             trueDx.update(updateDx);
@@ -233,7 +239,8 @@ function tangent_slide(i, slide=null){
 
         slide.inputs["xSlider"] = new SliderObj("dxIntroSliderX", [-10, 10], -2, "x=", slide.ctrlContainer, "viz_slider", 1000);
 
-        let select = new SelectorObj("tangentFxSelect", fxTxt, [0, 1, 2], slide.ctrlContainer);
+        let fxI = Array(fx.length).fill(null).map((x, i)=>{return i});
+        let select = new SelectorObj("tangentFxSelect", fxTxt, fxI, slide.ctrlContainer);
         slide.inputs["fxSelect"] = select;
 
         slides[i] = slide;
@@ -246,7 +253,7 @@ function tangent_slide(i, slide=null){
     if(!slide.init){
         slide.init = true;
 
-        let canvas = new CanvasObj("tangentCanvas", width, height, margin, [-10, 10], [-10, 10], slide.svgDiv[0].id);
+        let canvas = new CanvasObj("tangentCanvas", width, height, margin, Xrange, yRange, slide.svgDiv[0].id);
         let chart = new ChartObj("tangentChart", {}, canvas);
         let graph = new GraphObj("tangentG", fx[0], [-20, 20], {}, canvas);
         let tangent = new TangentObj("tangent", fx[0], {"origin": 2, "length": 100}, canvas, graph);
@@ -285,7 +292,8 @@ function dx_color_slide(i, slide = null){
         txt.innerHTML = figTxt;
         slide.txtContainer.appendChild(txt);
 
-        let select = new SelectorObj("dxClFxSelect", fxTxt, [0, 1, 2], slide.ctrlContainer);
+        let fxI = Array(fx.length).fill(null).map((x, i)=>{return i});
+        let select = new SelectorObj("dxClFxSelect", fxTxt, fxI, slide.ctrlContainer);
         slide.inputs["fxSelect"] = select;
 
         slides[i] = slide;
@@ -298,7 +306,7 @@ function dx_color_slide(i, slide = null){
     if(!slide.init){
         slide.init = true;
 
-        let canvas = new CanvasObj("dxColorCanvas", width, height, margin, [-10, 10], [-10, 10], slide.svgDiv[0].id);
+        let canvas = new CanvasObj("dxColorCanvas", width, height, margin, Xrange, yRange, slide.svgDiv[0].id);
         let chart = new ChartObj("dxColorChart", {}, canvas);
         let dxColor = new DxColorObj("dxColorG", fx[0], [-20, 20], {"draw": true}, canvas);
 
@@ -329,7 +337,8 @@ function multi_tangent_slide(i, slide = null){
         txt.innerHTML = figTxt;
         slide.txtContainer.appendChild(txt);
 
-        let select = new SelectorObj("tanChainFxSelect", fxTxt, [0, 1, 2], slide.ctrlContainer);
+        let fxI = Array(fx.length).fill(null).map((x, i)=>{return i});
+        let select = new SelectorObj("tanChainFxSelect", fxTxt, fxI, slide.ctrlContainer);
         slide.inputs["fxSelect"] = select;
 
         slides[i] = slide;
@@ -342,7 +351,7 @@ function multi_tangent_slide(i, slide = null){
     if(!slide.init){
         slide.init = true;
 
-        let canvas = new CanvasObj("tanChainCanvas", width, height, margin, [-10, 10], [-10, 10], slide.svgDiv[0].id);
+        let canvas = new CanvasObj("tanChainCanvas", width, height, margin, Xrange, yRange, slide.svgDiv[0].id);
         let chart = new ChartObj("tanChainChart", {}, canvas);
         let graph = new GraphObj("tanChainG", fx[0], [-20, 20], {"draw": true}, canvas);
         let tanChain = new TangentChainObj("tanChain", fx[0], [-7, 7], {"n":3, "lenght":10}, canvas, graph);

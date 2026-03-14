@@ -622,7 +622,7 @@ class SecantSuportObj extends ExstensionObj{
     
     this.get_data(this.data[1][0]-this.data[0][0]);
 
-        if(this.data[1][0]-this.data[0][0] < 0.5 || Math.abs(this.data[2][1]-this.data[1][1]<0.5)){
+        if(this.data[1][0]-this.data[0][0] < 0.5 || Math.abs(this.data[2][1]-this.data[1][1])<0.5){
             node.params.width = 0;
         }
         else{

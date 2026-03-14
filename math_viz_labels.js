@@ -84,7 +84,7 @@ class slopeLabels extends ExstensionObj{
         this.labelTxt = [];
         this.params={
             "anchors": ["middle"],
-            "showVal": [false, false, true, true, false, false],
+            "showVal": [false],
             "dx" : [ 25, 35, 0, 25, 0, 0 ],
             "dy" : [ 0, 0, 20, 0, 20, 20 ],
             "show": [true]
