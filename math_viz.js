@@ -1099,7 +1099,7 @@ class UpdateNode{   // Specify update parameters for other classes; link nodes (
 
 
 /* get line start and end values from target line lenght lenght */
-function get_points_from_lenght(fx, x0, lenght, ofset){ 
+function get_points_from_lenght(fx, x0, lenght, ofset=0.5){ 
 
     let deltaX = (lenght / (1+Math.abs(get_slope(fx, x0))));
     let deltaX1 = deltaX * (1-ofset);

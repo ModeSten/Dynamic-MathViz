@@ -28,7 +28,7 @@ class LabelAxisLineObj extends ExstensionObj{
         let l = this.params.points.length;
         let p = this.params.points;
 
-        for(let i=0; i<l; i++){
+        for(let i=1; i<l-1; i++){
 
             let px = p[i][0];
             let py = p[i][1];
@@ -111,12 +111,12 @@ class slopeLabels extends ExstensionObj{
             return
         }
 
-        let y0 = this.parent.data[0][1];
-        let y1 = this.parent.data[1][1];
+        let y0 = this.parent.data[1][1];
+        let y1 = this.parent.data[2][1];
         let dy = y1 - y0;
 
-        let x0 = this.parent.data[0][0];
-        let x1 =  this.parent.data[1][0];
+        let x0 = this.parent.data[1][0];
+        let x1 =  this.parent.data[2][0];
         let xC = x0*0.5 + x1*0.5;
         let yC = y0*0.5 + y1*0.5;
 
@@ -145,10 +145,10 @@ class slopeLabels extends ExstensionObj{
 
     get_label_text(){
 
-        let x = this.parent.data[0][0];
-        let xh = this.parent.data[1][0];
-        let fx = this.parent.data[0][1];
-        let fxh = this.parent.data[1][1];
+        let x = this.parent.data[1][0];
+        let xh = this.parent.data[2][0];
+        let fx = this.parent.data[1][1];
+        let fxh = this.parent.data[2][1];
         let dy = fxh - fx;
         let h = xh-x;
 
@@ -166,10 +166,10 @@ class slopeLabels extends ExstensionObj{
 
     adjust_offset(){
 
-        let x = this.parent.data[0][0];
-        let xh = this.parent.data[1][0];
-        let fx = this.parent.data[0][1];
-        let fxh = this.parent.data[1][1];
+        let x = this.parent.data[1][0];
+        let xh = this.parent.data[2][0];
+        let fx = this.parent.data[1][1];
+        let fxh = this.parent.data[2][1];
         let dy = fxh - fx;
         let h = this.parent.params.h;
 

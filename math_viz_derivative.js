@@ -489,7 +489,8 @@ class SecantObj extends ExstensionObj{
              "x0":  -2.5,       // slope line starting point (x)
              "width":2.5 ,      
              "color":"red", 
-             "draw": false      // specifiy line should animated as if drawn (true || false)
+             "draw": false,      // specifiy line should animated as if drawn (true || false)
+             "lenght": 50
             };   
         this.parse_params(params); 
 
@@ -514,9 +515,15 @@ class SecantObj extends ExstensionObj{
 
         let x = this.params.x0;
         let h = this.params.h;
+        let l = this.params.lenght;
+
+        let slope = get_tangent_function(this.params.fx, x, h);
+        let ends = get_points_from_lenght(slope, x, l);
             
+        this.data.push(ends[0]);
         this.data.push([x, this.params.fx(x)]);
         this.data.push([x+h, this.params.fx(x+h)]);
+        this.data.push(ends[1]);
 
     }
 
@@ -583,7 +590,8 @@ class SecantSuportObj extends ExstensionObj{
             "width": 2.5,
             "color": "black",
             "draw": false,
-            "lAnchors": ["middle", "start", "end", "start"]
+            "lAnchors": ["middle", "start", "end", "start"], 
+            "dashArray": "5, 5"
         };
         this.parse_params(params);
 
@@ -606,10 +614,10 @@ class SecantSuportObj extends ExstensionObj{
 
         let points = this.parent.data;
 
-        let x0 = points[0][0];
-        let y0 = points[0][1];
-        let x1 = points[1][0];
-        let y1 = points[1][1];
+        let x0 = points[1][0];
+        let y0 = points[1][1];
+        let x1 = points[2][0];
+        let y1 = points[2][1];
 
         this.data.push([x0, y0]);
         this.data.push([x1, y0]);
