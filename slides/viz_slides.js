@@ -4,7 +4,7 @@ width = 700;
 height = 400;
 
 var fx = [(x)=>{return x**3/12 - 0.9*x**2 + 2.5*x + 4}, (x)=>{return x**2/4 - 3*x/2 + 5 }, (x)=>{ return x**3/12 - 3*x**2/4 + 9*x/4 + 1}, (x)=>{ return 4*Math.sin(x)+5}];
-var Dx = [(x)=>{return x**2/4 - 1.8*x}, (x)=>{return x/2 - 3/2}, (x)=>{return x**2/4 - 3*x/2 +9/4}, (x)=>{ return 4*Math.cos(x) }];
+var Dx = [(x)=>{return x**2/4 - 1.8*x + 2.5}, (x)=>{return x/2 - 3/2}, (x)=>{return x**2/4 - 3*x/2 +9/4}, (x)=>{ return 4*Math.cos(x) }];
 var fxTxt = ["f(x)= 1/12*x^3 - 0.9x^2 + 2.5x +4", "f(x)= 1/4*x^2 - 3/2*x^2 +5", "f(x)= 1/12*x^3 - 3/4*x^2 +9/4*x +1", "f(x)= 4*sin(x)+5"];
 var Xrange = [-3, 10];
 var yRange = [-5, 10];
@@ -126,6 +126,7 @@ function dx_intro_slide(i, slide=null){
         let slopeSup = new SecantSuportObj("dxIntroSlopeBase", secant, {}, canvas);
         let labels = new slopeLabels("dxIntroLabels", secant, {}, canvas);
         let LabelLines = new LabelAxisLineObj("dxIntroLabelL", secant.data, {}, canvas, secant.svgObj);
+        let SecantMarker = new SecantMarkerObj("dxIntroSecMarker", secant, {}, canvas);
 
         slide.inputs.xSlider.addListener((val)=>{
             let update = new UpdateNode({"x0": val}, 10);
@@ -188,6 +189,7 @@ function dx_continued_slide(i, slide=null){
         let slopeSup = new SecantSuportObj("dxCtnSlopeBase", secant, {}, canvas1);
         let labels = new slopeLabels("dxCtnLabels", secant, {}, canvas1);
         let LabelLines = new LabelAxisLineObj("dxCtnLabelL", secant.data, {}, canvas1, secant.svgObj);
+        let SecantMarker = new SecantMarkerObj("dxCtnSecantMarker", secant, {}, canvas1);
 
         let canvas2 = new CanvasObj("dxCtnCanvas2", width, height, margin, Xrange, yRange, slide.svgDiv[1].id);
         let chart2 = new ChartObj("dxCtnChart2", {}, canvas2);

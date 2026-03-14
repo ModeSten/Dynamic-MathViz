@@ -240,3 +240,59 @@ constructor(id, parent, params={}, canvas=null){
 
 
 }
+
+
+
+class SecantMarkerObj extends ExstensionObj{
+
+    constructor(id, secant, params={}, canvas=null ){
+
+        super(id);
+
+        this.params={
+            "color": "red", 
+            "r": 3.5 
+        };
+        this.parse_params(params);
+
+        this.set_parent(secant);
+
+        this.get_data();
+        
+        this.svgObj = new MarkerObj(this.id, this.data, this.params);
+
+        this.assigne_to_canvas(canvas);
+
+    }
+
+
+    get_data(){
+
+        this.data = [];
+
+        if(this.parent === null){
+            return
+        }
+
+        this.data.push(this.parent.data[1]);
+        this.data.push(this.parent.data[2]);
+
+    }
+
+
+    resolve_update(node){
+
+        this.get_data();
+
+    }
+
+
+    on_parent_update(obj, msg, duration){
+
+        this.update(new UpdateNode({}, duration));
+
+    }
+
+
+}
+
