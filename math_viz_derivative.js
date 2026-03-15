@@ -109,7 +109,8 @@ class TangentChainObj extends ExstensionObj{
              "h": 0.01,         // h value for calculating line slope
              "ofset": 0.5,       // 
             "draw": false,
-            "lenght": 5
+            "lenght": [10], 
+            "x0": [0]
             };    
         this.parse_params(params);
 
@@ -130,8 +131,8 @@ class TangentChainObj extends ExstensionObj{
     get_data(){
 
         this.data = [];
-        let ofset = this.params.ofset;
 
+        /*
         let len = ( this.params.xRange[1] - this.params.xRange[0] ) / this.params.n;    // x value range for each tangent line
         let half = len / 2;
         let x0 = this.params.xRange[0] + len * ofset;
@@ -150,7 +151,21 @@ class TangentChainObj extends ExstensionObj{
             this.data.push( [ xi-len*ofset, func(xi-len*ofset) ] );
             this.data.push( [ xi+len*(1-ofset), func(xi+len*(1-ofset)) ] );
             this.data.push( [ xi+len*(1-ofset), null ] );
-            */
+        
+
+        }
+        */
+        
+
+        for( let i=0; i<this.params.x0.length; i++){
+
+            let slope = get_tangent_function( this.params.fx, this.params.x0[i], this.params.h );
+            let l = this.params.lenght.length
+            let points = get_points_from_lenght( slope, this.params.x0[i], this.params.lenght[i%l] );
+
+            this.data.push(points[0]);
+            this.data.push(points[1]);
+            this.data.push([points[1][0], null]);
 
         }
 

@@ -360,7 +360,7 @@ function multi_tangent_slide(i, slide = null){
 
         slide = new Slide("tanChainSlide", 1 );
 
-        let figTxt = "<b>figur5:</b> this is a figure";
+        let figTxt = "<b>figur5:</b> Multiple tangents to the graf f(x). <br> The tangent lines ilustarte where f `(x) > 0, f `(x) < 0 and f `(x) = 0";
 
         let txt = document.createElement("p");
         txt.innerHTML = figTxt;
@@ -380,15 +380,21 @@ function multi_tangent_slide(i, slide = null){
     if(!slide.init){
         slide.init = true;
 
+        let tanX0 = [ [-1, 1.8, 3.5, 5.3, 7.5 ], [-1, 3, 7], [-0.5, 3, 6.5], [0, 1.55, 3.2, 4.72, 6.3] ];
+        let tanLen = [[10, 3, 3, 3, 6 ], [9, 5, 9], [8, 4, 8], [9, 3, 9, 3, 9]];
+
         let canvas = new CanvasObj("tanChainCanvas", width, height, margin, Xrange, yRange, slide.svgDiv[0].id);
         let chart = new ChartObj("tanChainChart", {}, canvas);
         let graph = new GraphObj("tanChainG", fx[0], [-20, 20], {"draw": true}, canvas);
-        let tanChain = new TangentChainObj("tanChain", fx[0], [-7, 7], {"n":3, "lenght":10}, canvas, graph);
+        let tanChain = new TangentChainObj("tanChain", fx[0], [-7, 7], {"x0": tanX0[0], "lenght": tanLen[0]}, canvas);
 
         slide.inputs.fxSelect.addListener((val)=>{
 
             let update = new UpdateNode({"fx": fx[val]}, 1500);
             graph.update(update);
+
+            let tanUpdate = new UpdateNode({"fx": fx[val], "x0": tanX0[val], "lenght": tanLen[val]}, 1000);
+            tanChain.update(tanUpdate);
 
         });
 
