@@ -374,9 +374,69 @@ class SelectorObj{
 
     }
 
+}
+
+
+class CheckBoxObj{
+
+    constructor(id, label, value, parentDiv=null, className=""){
+
+        this.id = id;
+        this.listener = [];
+        this.parentDiv = null;
+        this.value = value
+
+        this.check = document.createElement("input");
+        this.check.type = "checkbox";
+        this.check.id = this.id;
+        this.check.value = value;
+        this.check.onchange = ()=>{this.on_change()};
+
+        this.label = document.createElement("label");
+        this.label.for = this.id;
+        this.label.innerHTML = label;
+
+        this.assignToDiv(parentDiv);
+
+    }
+
+
+    assignToDiv(parentDiv){
+
+        if(parentDiv === null){
+            return
+        }
+
+        parentDiv.appendChild(this.check);
+        parentDiv.appendChild(this.label);
+
+    }
+
+
+    on_change(){
+
+        this.listener.forEach( (func)=>{ func(this.check.checked) } ); 
+
+    }
+
+
+    addListener(callback){
+
+        this.listener.push(callback);
+        return ()=>{ this.listener = this.listener.filter( (func)=>{func !== callback}) };
+
+    }
+
+
+    removeAllListeners(){
+
+        this.listener = [];
+
+    }
 
 
 }
+
 
 
 
@@ -421,5 +481,6 @@ class VizContainerObj{
 
 
 }
+
 
 

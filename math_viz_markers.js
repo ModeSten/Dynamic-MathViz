@@ -250,7 +250,7 @@ class SecantMarkerObj extends ExstensionObj{
         super(id);
 
         this.params={
-            "color": "red", 
+            "color": "blue", 
             "r": 3.5 
         };
         this.parse_params(params);

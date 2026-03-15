@@ -196,6 +196,7 @@ function dx_continued_slide(i, slide=null){
         let graph2 = new GraphObj("dxCtnG2", fx[0], [-20, 20], {}, canvas2);
         let derivative = new DerivativeApxObj("dxCtnDx", fx[0], [-20, 20], {"color": "red", "h":2}, canvas2, graph2);
         let trueDx = new GraphObj("dxCtnTrueDx", Dx[0], [-20, 20], {"color": "red", "dashArray": "6, 6"}, canvas2);
+        let line = new LineObj("testLine", [[2, -10], [2, 10]], {"dashArray":"3, 3", "width": 1.5}, canvas2);
 
         slide.inputs.xSlider.addListener((val)=>{
             let update = new UpdateNode({"x0": val}, 10);
@@ -298,6 +299,11 @@ function dx_color_slide(i, slide = null){
         let select = new SelectorObj("dxClFxSelect", fxTxt, fxI, slide.ctrlContainer);
         slide.inputs["fxSelect"] = select;
 
+        let dxCheck = new CheckBoxObj("dxColorDxCheck", "f `(x)", 0, slide.ctrlContainer);
+        slide.inputs["dxCheck"] = dxCheck;
+        let dDxCheck = new CheckBoxObj("dDxColorDxCheck", "f ``(x)", 0, slide.ctrlContainer);
+        slide.inputs["dDxCheck"] = dDxCheck;
+
         slides[i] = slide;
 
     }
@@ -311,11 +317,33 @@ function dx_color_slide(i, slide = null){
         let canvas = new CanvasObj("dxColorCanvas", width, height, margin, Xrange, yRange, slide.svgDiv[0].id);
         let chart = new ChartObj("dxColorChart", {}, canvas);
         let dxColor = new DxColorObj("dxColorG", fx[0], [-20, 20], {"draw": true}, canvas);
+        let dx = new DerivativeApxObj("dxColorDx", fx[0], [-20, 20], { "color": "black", "width": 0}, canvas, dxColor);
+        let ddx = new DxApxDataObj("dxColorDdx", {"color": "black", "width": 0, "dashArray": "5, 5"}, canvas, dx);
 
         slide.inputs.fxSelect.addListener((val)=>{
 
             let update = new UpdateNode({"fx": fx[val]}, 1500);
             dxColor.update(update);
+
+        });
+
+        slide.inputs.dxCheck.addListener((val)=>{
+
+            if(val){
+                dx.update( new UpdateNode({"width": 1.5}, 500) );
+            } else{
+                dx.update( new UpdateNode({"width": 0}, 500) );
+            }
+
+        });
+
+        slide.inputs.dDxCheck.addListener((val)=>{
+
+            if(val){
+                ddx.update( new UpdateNode({"width": 1.5}, 500) );
+            } else{
+                ddx.update( new UpdateNode({"width": 0}, 500) );
+            }
 
         });
 
