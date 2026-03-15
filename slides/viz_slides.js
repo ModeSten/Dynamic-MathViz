@@ -289,7 +289,7 @@ function dx_color_slide(i, slide = null){
 
         slide = new Slide("dxColorSlide", 1 );
 
-        let figTxt = "<b>figur4:</b> this is a figure";
+        let figTxt = "<b>figur5:</b> En graf, f(x), är färgad röd där des andra derivata, f ``(x), är negativ och blå där andra derivatan är positiv <br> f ``(x) < 0 => röd <br> f ``(x) > 0 => blå ";
 
         let txt = document.createElement("p");
         txt.innerHTML = figTxt;
@@ -372,7 +372,7 @@ function multi_tangent_slide(i, slide = null){
 
         slide = new Slide("tanChainSlide", 1 );
 
-        let figTxt = "<b>figur5:</b> Multiple tangents to the graf f(x). <br> The tangent lines ilustarte where f `(x) > 0, f `(x) < 0 and f `(x) = 0";
+        let figTxt = "<b>figur4:</b> Multiple tangents to the graf f(x). <br> The tangent lines ilustarte where f `(x) > 0, f `(x) < 0 and f `(x) = 0";
 
         let txt = document.createElement("p");
         txt.innerHTML = figTxt;
