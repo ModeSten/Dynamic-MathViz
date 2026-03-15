@@ -164,7 +164,7 @@ function dx_continued_slide(i, slide=null){
         txt.innerHTML = figTxt;
         slide.txtContainer.appendChild(txt);
 
-        slide.inputs["xSlider"] = new SliderObj("dxIntroSliderX", [-10, 10], -2, "x=", slide.ctrlContainer, "viz_slider", 1000);
+        slide.inputs["xSlider"] = new SliderObj("dxIntroSliderX", [-5, 10], -2, "x=", slide.ctrlContainer, "viz_slider", 1000);
         slide.inputs["hSlider"] = new SliderObj("dxIntroSliderH", [0.1, 7], 2, "h=", slide.ctrlContainer, "viz_slider", 1000);
 
         let fxI = Array(fx.length).fill(null).map((x, i)=>{return i});
@@ -196,10 +196,12 @@ function dx_continued_slide(i, slide=null){
         let graph2 = new GraphObj("dxCtnG2", fx[0], [-20, 20], {}, canvas2);
         let derivative = new DerivativeApxObj("dxCtnDx", fx[0], [-20, 20], {"color": "red", "h":2}, canvas2, graph2);
         let trueDx = new GraphObj("dxCtnTrueDx", Dx[0], [-20, 20], {"color": "red", "dashArray": "6, 6"}, canvas2);
+        let legend = new LabelObj("dxCtnLegend", [[9.5,10], [9.5,9], [9.5,8]], ["–––f(x)", "– –f `(x)", "–––∆y/h"], {"color":["black", "red", "red"]}, canvas2);
 
         slide.inputs.xSlider.addListener((val)=>{
             let update = new UpdateNode({"x0": val}, 10);
             secant.update(update);
+
         })
 
         slide.inputs.hSlider.addListener((val)=>{
@@ -212,7 +214,6 @@ function dx_continued_slide(i, slide=null){
 
             let update = new UpdateNode({"fx": fx[val]}, 1500);
             let updateDx = new UpdateNode({"fx": Dx[val]});
-            console.log(Dx[val]);
             graph1.update(update);
             graph2.update(update);
             trueDx.update(updateDx);
@@ -239,7 +240,7 @@ function tangent_slide(i, slide=null){
         txt.innerHTML = figTxt;
         slide.txtContainer.appendChild(txt);
 
-        slide.inputs["xSlider"] = new SliderObj("dxIntroSliderX", [-10, 10], -2, "x=", slide.ctrlContainer, "viz_slider", 1000);
+        slide.inputs["xSlider"] = new SliderObj("dxIntroSliderX", [-5, 10], -2, "x=", slide.ctrlContainer, "viz_slider", 1000);
 
         let fxI = Array(fx.length).fill(null).map((x, i)=>{return i});
         let select = new SelectorObj("tangentFxSelect", fxTxt, fxI, slide.ctrlContainer);
@@ -318,6 +319,8 @@ function dx_color_slide(i, slide = null){
         let dxColor = new DxColorObj("dxColorG", fx[0], [-20, 20], {"draw": true}, canvas);
         let dx = new DerivativeApxObj("dxColorDx", fx[0], [-20, 20], { "color": "black", "width": 0}, canvas, dxColor);
         let ddx = new DxApxDataObj("dxColorDdx", {"color": "black", "width": 0, "dashArray": "5, 5"}, canvas, dx);
+        let legendTxt = ["–––f(x), f ``(x)>0", "–––f(x), f ``(x)<0", "–––f `(x)", "– –f ``(x)"];
+        let legend = new LabelObj("dxColorLegend", [[9.5,10],[9.5,9],[9.5,8],[9.5,7]], ["–––f(x), f ``(x)<0", "–––f(x), f ``(x)>0"], {"color":["red", "blue", "black", "black"]},canvas);
 
         slide.inputs.fxSelect.addListener((val)=>{
 
@@ -328,21 +331,30 @@ function dx_color_slide(i, slide = null){
 
         slide.inputs.dxCheck.addListener((val)=>{
 
+            let legTxt = [...legend.params.text];
             if(val){
                 dx.update( new UpdateNode({"width": 1.5}, 500) );
+                legTxt.push(legendTxt[2]);
             } else{
                 dx.update( new UpdateNode({"width": 0}, 500) );
+                legTxt = legTxt.filter((txt)=>{return txt!==legendTxt[2]});
             }
+            console.log(legTxt);
+            legend.update(new UpdateNode({"text":legTxt}));
 
         });
 
         slide.inputs.dDxCheck.addListener((val)=>{
 
+            let legTxt = [...legend.params.text];
             if(val){
                 ddx.update( new UpdateNode({"width": 1.5}, 500) );
+                legTxt.push(legendTxt[3]);
             } else{
                 ddx.update( new UpdateNode({"width": 0}, 500) );
+                legTxt = legTxt.filter((txt)=>{return txt!==legendTxt[3]});
             }
+            legend.update(new UpdateNode({"text":legTxt}));
 
         });
 

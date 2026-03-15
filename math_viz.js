@@ -768,7 +768,8 @@ class LabelObj extends VisualObj{
             "dx": [0],
             "dy": [0],
             "anchors": ["middle"], 
-            "show": [true]
+            "show": [true],
+            "color": ["black"]
         }
         this.parse_params(params);
     
@@ -808,7 +809,8 @@ class LabelObj extends VisualObj{
                 .attr("y", (d)=>{ return this.canvas.yScale(d[1]) })
                 .attr("dx", (d, i)=>{ return this.params.dx[i%dxL] })
                 .attr("dy", (d, i)=>{ return this.params.dy[i%dyL] })
-                .attr("text-anchor", (d, i)=>{ return this.params.anchors[i%this.params.anchors.length]});
+                .attr("text-anchor", (d, i)=>{ return this.params.anchors[i%this.params.anchors.length]})
+                .style("fill", (d, i)=>{ return this.params.color[i%this.params.color.length] });
 
     }
 
@@ -1048,6 +1050,7 @@ class GraphObj extends ExstensionObj{
     }
 
 }
+
 
 
 /* other classes */
