@@ -95,7 +95,7 @@ function dx_intro_slide(i, slide=null){
 
         slide = new Slide("derivativeIntro", 1);
         
-        let figTxt = "<b>figure1:</b> this is a figure";
+        let figTxt = "<b>figur1:</b> En sekant (linje) skär grafen f(x) i punkterna ( x, f(x) ) och ( x+h, f(x+h). För små värden på h är sekantentens lutning, ∆y/h, ungefär lika med grafens derivata, f `(x) <br> f `(x) ≈ ∆y/h för små h";
 
         let txt = document.createElement("p");
         txt.innerHTML = figTxt;
@@ -158,7 +158,7 @@ function dx_continued_slide(i, slide=null){
 
         slide = new Slide("derivateCtn", 2);
         
-        let figTxt = "<b>figure2:</b> this is a figure";
+        let figTxt = "<b>figur2:</b> (Vänster) En sekant (linje) skär grafen f(x) i punkterna ( x, f(x) ) och ( x+h, f(x+h). För små värden på h är sekantentens lutning, ∆y/h, ungefär lika med grafens derivata, f `(x) <br> f `(x) ≈ ∆y/h för små h <br> (Höger) Arpoximerade derivatan av f(x), ∆y/h, jämfört med den faktiska derivatan, f `(x)";
 
         let txt = document.createElement("p");
         txt.innerHTML = figTxt;
@@ -196,7 +196,6 @@ function dx_continued_slide(i, slide=null){
         let graph2 = new GraphObj("dxCtnG2", fx[0], [-20, 20], {}, canvas2);
         let derivative = new DerivativeApxObj("dxCtnDx", fx[0], [-20, 20], {"color": "red", "h":2}, canvas2, graph2);
         let trueDx = new GraphObj("dxCtnTrueDx", Dx[0], [-20, 20], {"color": "red", "dashArray": "6, 6"}, canvas2);
-        let line = new LineObj("testLine", [[2, -10], [2, 10]], {"dashArray":"3, 3", "width": 1.5}, canvas2);
 
         slide.inputs.xSlider.addListener((val)=>{
             let update = new UpdateNode({"x0": val}, 10);
@@ -234,7 +233,7 @@ function tangent_slide(i, slide=null){
 
         slide = new Slide("tangentSlide", 1 );
 
-        let figTxt = "<b>figure3:</b> this is a figure";
+        let figTxt = "<b>figur3:</b> En tangent (linje) till grafen f(x) i punkten ( x, f(x) ) ";
 
         let txt = document.createElement("p");
         txt.innerHTML = figTxt;
@@ -289,7 +288,7 @@ function dx_color_slide(i, slide = null){
 
         slide = new Slide("dxColorSlide", 1 );
 
-        let figTxt = "<b>figure4:</b> this is a figure";
+        let figTxt = "<b>figur4:</b> this is a figure";
 
         let txt = document.createElement("p");
         txt.innerHTML = figTxt;
@@ -361,7 +360,7 @@ function multi_tangent_slide(i, slide = null){
 
         slide = new Slide("tanChainSlide", 1 );
 
-        let figTxt = "<b>figure5:</b> this is a figure";
+        let figTxt = "<b>figur5:</b> this is a figure";
 
         let txt = document.createElement("p");
         txt.innerHTML = figTxt;
