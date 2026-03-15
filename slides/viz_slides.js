@@ -196,7 +196,7 @@ function dx_continued_slide(i, slide=null){
         let graph2 = new GraphObj("dxCtnG2", fx[0], [-20, 20], {}, canvas2);
         let derivative = new DerivativeApxObj("dxCtnDx", fx[0], [-20, 20], {"color": "red", "h":2}, canvas2, graph2);
         let trueDx = new GraphObj("dxCtnTrueDx", Dx[0], [-20, 20], {"color": "red", "dashArray": "6, 6"}, canvas2);
-        let legend = new LabelObj("dxCtnLegend", [[9.5,10], [9.5,9], [9.5,8]], ["–––f(x)", "– –f `(x)", "–––∆y/h"], {"color":["black", "red", "red"]}, canvas2);
+        let legend = new LabelObj("dxCtnLegend", [[-1,10], [-1,9], [-1,8]], ["–––f(x)", "– –f `(x)", "–––∆y/h"], {"color":["black", "red", "red"]}, canvas2);
 
         slide.inputs.xSlider.addListener((val)=>{
             let update = new UpdateNode({"x0": val}, 10);
@@ -320,7 +320,7 @@ function dx_color_slide(i, slide = null){
         let dx = new DerivativeApxObj("dxColorDx", fx[0], [-20, 20], { "color": "black", "width": 0}, canvas, dxColor);
         let ddx = new DxApxDataObj("dxColorDdx", {"color": "black", "width": 0, "dashArray": "5, 5"}, canvas, dx);
         let legendTxt = ["–––f(x), f ``(x)>0", "–––f(x), f ``(x)<0", "–––f `(x)", "– –f ``(x)"];
-        let legend = new LabelObj("dxColorLegend", [[9.5,10],[9.5,9],[9.5,8],[9.5,7]], ["–––f(x), f ``(x)<0", "–––f(x), f ``(x)>0"], {"color":["red", "blue", "black", "black"]},canvas);
+        let legend = new LabelObj("dxColorLegend", [[-2,10],[-2,9],[-2,8],[-2,7]], ["–––f(x), f ``(x)<0", "–––f(x), f ``(x)>0"], {"color":["red", "blue", "black", "black"]},canvas);
 
         slide.inputs.fxSelect.addListener((val)=>{
 
