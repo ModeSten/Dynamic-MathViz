@@ -1,4 +1,5 @@
 
+// class for creating lines between labels and value position: (x, 0) -> (x, y) -> (0, y)
 class LabelAxisLineObj extends ExstensionObj{
 
     constructor(id, points, params={}, canvas=null, parent=null){
@@ -6,9 +7,9 @@ class LabelAxisLineObj extends ExstensionObj{
         super(id);
 
         this.params = {
-            "points": points,
-            "axisOfset": [0.2, 0.2],
-            "width": 0.5
+            "points": points,           // data points
+            "axisOfset": [0.2, 0.2],    // line lenght after crossing axis
+            "width": 0.5                // line width
         };
         this.parse_params(params);
         this.get_data();
@@ -73,21 +74,21 @@ class LabelAxisLineObj extends ExstensionObj{
 }
 
 
-
+// class for creating labels for graph slope (secant)
 class slopeLabels extends ExstensionObj{
 
     constructor(id, slope, params={}, canvas=null){
 
         super(id);
         this.labelText = [];
-        this.baseLabelTxt = ["f(x)", "f(x+h)", "h", "∆y", "x", "x+h"];
+        this.baseLabelTxt = ["f(x)", "f(x+h)", "h", "∆y", "x", "x+h"];  // default text (without values) for labels
         this.labelTxt = [];
         this.params={
             "anchors": ["end", "end", "middle", "start", "middle", "middle"],
-            "showVal": [false],
-            "dx" : [ 20, 20, 0, 10, 0, 0 ],
-            "dy" : [ 0, 0, 15, 0, 30, 30 ],
-            "show": [true]
+            "showVal": [false],             // specifie if label[i] should include data value
+            "dx" : [ 20, 20, 0, 10, 0, 0 ], // label xOffset
+            "dy" : [ 0, 0, 15, 0, 30, 30 ], // label yOffset
+            "show": [true]                  // specifiy if label[i] should be shown or hidden
         };
         this.parse_params(params);
 
@@ -247,10 +248,10 @@ class TangentLabel extends ExstensionObj{
 
         this.params={
             "anchors": ["middle"],
-            "showVal": [true],
-            "dx" : [ 30 ],
-            "dy" : [ 20 ],
-            "show": [true]
+            "showVal": [true],      // specifie if label should include data value
+            "dx" : [ 30 ],          // label xOffset
+            "dy" : [ 20 ],          // label yOffset
+            "show": [true]          // specifiy if label should be shown or hidden
         };
         this.parse_params(params);   
         

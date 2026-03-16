@@ -756,6 +756,7 @@ class MarkerObj extends VisualObj{
 }
 
 
+// class for creating and managing label svg elements
 class LabelObj extends VisualObj{
 
     constructor(id, pos, text, params={}, canvas=null, classname=""){
@@ -763,12 +764,12 @@ class LabelObj extends VisualObj{
         super(id);
 
         this.params={
-            "data": pos,
-            "text": text,
-            "dx": [0],
-            "dy": [0],
+            "data": pos,    // label positions: [[x0, y0], [x1, y1]]
+            "text": text,   // label texts: ["label1Text", "label2Text"]
+            "dx": [0],      // labels xOffset
+            "dy": [0],      // labels yOffset
             "anchors": ["middle"], 
-            "show": [true],
+            "show": [true], 
             "color": ["black"]
         }
         this.parse_params(params);

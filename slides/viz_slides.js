@@ -197,12 +197,11 @@ function dx_continued_slide(i, slide=null){
         let derivative = new DerivativeApxObj("dxCtnDx", fx[0], [-20, 20], {"color": "red", "h":2}, canvas2, graph2);
         let trueDx = new GraphObj("dxCtnTrueDx", Dx[0], [-20, 20], {"color": "red", "dashArray": "6, 6"}, canvas2);
         let legend = new LabelObj("dxCtnLegend", [[-1,10], [-1,9], [-1,8]], ["–––f(x)", "– –f `(x)", "–––∆y/h"], {"color":["black", "red", "red"]}, canvas2);
-        let marker = new PointMarkerFxObj("dxCtnRightXMarker", graph2, {"x":[2]}, canvas2, graph2 );
+        let marker = new X0MarkerObj("dxCtnRightMarker", secant, {}, canvas2);
 
         slide.inputs.xSlider.addListener((val)=>{
             let update = new UpdateNode({"x0": val}, 10);
             secant.update(update);
-            marker.update( new UpdateNode( {"x": [val]}, 10 ) );
         })
 
         slide.inputs.hSlider.addListener((val)=>{

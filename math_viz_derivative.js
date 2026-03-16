@@ -11,11 +11,11 @@ class TangentObj extends ExstensionObj{
 
         super(id);
 
-        this.fx = fx;       // tangent reference function
+        this.fx = fx;                  // tangent reference function
         this.slope = 0;
         this.params = {
             "fx": fx,                  // reference function 
-             "x0":0 ,             // tangent 'origin' x value
+             "x0":0 ,                  // tangent 'origin' x value
              "length": 10 ,            // tangent-line lenght
              "width":2.5 ,             // line width
              "color":"red",            // line (stroke) color
@@ -24,7 +24,7 @@ class TangentObj extends ExstensionObj{
         };
         this.parse_params(params);
 
-        this.duration = 50;     // default transition duration
+        this.duration = 50;            // default transition duration
 
         if(graph===null){
             this.get_data();
@@ -110,7 +110,7 @@ class TangentChainObj extends ExstensionObj{
              "ofset": 0.5,       // 
             "draw": false,
             "lenght": [10], 
-            "x0": [0]
+            "x0": [0]           
             };    
         this.parse_params(params);
 
@@ -197,15 +197,15 @@ class DerivativeApxObj extends ExstensionObj{
 
         super(id);
         this.params = {
-            "fx": fx,           // reference function      
-             "width":2.5 ,      // line width
-             "color":"red",     // line color
-             "xRange": xRange,  // x value range
+            "fx": fx,              // reference function      
+             "width":2.5 ,         // line width
+             "color":"red",        // line color
+             "xRange": xRange,     // x value range
              "h": 0.05,            // h value for caclulating slope and for sgement lenght
              "draw": false,
              "discrete": false,
              "step": 0.05,
-             "dashArray": "0, 0"
+             "dashArray": "0, 0"   // specify if / how line should be dashed
             };   
         this.parse_params(params); 
 
@@ -284,7 +284,7 @@ class DxApxDataObj extends DerivativeApxObj{
 }
 
 
-
+// class for creating graph colored based on derivative / second derivative greater or smaller than 0
 class DxColorObj extends ExstensionObj{
 
     constructor(id, fx, xRange, params={}, canvas){
@@ -592,6 +592,7 @@ class SecantObj extends ExstensionObj{
 }
 
 
+// class for creating lines, highligthing slope (secant) delta y and delta x (h) between intersection points
 class SecantSuportObj extends ExstensionObj{
 
     constructor(id, secant, params={}, canvas=null){
@@ -603,10 +604,9 @@ class SecantSuportObj extends ExstensionObj{
         this.labelText = [];
         this.params = {
             "width": 2.5,
-            "color": "black",
+            "color": "black",   
             "draw": false,
-            "lAnchors": ["middle", "start", "end", "start"], 
-            "dashArray": "5, 5"
+            "dashArray": "5, 5"     // specifing if / how line shoudl be dashed
         };
         this.parse_params(params);
 

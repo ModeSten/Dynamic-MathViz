@@ -242,7 +242,7 @@ constructor(id, parent, params={}, canvas=null){
 }
 
 
-
+// class for placing markers at (two) secant intersection points 
 class SecantMarkerObj extends ExstensionObj{
 
     constructor(id, secant, params={}, canvas=null ){
@@ -251,7 +251,8 @@ class SecantMarkerObj extends ExstensionObj{
 
         this.params={
             "color": "blue", 
-            "r": 3.5 
+            "r": 3.5,            // marker (circle) radius
+            "show": [true]
         };
         this.parse_params(params);
 
@@ -297,6 +298,7 @@ class SecantMarkerObj extends ExstensionObj{
 }
 
 
+// class for placing markers along function (graph) at specified x positions
 class PointMarkerFxObj extends ExstensionObj{
     
     constructor(id, fx, params={}, canvas=null, graph=null){
@@ -304,10 +306,10 @@ class PointMarkerFxObj extends ExstensionObj{
         super(id);
 
         this.params = {
-            "color": "blue",     // marker color
+            "color": "blue",    // marker color
             "r": 3.5,           // marker (circle) radius
-            "x": [1],         // (relative) positions alogn line segment (between 0 & 1); multiple values => multiple markers / segment
-            "fx": fx
+            "x": [1],           // (relative) positions alogn line segment (between 0 & 1); multiple values => multiple markers / segment
+            "fx": fx            // target function
         };
         this.parse_params(params);
 
@@ -353,3 +355,55 @@ class PointMarkerFxObj extends ExstensionObj{
 }
 
 
+// place marker along parent function at position x0; require parent with fx and x0 parameters
+class X0MarkerObj extends ExstensionObj{
+
+    constructor(id, parent, params={}, canvas=null){
+
+        super(id);
+
+        this.params={
+            "r": "3.5",         // marker (circle) radius
+            "color": "blue",    // marker (circle) color
+        };
+        this.parse_params(params);
+
+        this.set_parent(parent);
+        
+        this.get_data();
+
+        this.svgObj = new MarkerObj(this.id, this.data, this.params, canvas);
+
+    }
+
+
+    get_data(){
+
+        this.data = [];
+
+        if(this.parent === null || !("x0" in this.parent.params) || !("fx" in this.parent.params)){
+            return
+        }
+
+        let x = this.parent.params.x0;
+        let y = this.parent.params.fx(x);
+
+        this.data.push([x, y]);
+
+    }
+
+
+    resolve_update(node){
+
+        this.get_data();
+
+    }
+
+
+    on_parent_update(obj, msg, duration){
+
+        this.update( new UpdateNode( {}, duration ) );
+
+    }
+
+}
