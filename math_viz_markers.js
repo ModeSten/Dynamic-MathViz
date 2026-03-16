@@ -296,3 +296,60 @@ class SecantMarkerObj extends ExstensionObj{
 
 }
 
+
+class PointMarkerFxObj extends ExstensionObj{
+    
+    constructor(id, fx, params={}, canvas=null, graph=null){
+
+        super(id);
+
+        this.params = {
+            "color": "blue",     // marker color
+            "r": 3.5,           // marker (circle) radius
+            "x": [1],         // (relative) positions alogn line segment (between 0 & 1); multiple values => multiple markers / segment
+            "fx": fx
+        };
+        this.parse_params(params);
+
+        this.data = [];
+
+        this.set_parent(graph);
+        this.get_data();
+
+        this.svgObj = new MarkerObj(this.id, this.data, this.params);
+        this.assigne_to_canvas(canvas);
+
+    }
+
+
+    // get marker position data
+    get_data(){
+
+        this.data = [];
+
+        this.params.x.forEach (  (x)=>{
+            let y = this.params.fx(x);
+            this.data.push([x, y]);
+            }
+        );
+            
+    }
+
+
+    resolve_update(){
+        this.get_data();
+    }
+
+
+    on_parent_update(obj, msg, duration){
+
+        this.params.fx = this.parent.params.fx;
+        
+        this.update(new UpdateNode({}, duration));
+
+    }
+
+
+}
+
+

@@ -15,7 +15,7 @@ class TangentObj extends ExstensionObj{
         this.slope = 0;
         this.params = {
             "fx": fx,                  // reference function 
-             "origin":0 ,             // tangent 'origin' x value
+             "x0":0 ,             // tangent 'origin' x value
              "length": 10 ,            // tangent-line lenght
              "width":2.5 ,             // line width
              "color":"red",            // line (stroke) color
@@ -51,8 +51,8 @@ class TangentObj extends ExstensionObj{
     
     get_data(){
 
-        let func = get_tangent_function(this.params.fx, this.params.origin, this.params.h);     // tangent-line function
-        this.data = get_points_from_lenght(func, this.params.origin, this.params.length, 0.5);
+        let func = get_tangent_function(this.params.fx, this.params.x0, this.params.h);     // tangent-line function
+        this.data = get_points_from_lenght(func, this.params.x0, this.params.length, 0.5);
 
     }
 
@@ -60,26 +60,26 @@ class TangentObj extends ExstensionObj{
     // Create update chain for changing tangent origin x value
     translate_center(center, stepSize=0.05, duration=this.duration){
 
-        let direction = Math.sign( center - this.params.origin );  // translate direction: new center is left (negative) or right (positive) of old
-        let x = this.params.origin + direction * stepSize;         
+        let direction = Math.sign( center - this.params.x0 );  // translate direction: new center is left (negative) or right (positive) of old
+        let x = this.params.x0 + direction * stepSize;         
 
         let T = duration; // transition duration 
 
 
-        let root = new UpdateNode({"origin": x}, T);
+        let root = new UpdateNode({"x0": x}, T);
         let node = root;
         x +=  direction * stepSize;
 
 
         while ( Math.abs(center-x) > 0.05 ){
 
-            node.next = new UpdateNode({"origin": x}, T);
+            node.next = new UpdateNode({"x0": x}, T);
             node = node.next;
 
             x +=  direction * stepSize;
-            if( (x > center && center > this.params.origin) || (x < center && center < this.params.origin) ){
+            if( (x > center && center > this.params.x0) || (x < center && center < this.params.x0) ){
                 x = center;
-                node.next = new UpdateNode({"origin": x}, T);
+                node.next = new UpdateNode({"x0": x}, T);
                 break;
             }
 

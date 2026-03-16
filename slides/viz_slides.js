@@ -197,11 +197,12 @@ function dx_continued_slide(i, slide=null){
         let derivative = new DerivativeApxObj("dxCtnDx", fx[0], [-20, 20], {"color": "red", "h":2}, canvas2, graph2);
         let trueDx = new GraphObj("dxCtnTrueDx", Dx[0], [-20, 20], {"color": "red", "dashArray": "6, 6"}, canvas2);
         let legend = new LabelObj("dxCtnLegend", [[-1,10], [-1,9], [-1,8]], ["–––f(x)", "– –f `(x)", "–––∆y/h"], {"color":["black", "red", "red"]}, canvas2);
+        let marker = new PointMarkerFxObj("dxCtnRightXMarker", graph2, {"x":[2]}, canvas2, graph2 );
 
         slide.inputs.xSlider.addListener((val)=>{
             let update = new UpdateNode({"x0": val}, 10);
             secant.update(update);
-
+            marker.update( new UpdateNode( {"x": [val]}, 10 ) );
         })
 
         slide.inputs.hSlider.addListener((val)=>{
@@ -259,12 +260,12 @@ function tangent_slide(i, slide=null){
         let canvas = new CanvasObj("tangentCanvas", width, height, margin, Xrange, yRange, slide.svgDiv[0].id);
         let chart = new ChartObj("tangentChart", {}, canvas);
         let graph = new GraphObj("tangentG", fx[0], [-20, 20], {}, canvas);
-        let tangent = new TangentObj("tangent", fx[0], {"origin": 2, "length": 100}, canvas, graph);
+        let tangent = new TangentObj("tangent", fx[0], {"x0": 2, "length": 100}, canvas, graph);
         let marker = new SegmentMarkerObj("tangentMarker", tangent, {"p":[0.5], "color": "blue"}, canvas);
         let label = new TangentLabel("tangentLabel", tangent, {}, canvas);
 
         slide.inputs.xSlider.addListener((val)=>{
-            let update = new UpdateNode({"origin": val}, 10);
+            let update = new UpdateNode({"x0": val}, 10);
             tangent.update(update);
         });
 
