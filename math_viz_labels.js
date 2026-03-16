@@ -83,10 +83,10 @@ class slopeLabels extends ExstensionObj{
         this.baseLabelTxt = ["f(x)", "f(x+h)", "h", "∆y", "x", "x+h"];
         this.labelTxt = [];
         this.params={
-            "anchors": ["middle"],
+            "anchors": ["end", "end", "middle", "start", "middle", "middle"],
             "showVal": [false],
-            "dx" : [ 25, 35, 0, 25, 0, 0 ],
-            "dy" : [ 0, 0, 20, 0, 20, 20 ],
+            "dx" : [ 20, 20, 0, 10, 0, 0 ],
+            "dy" : [ 0, 0, 15, 0, 30, 30 ],
             "show": [true]
         };
         this.parse_params(params);
