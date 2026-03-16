@@ -392,8 +392,8 @@ function multi_tangent_slide(i, slide = null){
     if(!slide.init){
         slide.init = true;
 
-        let tanX0 = [ [-1, 1.8, 3.5, 5.3, 7.5 ], [-1, 3, 7], [-0.5, 3, 6.5], [0, 1.55, 3.2, 4.72, 6.3] ];
-        let tanLen = [[10, 3, 3, 3, 6 ], [9, 5, 9], [8, 4, 8], [9, 3, 9, 3, 9]];
+        let tanX0 = [ [-0.5, 1.879, 3.5, 5.375, 7.5 ], [-1, 3, 7], [-0.5, 3, 6.5], [0, 1.57, 3.2, 4.712, 6.3, 7.854] ];
+        let tanLen = [[6, 3, 3, 3, 6 ], [8, 4, 8], [7.5, 4, 7.5], [7, 2, 7, 2, 7, 2]];
 
         let canvas = new CanvasObj("tanChainCanvas", width, height, margin, Xrange, yRange, slide.svgDiv[0].id);
         let chart = new ChartObj("tanChainChart", {}, canvas);
