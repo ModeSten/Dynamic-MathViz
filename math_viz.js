@@ -56,7 +56,7 @@ class CanvasObj {
                 .attr("id", this.id)
                 .attr("class", "viz_svg")
                 .attr("preserveAspectRatio", "xMinyMin mett")
-                .attr("viewBox", `0 0 ${width+margin.left*2} ${height+margin.top*2}`)
+                .attr("viewBox", `0 0 ${this.params.width+this.params.margin.left*2} ${this.params.height+this.params.margin.top*2}`)
                 .append("g")
                     .attr("class", "transform")
                     .attr("transform", "translate("+ this.params.margin.left + "," + this.params.margin.top +")");

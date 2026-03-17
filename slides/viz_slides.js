@@ -1,5 +1,5 @@
 
-const margin = { top: 40, right: 0, bottom: 10, left: 10 },
+const margin = { top: 40, right: 10, bottom: 10, left: 30 },
 width = 650;
 height = 300;
 
@@ -183,7 +183,7 @@ function dx_continued_slide(i, slide=null){
 
         slide.init = true;
 
-        let canvas1 = new CanvasObj("dxCtnCanvas1", width, height, margin, Xrange, yRange, slide.svgDiv[0].id);
+        let canvas1 = new CanvasObj("dxCtnCanvas1", width, height*1.3, margin, Xrange, yRange, slide.svgDiv[0].id);
         let chart1 = new ChartObj("dxCtnChart1", {}, canvas1);
         let graph1 = new GraphObj("dxCtnG1", fx[0], [-20, 20], {}, canvas1);
         let secant = new SecantObj("dxCtnSlope", fx[0], {"width": 1.5, "x0": 2, "h":2}, canvas1, graph1);
@@ -192,7 +192,7 @@ function dx_continued_slide(i, slide=null){
         let LabelLines = new LabelAxisLineObj("dxCtnLabelL", secant.data, {}, canvas1, secant.svgObj);
         let SecantMarker = new SecantMarkerObj("dxCtnSecantMarker", secant, {}, canvas1);
 
-        let canvas2 = new CanvasObj("dxCtnCanvas2", width, height, margin, Xrange, yRange, slide.svgDiv[1].id);
+        let canvas2 = new CanvasObj("dxCtnCanvas2", width, height*1.3, margin, Xrange, yRange, slide.svgDiv[1].id);
         let chart2 = new ChartObj("dxCtnChart2", {}, canvas2);
         let graph2 = new GraphObj("dxCtnG2", fx[0], [-20, 20], {}, canvas2);
         let derivative = new DerivativeApxObj("dxCtnDx", fx[0], [-20, 20], {"color": "red", "h":2}, canvas2, graph2);
@@ -340,7 +340,6 @@ function dx_color_slide(i, slide = null){
                 dx.update( new UpdateNode({"width": 0}, 500) );
                 legTxt = legTxt.filter((txt)=>{return txt!==legendTxt[2]});
             }
-            console.log(legTxt);
             legend.update(new UpdateNode({"text":legTxt}));
 
         });
