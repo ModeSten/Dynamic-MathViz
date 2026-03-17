@@ -1,7 +1,8 @@
 
-const margin = { top: 50, right: 0, bottom: 20, left: 30 },
-width = 700;
-height = 400;
+const margin = { top: 40, right: 0, bottom: 10, left: 10 },
+width = 650;
+height = 300;
+
 
 var fx = [(x)=>{return x**3/12 - 0.9*x**2 + 2.5*x + 4}, (x)=>{return x**2/4 - 3*x/2 + 5 }, (x)=>{ return x**3/12 - 3*x**2/4 + 9*x/4 + 1}, (x)=>{ return 4*Math.sin(x)+5}];
 var Dx = [(x)=>{return x**2/4 - 1.8*x + 2.5}, (x)=>{return x/2 - 3/2}, (x)=>{return x**2/4 - 3*x/2 +9/4}, (x)=>{ return 4*Math.cos(x) }];
