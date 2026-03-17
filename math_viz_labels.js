@@ -83,11 +83,12 @@ class slopeLabels extends ExstensionObj{
         this.labelText = [];
         this.baseLabelTxt = ["f(x)", "f(x+h)", "h", "∆y", "x", "x+h"];  // default text (without values) for labels
         this.labelTxt = [];
+        this.baseAnchors = ["end", "end", "middle", "start", "middle", "middle"];
         this.params={
-            "anchors": ["end", "end", "middle", "start", "middle", "middle"],
+            "anchors": [...this.baseAnchors],
             "showVal": [false],             // specifie if label[i] should include data value
-            "dx" : [ 20, 20, 0, 10, 0, 0 ], // label xOffset
-            "dy" : [ 0, 0, 15, 0, 30, 30 ], // label yOffset
+            "dx" : [ 0 ], // label xOffset
+            "dy" : [ 0 ], // label yOffset
             "show": [true]                  // specifiy if label[i] should be shown or hidden
         };
         this.parse_params(params);
@@ -134,7 +135,7 @@ class slopeLabels extends ExstensionObj{
         this.data.push([y1x, y0]);
         this.data.push([0, y1]);
         this.data.push([xC, y0]);
-        this.data.push([x1, yC]);
+        this.data.push([x1+0.25, yC]);
         this.data.push([x0, 0]);
         this.data.push([x1, x1y]);
 
@@ -165,6 +166,7 @@ class slopeLabels extends ExstensionObj{
     }
 
 
+
     adjust_offset(){
 
         let x = this.parent.data[1][0];
@@ -174,47 +176,44 @@ class slopeLabels extends ExstensionObj{
         let dy = fxh - fx;
         let h = this.parent.params.h;
 
-        let negateX = [false, false, false, false, false, false];
-        let negateY = [false, false, false, false, false, false];
+        let ofsetAxisL = 0.5;
+        let ofsetAxisR = 0.25;
+        let ofsetAxisT = 1.5;
+        let ofsetAxisB = 0.5;
+        let ofsetLineB = 1;
 
-        if(x >= 0 ){
-            negateX[0] = true;
-        } 
+        if(x >= 0){
+            this.data[0][0] -= ofsetAxisL;
+            this.params.anchors[0] = "end";
+        } else{
+            this.data[0][0] += ofsetAxisR;
+            this.params.anchors[0] = "start";
+        }
 
         if(xh >= 0){
-            negateX[1] = true;
+            this.data[1][0] -= ofsetAxisL;
+            this.params.anchors[1] = "end";
+        }else{
+            this.data[1][0] += ofsetAxisR;
+            this.params.anchors[1] = "start";
         }
 
-        if(fx < 0){
-            negateY[4] = true;
+        if(fx >= 0){
+            this.data[4][1] -= ofsetAxisT; 
+        }else{
+            this.data[4][1] += ofsetAxisB;
         }
 
-        if(fxh < 0){
-            negateY[5] = true;
+        if(fxh >= 0){
+            this.data[5][1] -= ofsetAxisT;
+        } else{
+            this.data[5][1] += ofsetAxisB;
         }
 
-        if(dy < 0){
-            negateY[2] = true;
-        }
-
-        for(let i=0; i<this.data.length; i++){
-
-            if( this.params.dx.length > i ){
-                let dx = Math.abs(this.params.dx[i]);
-                if(negateX[i]){
-                    dx = -dx;
-                }
-                this.params.dx[i] = dx;
-            }
-
-            if( this.params.dy.length > i ){
-                let dy = Math.abs(this.params.dy[i]);
-                if(negateY[i]){
-                    dy = -dy;
-                }
-                this.params.dy[i] = dy;
-            }
-
+        if(dy >= 0){
+            this.data[2][1] -= ofsetLineB;
+        } else{
+            this.data[2][1] += ofsetAxisB;
         }
 
 
