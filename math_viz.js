@@ -899,7 +899,7 @@ class ExstensionObj{
 
             this.parse_params(node.params);
             this.resolve_update(node);
-            node.params.data = this.data;   // add data to update node
+            node.params.data = [...this.data];   // add data to update node
             if(node.duration === null){
                 node.duration = this.duration;
             } 
@@ -1002,6 +1002,160 @@ class ExstensionObj{
 }
 
 
+class ExstensionMultiObj{
+
+    constructor(id){
+
+        this.id = id;
+        this.params = [];
+        this.svgObj = [];
+        this.parent = null;
+
+    }
+
+
+    parse_params(params){
+
+        for(let i=0; i<params.lenght; i++){
+
+            if(i >= this.params.length){
+                break;
+            }
+                
+            for (let [key, val] of Object.entries(params[i])){
+                if( this.params[i][key] !== undefined ){       // if provided parameter is part of class, override curent value
+                    this.params[i][key] = val;
+                }
+            }
+
+        }
+
+    }
+
+
+    update(state){
+
+        let node = state;     
+        let duration = 0; 
+        let updateSt = [];
+        this.svgObj.forEach(()=>{ updateSt.push(new UpdateNode({}, 0)) });
+
+        while( node !== null){              // loop through update nodes
+
+            this.parse_params(node.params);
+            this.resolve_update(node);
+            if(node.duration === null){
+                node.duration = this.duration;
+            }
+            if(node.delay === null){
+                node.delay = this.delay;
+            }
+            for(let i=0; i<this.svgObj.length; i++){
+
+                if(i >= node.params.lenght){
+                    break;
+                }
+                node.params[i].data = [...this.data];
+                updateSt[i].append( new UpdateNode( node.params[i], node.duration, node.delay ) );
+
+            }
+
+            duration += node.duration;
+            node = node.next;
+            
+        }
+
+        if(this.svgObj !== null){
+            this.svgObj.update(state);   
+        }
+
+        // update child (visual) object; pass root update node
+        this.notify_children(duration);
+
+    }
+
+
+    assigne_to_canvas(canvas){
+
+        if(canvas == null){
+            return
+        } 
+
+        this.canvas = canvas;
+        this.svgObj.forEach((c)=>{c.assigne_to_canvas(canvas)});
+
+    }
+
+
+    remove_from_canvas(){
+
+        this.canvas = null;
+        this.children.forEach((c)=>{c.remove_from_canvas()});
+
+    }    
+
+
+    add_child(obj, callback){
+
+        this.remove_child(obj);     // remove child if already exists; avoid duplicates
+        this.children.push( {element: obj, callback: callback} );
+        callback(this, "");
+
+    }
+
+
+    remove_child(obj){
+
+        this.children = this.children.filter( (e) => {return e.element.id !== obj.id} );
+
+    }
+
+
+    notify_children(duration){
+
+        this.children.forEach( (c) => { c.callback( this, "", duration); } );
+
+    }
+
+
+    set_parent(parent){
+
+        if(parent === null){
+            return
+        }
+
+        this.parent = parent;
+        parent.add_child(this, (obj,msg, duration)=>{ this.on_parent_update(obj, msg, duration) });
+
+    }
+
+
+    on_parent_update( obj, msg ){
+        /* placeholder for child class override */
+    }
+
+
+    remove_parent(){
+
+        this.parent = null;
+        parent.remove_child(this);
+
+    }
+
+
+    resolve_update(){
+        /* placeholder for child override */
+    }
+
+
+    get_data(){
+        /* placeholder for child override */
+    }
+
+}
+
+
+
 // Class for creating Graph from function 
 class GraphObj extends ExstensionObj{ 
 
@@ -1097,6 +1251,7 @@ class UpdateNode{   // Specify update parameters for other classes; link nodes (
     }
 
 }
+
 
     
 /*  suport functions  */
