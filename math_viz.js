@@ -153,7 +153,6 @@ class VisualObj{
 
     constructor(id){
 
-
         this.id = id;
         this.canvas = null;     // assigned canvas element
         this.params = {};       // parameters placeholder for child class overrride
@@ -280,7 +279,7 @@ class VisualObj{
         }
 
         this.parse_params(state.params);
-        this.resolve_update();              // resolve update 'side-efects'; Custome for each child class (ex update data)
+        this.resolve_update(state);              // resolve update 'side-efects'; Custome for each child class (ex update data)
         this.notify_children( state.duration );
 
         if(state.duration === null){
@@ -508,7 +507,7 @@ class ChartObj extends VisualObj{
 // Line class: plot line (graph) based on list of data values
 class LineObj extends VisualObj{
 
-    constructor( id, points, params, canvas=null){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
+    constructor( id, points, params={}, canvas=null){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
 
         super(id);
 
@@ -527,7 +526,7 @@ class LineObj extends VisualObj{
 
         this.parse_params(params);
         this.assigne_to_canvas(canvas);
-    
+
     }
 
 
@@ -550,41 +549,23 @@ class LineObj extends VisualObj{
             this.svg_draw(u, line, duration, delay, callback);
             return
         }
-    
-        if(duration === 0){
 
-            u.enter()
-                .append("path")
-                    .attr("class", this.id)
-                    .attr("clip-path", "url(#clip)")
-            .merge(u)
-                    .attr("d", line)
-                    .attr("fill", "none")
-                    .attr("stroke", this.params.color)
-                    .attr("stroke-width", this.params.width)
+        u.exit().remove();
 
-            callback();
-
-        } else{
-
-            u.enter()
-                .append("path")
-                    .attr("class", this.id)
-                    .attr("clip-path", "url(#clip)")
-            .merge(u)
-                .transition()
-                    .duration(duration)
-                    .attr("d", line)
-                    .attr("fill", "none")
-                    .attr("stroke", this.params.color)
-                    .attr("stroke-width", this.params.width)
-                    .attr("stroke-dasharray", this.params.dashArray)
-                    .delay(delay)
-                .on("end", callback)
-
-             u.exit().remove();
-
-        }
+        u.enter()
+            .append("path")
+                .attr("class", this.id)
+                .attr("clip-path", "url(#clip)")
+        .merge(u)
+            .transition()
+                .duration(duration)
+                .attr("d", line)
+                .attr("fill", "none")
+                .attr("stroke", this.params.color)
+                .attr("stroke-width", this.params.width)
+                .attr("stroke-dasharray", this.params.dashArray)
+                .delay(delay)
+            .on("end", callback)
 
     }
 
@@ -664,8 +645,18 @@ class LineObj extends VisualObj{
     }
 
 
-    resolve_update(){
+    resolve_update(node){
+
+        if(node.next === null){
+
+            if(this.params.draw === true && this.params.dashArray !== "0, 0"){
+                node.next = new UpdateNode({"draw": false}, 10, 0);
+            }
+
+        }
+
         this.data = this.params.data;
+
     }
     
 

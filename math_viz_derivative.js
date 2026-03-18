@@ -272,7 +272,7 @@ class DxApxDataObj extends DerivativeApxObj{
     get_data(){
 
         this.data = [];
-        if(this.graph === null){
+        if(this.parent === null){
             return;
         }
 
@@ -451,7 +451,120 @@ class DxColorObj extends ExstensionMultiObj{
 }
 
 
+class DxAproxColoredObj extends ExstensionMultiObj{
 
+    constructor(id, fx, xRange, params={}, canvas=null, graph){
+
+        super(id);
+
+        this.params ={
+            "fx": fx,              // reference function      
+             "width":2.5 ,         // line width
+             "color0":"red",        // line color
+             "color1":"blue",
+             "xRange": xRange,     // x value range
+             "h": 0.05,            // h value for caclulating slope and for sgement lenght
+             "draw": false,
+             "discrete": false,
+             "step": 0.05,
+             "dashArray": "0, 0",   // specify if / how line should be dashed
+             "drawT": 1,
+             "drawT0": 0
+        }
+        this.parse_params(params);
+
+        this.svgObj.push( new LineObj(this.id+"0", this.data));
+        this.svgObj[0].isDefined = (d)=>{ return (d[0] !== null) && (d[1] !== null) && (d[1]<-0.01)};
+        this.svgObj.push( new LineObj(this.id+"1", this.data));
+        this.svgObj[1].isDefined = (d)=>{ return (d[0] !== null) && (d[1] !== null) && (d[1]>0.01)};
+        this.svgObj.push( new LineObj(this.id+"2", this.data));
+        this.svgObj[2].isDefined = (d)=>{ return (d[0] !== null) && (d[1] !== null) && ( Math.abs(d[1])<0.01 )};
+
+        this.set_parent(graph);
+        this.assigne_to_canvas(canvas);
+
+        this.update(new UpdateNode({}, 0, 0));
+
+    }
+
+
+    get_data(){
+
+        this.data = [];
+
+        let xStart = this.params.xRange[0];
+        let xEnd = this.params.xRange[1];
+        let h = this.params.h;
+
+        for(let x=xStart; x<=xEnd; x+=this.params.step){
+
+            let k = get_slope(this.params.fx, x, h);
+
+            this.data.push([x, k]);
+
+        }
+
+    }
+
+
+    resolve_update(){
+
+        this.get_data();
+
+    }
+
+
+    get_svgObj_params(){
+
+        let params = [];
+        let color = [this.params.color0, this.params.color1, "black"];
+
+        let l = this.svgObj.length;
+        for(let i=0; i<l;i++){
+            params.push({
+              "data": [...this.data],
+              "color": color[i],
+              "width": this.params.width,
+              "draw": this.params.draw,
+              "drawT": this.params.drawT,
+              "drawT0" :this.params.drawT0,
+              "dashArray": this.params.dashArray
+            });
+        }
+
+        return params;
+
+    }
+
+
+    on_parent_update(obj, msg, duration){
+
+        this.update( new UpdateNode({"fx": this.parent.params.fx}, duration) );
+
+    }
+
+
+}
+
+
+class DxAproxDataColoredObj extends DxAproxColoredObj{
+
+    constructor(id, params={}, canvas, graph){
+        super(id, null, null, params, canvas, graph);
+    }
+
+    get_data(){
+
+        this.data = [];
+        if(this.parent === null){
+            return;
+        }
+
+        this.data = derivativeData(this.parent.data);
+        
+    }
+
+}
 
 
 

@@ -319,7 +319,7 @@ function dx_color_slide(i, slide = null){
         let chart = new ChartObj("dxColorChart", {}, canvas);
         let dxColor = new DxColorObj("dxColorG", fx[0], [-20, 20], {"draw": true}, canvas);
         let dx = new DerivativeApxObj("dxColorDx", fx[0], [-20, 20], { "color": "black", "width": 0}, canvas, dxColor);
-        let ddx = new DxApxDataObj("dxColorDdx", {"color": "black", "width": 0, "dashArray": "5, 5"}, canvas, dx);
+        let ddx = new DxAproxDataColoredObj("dxColorDdx", { "width": 0, "dashArray": "5, 5", "draw": false}, canvas, dx);
         let legendTxt = ["–––f(x), f ``(x)>0", "–––f(x), f ``(x)<0", "–––f `(x)", "– –f ``(x)"];
         let legend = new LabelObj("dxColorLegend", [[-2,10],[-2,9],[-2,8],[-2,7]], ["–––f(x), f ``(x)<0", "–––f(x), f ``(x)>0"], {"color":["red", "blue", "black", "black"]},canvas);
 
