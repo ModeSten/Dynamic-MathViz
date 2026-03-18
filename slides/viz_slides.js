@@ -320,8 +320,9 @@ function dx_color_slide(i, slide = null){
         let dxColor = new DxColorObj("dxColorG", fx[0], [-20, 20], {"draw": true}, canvas);
         let dx = new DerivativeApxObj("dxColorDx", fx[0], [-20, 20], { "color": "black", "width": 0}, canvas, dxColor);
         let ddx = new DxAproxDataColoredObj("dxColorDdx", { "width": 0, "dashArray": "5, 5", "draw": false}, canvas, dx);
-        let legendTxt = ["–––f(x), f ``(x)>0", "–––f(x), f ``(x)<0", "–––f `(x)", "– –f ``(x)"];
-        let legend = new LabelObj("dxColorLegend", [[-2,10],[-2,9],[-2,8],[-2,7]], ["–––f(x), f ``(x)<0", "–––f(x), f ``(x)>0"], {"color":["red", "blue", "black", "black"]},canvas);
+        let legendTxt = ["–––f(x), f ``(x)>0", "–––f(x), f ``(x)<0", "–––f `(x)", "– –f ``(x), < 0", "– –f ``(x), >0",];
+        let labelX = -3;
+        let legend = new LabelObj("dxColorLegend", [[labelX,10],[labelX,9],[labelX,8],[labelX,7], [labelX,6]], [legendTxt[0], legendTxt[1]] , {"color":["red", "blue"], "anchors": ["start"]},canvas);
 
         slide.inputs.fxSelect.addListener((val)=>{
 
@@ -333,28 +334,46 @@ function dx_color_slide(i, slide = null){
         slide.inputs.dxCheck.addListener((val)=>{
 
             let legTxt = [...legend.params.text];
+            let colors = [...legend.params.color];
+            let l = legTxt.length;
             if(val){
                 dx.update( new UpdateNode({"width": 1.5}, 500) );
                 legTxt.push(legendTxt[2]);
+                colors.push("black");
             } else{
                 dx.update( new UpdateNode({"width": 0}, 500) );
-                legTxt = legTxt.filter((txt)=>{return txt!==legendTxt[2]});
+                legTxt = legTxt.filter((txt, i)=>{
+                    if(txt===legendTxt[2]){
+                        colors.splice(i, 1);
+                    }
+                    return txt!==legendTxt[2]
+                });
             }
-            legend.update(new UpdateNode({"text":legTxt}));
+            legend.update(new UpdateNode({"text":legTxt, "color": colors}, 10));
 
         });
 
         slide.inputs.dDxCheck.addListener((val)=>{
 
             let legTxt = [...legend.params.text];
+            let colors = [...legend.params.color];
             if(val){
                 ddx.update( new UpdateNode({"width": 1.5}, 500) );
                 legTxt.push(legendTxt[3]);
+                legTxt.push(legendTxt[4]);
+                colors.push("red");
+                colors.push("blue");
+
             } else{
                 ddx.update( new UpdateNode({"width": 0}, 500) );
-                legTxt = legTxt.filter((txt)=>{return txt!==legendTxt[3]});
+                legTxt = legTxt.filter((txt,i)=>{
+                    if(txt===legendTxt[3]){
+                        colors.splice(i, 2);
+                    } 
+                    return (txt!==legendTxt[3]) && (txt!==legendTxt[4]) 
+                });
             }
-            legend.update(new UpdateNode({"text":legTxt}));
+            legend.update(new UpdateNode({"text":legTxt, "color": colors}, 10));
 
         });
 
