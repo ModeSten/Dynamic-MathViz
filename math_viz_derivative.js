@@ -285,7 +285,7 @@ class DxApxDataObj extends DerivativeApxObj{
 
 
 // class for creating graph colored based on derivative / second derivative greater or smaller than 0
-class DxColorObj extends ExstensionObj{
+class DxColorObj extends ExstensionMultiObj{
 
     constructor(id, fx, xRange, params={}, canvas){
 
@@ -310,27 +310,18 @@ class DxColorObj extends ExstensionObj{
 
         this.get_data();
 
-        this.line0 = new LineObj(this.id+"0", this.data, {"color": this.params.color0});    
-        this.line0.isDefined = (d, i )=>{ return this.definedPos( d, i ) };
-        this.line1 = new LineObj(this.id+"1", this.data, {"color": this.params.color1});
-        this.line1.isDefined = (d, i )=>{ return this.definedNeg( d, i ) };
-        this.line3 = new LineObj(this.id+"3", this.data, {"color": "black"});
-        this.line3.isDefined = (d, i)=>{ return this.definedZero( d, i) };
-
+        this.svgObj.push ( new LineObj(this.id+"0", this.data, {"color": this.params.color0}) );    
+        this.svgObj[0].isDefined = (d, i )=>{ return this.definedPos( d, i ) };
+        this.svgObj.push( new LineObj(this.id+"1", this.data, {"color": this.params.color1}) );
+        this.svgObj[1].isDefined = (d, i )=>{ return this.definedNeg( d, i ) };
+        //this.svgObj.push( new LineObj(this.id+"3", this.data, {"color": "black"}) );
+        //this.svgObj[2].isDefined = (d, i)=>{ return this.definedZero( d, i) };
         
-        this.update(new UpdateNode(this.params));
+        this.update(new UpdateNode(this.params, 0, 0));
         this.assigne_to_canvas(canvas);
 
     }
 
-
-    assigne_to_canvas(canvas){
-
-        this.line0.assigne_to_canvas(canvas);
-        this.line1.assigne_to_canvas(canvas);
-        this.line3.assigne_to_canvas(canvas);
-
-    }
 
 
     get_data(){
@@ -402,6 +393,7 @@ class DxColorObj extends ExstensionObj{
     /* defined for derivative is 0 */
     definedZero(d, i){
 
+
         if(this.params.mode === "first"){
 
             if(this.dxData0[i][1] === null){
@@ -423,53 +415,24 @@ class DxColorObj extends ExstensionObj{
     }
 
 
-    update(state){
-   
+    get_svgObj_params(){
 
-        let node = state;
-        let state0 = new UpdateNode({});
-        let state1 = new UpdateNode({});
-        let state3 = new UpdateNode({});
-
-        let duration = 0;
-
-
-        while( node !== null){              // loop through update nodes
-
-            this.parse_params(node.params);
-            this.resolve_update();
-
-            node.params["data"] = this.data;
-
-            if(node.duration === null){
-                node.duration = this.duration;
-            } 
-            if(node.delay === null){
-                node.delay = this.delay
-            }
-
-
-            let update0 = new UpdateNode({...node.params}, node.duration, node.delay);
-            update0.params["color"] = this.params.color0;
-            let update1 = new UpdateNode({...node.params}, node.duration, node.delay);
-            update1.params["color"] = this.params.color1;
-            let update3 = new UpdateNode({...node.params}, node.duration, node.delay);
-            update3.params["color"] = "black";
-
-            state0.append(update0);
-            state1.append(update1);
-            state3.append(update3);
-
-            
-            duration += node.duration;
-            node = node.next;
+        let params = [];
+        let objL = this.svgObj.length;
+        let colors = [this.params.color0, this.params.color1, "black"];
+        for(let i=0; i<objL; i++){
+            params.push( {
+            "color": colors[i],    
+            "width": this.params.width,         
+            "draw": this.params.draw,      // specifiy line should animated as if drawn (true || false)
+            "drawT": this.params.drawT,         // draw animation end (relative to line lenght: 0 to 1)
+            "drawT0": this.params.drawT0,        // draw animation start (relative: 0 to 1)
+            "data": [...this.data]
+            } );
 
         }
 
-        this.line0.update(state0.next);            // update child (visual) object; pass root update node
-        this.line1.update(state1.next);
-        this.line3.update(state3.next);
-        this.notify_children(duration);
+        return params;
 
     }
 
@@ -478,8 +441,9 @@ class DxColorObj extends ExstensionObj{
 
         this.get_data();
 
-        this.line0.isDefined =  (d, i )=>{ return this.definedNeg( i ) };
-        this.line1.isDefined =  (d, i )=>{ return this.definedPos( i ) };
+        this.svgObj[0].isDefined = (d, i )=>{ return this.definedNeg( i ) };
+        this.svgObj[1].isDefined = (d, i )=>{ return this.definedPos( i ) };
+        //this.svgObj[2].isDefined = (d, i)=>{ return this.definedZero( i ) };
 
     }
 

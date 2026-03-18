@@ -1007,27 +1007,26 @@ class ExstensionMultiObj{
     constructor(id){
 
         this.id = id;
-        this.params = [];
+        this.params = {};
+        this.objParams = [];
         this.svgObj = [];
         this.parent = null;
+        this.canvas = null;
+        this.data = [];
+        this.duration = 1000;
+        this.delay = 0;
+        this.children = [];
+        this.isDefined = (d, i)=>{ return (d[0]!==null) && (d[1]!==null) };
 
     }
 
 
     parse_params(params){
-
-        for(let i=0; i<params.lenght; i++){
-
-            if(i >= this.params.length){
-                break;
-            }
                 
-            for (let [key, val] of Object.entries(params[i])){
-                if( this.params[i][key] !== undefined ){       // if provided parameter is part of class, override curent value
-                    this.params[i][key] = val;
-                }
+        for (let [key, val] of Object.entries(params)){
+            if( this.params[key] !== undefined ){       // if provided parameter is part of class, override curent value
+                this.params[key] = val;
             }
-
         }
 
     }
@@ -1037,8 +1036,12 @@ class ExstensionMultiObj{
 
         let node = state;     
         let duration = 0; 
-        let updateSt = [];
-        this.svgObj.forEach(()=>{ updateSt.push(new UpdateNode({}, 0)) });
+        
+        let update = [];
+        let objL = this.svgObj.length;
+        for (let i=0; i<objL; i++){
+            update.push( new UpdateNode({}, 0, 0) );
+        }
 
         while( node !== null){              // loop through update nodes
 
@@ -1046,40 +1049,38 @@ class ExstensionMultiObj{
             this.resolve_update(node);
             if(node.duration === null){
                 node.duration = this.duration;
-            }
+            } 
             if(node.delay === null){
-                node.delay = this.delay;
+                node.delay = this.delay
             }
-            for(let i=0; i<this.svgObj.length; i++){
-
-                if(i >= node.params.lenght){
+            let objParams = this.get_svgObj_params();
+            let pL = objParams.lenght;
+            for(let i=0; i<objL; i++){
+                if(i>=pL){
                     break;
                 }
-                node.params[i].data = [...this.data];
-                updateSt[i].append( new UpdateNode( node.params[i], node.duration, node.delay ) );
-
+                update[i].append( new UpdateNode(objParams[i], node.duration, node.delay) );
             }
-
             duration += node.duration;
             node = node.next;
             
         }
 
-        if(this.svgObj !== null){
-            this.svgObj.update(state);   
+        for(let i=0; i<objL; i++){
+            this.svgObj[i].update(update[i]);
         }
 
         // update child (visual) object; pass root update node
         this.notify_children(duration);
+    }
 
+
+    get_svgObj_params(){
+        /* placeholder for child class override */
     }
 
 
     assigne_to_canvas(canvas){
-
-        if(canvas == null){
-            return
-        } 
 
         this.canvas = canvas;
         this.svgObj.forEach((c)=>{c.assigne_to_canvas(canvas)});
