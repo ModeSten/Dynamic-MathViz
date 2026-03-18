@@ -122,7 +122,7 @@ function dx_intro_slide(i, slide=null){
 
         let canvas = new CanvasObj("dxIntoCanvas", width, height, margin, Xrange, yRange, slide.svgDiv[0].id);
         let chart = new ChartObj("dxIntroChart", {}, canvas);
-        let graph = new GraphObj("dxIntroGraph", fx[0], [-20, 20], {"draw": false}, canvas);
+        let graph = new GraphObj("dxIntroGraph", fx[0], [-3, 10], {"draw": false}, canvas);
         let secant = new SecantObj("dxIntroSlope", fx[0], {"x0": 2, "h": 3}, canvas, graph);
         let slopeSup = new SecantSuportObj("dxIntroSlopeBase", secant, {}, canvas);
         let labels = new slopeLabels("dxIntroLabels", secant, {}, canvas);
@@ -194,9 +194,9 @@ function dx_continued_slide(i, slide=null){
 
         let canvas2 = new CanvasObj("dxCtnCanvas2", width, height*1.5, margin, Xrange, yRange, slide.svgDiv[1].id);
         let chart2 = new ChartObj("dxCtnChart2", {}, canvas2);
-        let graph2 = new GraphObj("dxCtnG2", fx[0], [-20, 20], {}, canvas2);
-        let derivative = new DerivativeApxObj("dxCtnDx", fx[0], [-20, 20], {"color": "red", "h":2}, canvas2, graph2);
-        let trueDx = new GraphObj("dxCtnTrueDx", Dx[0], [-20, 20], {"color": "red", "dashArray": "6, 6"}, canvas2);
+        let graph2 = new GraphObj("dxCtnG2", fx[0], [-3, 10], {}, canvas2);
+        let derivative = new DerivativeApxObj("dxCtnDx", fx[0], [-3, 10], {"color": "red", "h":2}, canvas2, graph2);
+        let trueDx = new GraphObj("dxCtnTrueDx", Dx[0], [-3, 10], {"color": "red", "dashArray": "6, 6"}, canvas2);
         let marker = new X0MarkerObj("dxCtnRightMarker", secant, {}, canvas2);
 
         let legX = -2
@@ -263,7 +263,7 @@ function tangent_slide(i, slide=null){
 
         let canvas = new CanvasObj("tangentCanvas", width, height, margin, Xrange, yRange, slide.svgDiv[0].id);
         let chart = new ChartObj("tangentChart", {}, canvas);
-        let graph = new GraphObj("tangentG", fx[0], [-20, 20], {}, canvas);
+        let graph = new GraphObj("tangentG", fx[0], [-3, 10], {}, canvas);
         let tangent = new TangentObj("tangent", fx[0], {"x0": 2, "length": 100}, canvas, graph);
         let marker = new SegmentMarkerObj("tangentMarker", tangent, {"p":[0.5], "color": "blue"}, canvas);
         let label = new TangentLabel("tangentLabel", tangent, {}, canvas);
@@ -321,8 +321,8 @@ function dx_color_slide(i, slide = null){
 
         let canvas = new CanvasObj("dxColorCanvas", width, height, margin, Xrange, yRange, slide.svgDiv[0].id);
         let chart = new ChartObj("dxColorChart", {}, canvas);
-        let dxColor = new DxColorObj("dxColorG", fx[0], [-20, 20], {"draw": true}, canvas);
-        let dx = new DerivativeApxObj("dxColorDx", fx[0], [-20, 20], { "color": "black", "width": 0}, canvas, dxColor);
+        let dxColor = new DxColorObj("dxColorG", fx[0], [-3, 10], {"draw": true}, canvas);
+        let dx = new DerivativeApxObj("dxColorDx", fx[0], [-3, 10], { "color": "black", "width": 0}, canvas, dxColor);
         let ddx = new DxAproxDataColoredObj("dxColorDdx", { "width": 0, "dashArray": "5, 5", "draw": false}, canvas, dx);
 
         let rect = new RectObj("dxColorLblBack", [[-3.2, 11]], {"height":[120], "width":[130]}, canvas, "txtBack");
@@ -423,7 +423,7 @@ function multi_tangent_slide(i, slide = null){
 
         let canvas = new CanvasObj("tanChainCanvas", width, height, margin, Xrange, yRange, slide.svgDiv[0].id);
         let chart = new ChartObj("tanChainChart", {}, canvas);
-        let graph = new GraphObj("tanChainG", fx[0], [-20, 20], {"draw": true}, canvas);
+        let graph = new GraphObj("tanChainG", fx[0], [-3, 10], {"draw": true}, canvas);
         let tanChain = new TangentChainObj("tanChain", fx[0], [-7, 7], {"x0": tanX0[0], "lenght": tanLen[0]}, canvas);
 
         slide.inputs.fxSelect.addListener((val)=>{
