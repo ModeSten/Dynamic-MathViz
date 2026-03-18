@@ -776,7 +776,7 @@ class LabelObj extends VisualObj{
     }
 
 
-    svg_init(duration=this.duration, delay=this.delay, callbac=()=>{}){
+    svg_init(duration=this.duration, delay=this.delay, callback=()=>{}){
 
         if(this.canvas === null || this.canvas.svg === null){
             return
@@ -802,7 +802,8 @@ class LabelObj extends VisualObj{
                 .attr("dx", (d, i)=>{ return this.params.dx[i%dxL] })
                 .attr("dy", (d, i)=>{ return this.params.dy[i%dyL] })
                 .attr("text-anchor", (d, i)=>{ return this.params.anchors[i%this.params.anchors.length]})
-                .style("fill", (d, i)=>{ return this.params.color[i%this.params.color.length] });
+                .style("fill", (d, i)=>{ return this.params.color[i%this.params.color.length] })
+            .on("end", callback);
 
     }
 
@@ -834,6 +835,68 @@ class LabelObj extends VisualObj{
 
     resolve_update(){
         this.data = this.params.data;
+    }
+
+}
+
+
+class RectObj extends VisualObj{
+
+    constructor(id, pos,params={}, canvas=null, classname=""){
+
+        super(id);
+
+        this.params={
+            "data": pos,
+            "height": [50],
+            "width": [50],
+            "color": ["white"],
+            "stroke": ["black"]
+        };
+        this.parse_params(params);
+
+        this.classname = this.id + " " + classname;
+        this.data = this.params.data;
+
+        this.assigne_to_canvas(canvas);
+
+        this.duration = 10;
+
+    }
+
+
+    svg_init(duration=this.duration, delay=this.delay, callback=()=>{return}){
+
+        if(this.canvas === null){
+            return
+        }
+
+
+        let wL = this.params.width.length;
+        let hL = this.params.height.length;
+        let cL = this.params.color.length;
+        let sL = this.params.stroke.lenght;
+
+        let u = this.canvas.svg.selectAll("."+this.id)
+            .data(this.params.data);
+
+        u.enter()
+            .append("rect")
+            .attr("class", this.classname)
+        .merge(u)
+            .transition()
+                .duration(duration)
+                .attr("x", (d)=>{ return this.canvas.xScale(d[0]) })
+                .attr("y", (d)=>{ return this.canvas.yScale(d[1])})
+                .attr("width", (d, i)=>{return this.params.width[i%wL]})
+                .attr("height", (d, i)=>{return this.params.height[i%hL]})
+            .on("end", callback);
+
+    }
+
+
+    on_canvas_update(){
+        this.svg_init();
     }
 
 }
