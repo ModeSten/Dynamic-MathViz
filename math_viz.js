@@ -151,14 +151,15 @@ class CanvasObj {
 // parent class for math visualisation classes; implements common parameters and methods
 class VisualObj{
 
-    constructor(id){
+    constructor(id, classname="", duration=0, delay=0){
 
         this.id = id;
+        this.classname = this.id + " " + classname;
         this.canvas = null;     // assigned canvas element
         this.params = {};       // parameters placeholder for child class overrride
 
-        this.duration = 1000;   // transition dration (default)
-        this.delay = 0;         // transition delay (default)
+        this.duration = duration;   // transition dration (default)
+        this.delay = delay;         // transition delay (default)
         this.isDefined = (d, i) => { return ( d[0] !== null )  && ( d[1] !== null ) };      // specify for whath values element should be rendered
 
         this.data = [];
@@ -323,9 +324,9 @@ class VisualObj{
 // kordinate system (axis)
 class ChartObj extends VisualObj{
 
-    constructor ( id, params={}, canvas=null){
+    constructor ( id, params={}, canvas=null, classname="", duration=0, delay=0){
 
-        super(id);
+        super(id, duration, delay, classname);
 
         this.params = {
             "xRange": null,     // range of x axis values
@@ -507,9 +508,9 @@ class ChartObj extends VisualObj{
 // Line class: plot line (graph) based on list of data values
 class LineObj extends VisualObj{
 
-    constructor( id, points, params={}, canvas=null){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
+    constructor( id, points, params={}, canvas=null, classname="", duration=0, delay=0){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
 
-        super(id);
+        super(id, classname, duration, delay);
 
         this.params = {
         "data": points,     // data for drawing line (x & y value pairs)
@@ -666,20 +667,21 @@ class LineObj extends VisualObj{
 // data markers class; create circular markers based on data value paris
 class MarkerObj extends VisualObj{
 
-    constructor( id,  data, params={}, canvas=null, parent=null){
+    constructor( id,  data, params={}, canvas=null, parent=null, classname="", duration=0, delay=0){
 
-        super(id);
+        super(id, classname, duration, delay);
 
         this.params={
             "data": data,       // marker positions
             "color": "red",     // marker color
             "r": 3,             // marker (circle) radius 
-        }
+        };
+        this.parse_params(params);
 
         this.data = data;       
-        this.parent = null;
 
-        this.parse_params(params);
+        this.set_parent(parent);
+
         this.assigne_to_canvas(canvas);
         this.svg_init();
 
@@ -750,9 +752,9 @@ class MarkerObj extends VisualObj{
 // class for creating and managing label svg elements
 class LabelObj extends VisualObj{
 
-    constructor(id, pos, text, params={}, canvas=null, classname=""){
+    constructor(id, pos, text, params={}, canvas=null, classname="", duration=0, delay=0){
 
-        super(id);
+        super(id, classname, duration, delay);
 
         this.params={
             "data": pos,    // label positions: [[x0, y0], [x1, y1]]
@@ -765,7 +767,6 @@ class LabelObj extends VisualObj{
         }
         this.parse_params(params);
     
-        this.classname = this.id + " " + classname;
         this.textObj = null;
 
         this.data = this.params.data;
@@ -842,9 +843,9 @@ class LabelObj extends VisualObj{
 
 class RectObj extends VisualObj{
 
-    constructor(id, pos,params={}, canvas=null, classname=""){
+    constructor(id, pos,params={}, canvas=null, classname="", duration=0, delay=0){
 
-        super(id);
+        super(id, classname, duration, delay);
 
         this.params={
             "data": pos,
@@ -855,7 +856,6 @@ class RectObj extends VisualObj{
         };
         this.parse_params(params);
 
-        this.classname = this.id + " " + classname;
         this.data = this.params.data;
 
         this.assigne_to_canvas(canvas);
@@ -907,7 +907,7 @@ class RectObj extends VisualObj{
 // Base class for classes extending visual classes; cotnain visualObj (ex line) as parameter 
 class ExstensionObj{
 
-    constructor( id ){
+    constructor( id, classname="", duration=0, delay=0 ){
 
         this.id = id;           // object id; also used for selecting svg elements
         this.svgObj = null;     // Class object mannaging svg elements (VisualObj class)
@@ -916,9 +916,10 @@ class ExstensionObj{
         this.children = []      // child objects, updating with parent class
         this.data = [];         // object data to visualize
         this.isDefined = (d, i)=>{return (d[0]!==null) && (d[1]!==null)};   // specifies which data points should be ignored
-        this.duration = 1000;   // transition (default) duration
-        this.delay = 0;         // transition (default) delay
+        this.duration = duration;   // transition (default) duration
+        this.delay = delay;         // transition (default) delay
         this.parent = null;
+        this.classname = classname;
 
     }
 
@@ -1058,7 +1059,7 @@ class ExstensionObj{
 
 class ExstensionMultiObj{
 
-    constructor(id){
+    constructor(id, classname="", duration=0, delay=0){
 
         this.id = id;
         this.params = {};
@@ -1067,10 +1068,11 @@ class ExstensionMultiObj{
         this.parent = null;
         this.canvas = null;
         this.data = [];
-        this.duration = 1000;
-        this.delay = 0;
+        this.duration = duration;
+        this.delay = delay;
         this.children = [];
         this.isDefined = (d, i)=>{ return (d[0]!==null) && (d[1]!==null) };
+        this.classname = classname;
 
     }
 
@@ -1214,9 +1216,9 @@ class ExstensionMultiObj{
 // Class for creating Graph from function 
 class GraphObj extends ExstensionObj{ 
 
-    constructor(id, fx, xRange, params, canvas){
+    constructor(id, fx, xRange, params={}, canvas=null, classname="", duration=0, delay=0){
 
-        super(id);
+        super(id, classname, duration, delay);
         this.params = {
             "fx": fx,           // graph function
             "xRange": xRange,   // x value range
@@ -1230,8 +1232,10 @@ class GraphObj extends ExstensionObj{
         };
         this.parse_params(params);
 
+
+
         this.get_data();
-        this.svgObj = new LineObj(id, this.data, this.params);
+        this.svgObj = new LineObj(id, this.data, this.params, null, classname, this.duration, this.delay);
         this.assigne_to_canvas(canvas);
 
 

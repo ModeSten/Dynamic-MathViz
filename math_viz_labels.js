@@ -2,9 +2,9 @@
 // class for creating lines between labels and value position: (x, 0) -> (x, y) -> (0, y)
 class LabelAxisLineObj extends ExstensionObj{
 
-    constructor(id, points, params={}, canvas=null, parent=null){
+    constructor(id, points, params={}, canvas=null, parent=null, duration=0, delay=0, classname=""){
 
-        super(id);
+        super(id, classname, duration, delay);
 
         this.params = {
             "points": points,           // data points
@@ -14,7 +14,7 @@ class LabelAxisLineObj extends ExstensionObj{
         this.parse_params(params);
         this.get_data();
 
-        this.svgObj = new LineObj(id+"Lines", this.data, this.params);
+        this.svgObj = new LineObj(id+"Lines", this.data, this.params, null, this.classname, this.duration, this.delay);
         this.assigne_to_canvas(canvas);
 
         this.set_parent(parent);
@@ -77,9 +77,9 @@ class LabelAxisLineObj extends ExstensionObj{
 // class for creating labels for graph slope (secant)
 class slopeLabels extends ExstensionObj{
 
-    constructor(id, slope, params={}, canvas=null){
+    constructor(id, slope, params={}, canvas=null, duration=0, delay=0, classname=""){
 
-        super(id);
+        super(id, classname, duration, delay);
         this.labelText = [];
         this.baseLabelTxt = ["f(x)", "f(x+h)", "h", "∆y", "x", "x+h"];  // default text (without values) for labels
         this.labelTxt = [];
@@ -239,9 +239,9 @@ class slopeLabels extends ExstensionObj{
 
 class TangentLabel extends ExstensionObj{
 
-    constructor(id, tangent, params={}, canvas=null){
+    constructor(id, tangent, params={}, canvas=null, duration=0, delay=0, classname=""){
 
-        super(id);
+        super(id, classname, duration, delay);
 
         this.LabelTxt=[""];
 

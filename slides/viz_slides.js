@@ -218,7 +218,7 @@ function dx_continued_slide(i, slide=null){
         slide.inputs.fxSelect.addListener((val)=>{
 
             let update = new UpdateNode({"fx": fx[val]}, 1500);
-            let updateDx = new UpdateNode({"fx": Dx[val]});
+            let updateDx = new UpdateNode({"fx": Dx[val]}, 1500);
             graph1.update(update);
             graph2.update(update);
             trueDx.update(updateDx);

@@ -6,9 +6,9 @@
 // Class for placing marker at regular intervals along line
 class SpacedMarkerObj extends ExstensionObj{
 
-    constructor(id, parent, params={}, canvas=null){
+    constructor(id, parent, params={}, canvas=null, duration=0, delay=0, classname=""){
 
-        super(id);
+        super(id, classname, duration, delay);
 
         this.params = {
             "color": "red",     // marker color
@@ -22,7 +22,7 @@ class SpacedMarkerObj extends ExstensionObj{
         this.set_parent(parent);
         this.get_data();
 
-        this.svgObj = new MarkerObj(id, this.data, this.params);    // svg (visual) object for managing SVG elements
+        this.svgObj = new MarkerObj(id, this.data, this.params, null, null, this.classname, this.duration, this.delay);    // svg (visual) object for managing SVG elements
 
         this.assigne_to_canvas(canvas);
 
@@ -68,12 +68,12 @@ class SpacedMarkerObj extends ExstensionObj{
     }
 
 
-    on_parent_update(){
+    on_parent_update(obj, msg, duration){
 
         this.get_data();
 
         if(this.svgObj !== null){
-            this.svgObj.update(new UpdateNode({"data":this.data}, this.parent.duration));
+            this.svgObj.update(new UpdateNode({"data":this.data}, duration));
         }
 
     }
@@ -85,9 +85,9 @@ class SpacedMarkerObj extends ExstensionObj{
 // Class for placin markers at relative positions along line segment (between data points)
 class SegmentMarkerObj extends ExstensionObj{
 
-constructor(id, parent, params={}, canvas=null){
+constructor(id, parent, params={}, canvas=null, duration=0, delay=0, classname=""){
 
-        super(id);
+        super(id, classname, duration, delay);
 
         this.params = {
             "color": "red",     // marker color
@@ -101,7 +101,7 @@ constructor(id, parent, params={}, canvas=null){
         this.set_parent(parent);
         this.get_data();
 
-        this.svgObj = new MarkerObj(id, this.data, this.params);
+        this.svgObj = new MarkerObj(id, this.data, this.params, null, null, this.classname, this.duration, this.delay);
 
         this.assigne_to_canvas(canvas);
 
@@ -162,9 +162,9 @@ constructor(id, parent, params={}, canvas=null){
 // Class for placin markers at relative positions along line segment (between data points); y value based on function 
 class SegmentMarkerFxObj extends ExstensionObj{
 
-constructor(id, parent, params={}, canvas=null){
+constructor(id, parent, params={}, canvas=null, duration=0, delay=0, classname=""){
 
-        super(id);
+        super(id, classname, duration, delay);
 
         this.params = {
             "color": "red",     // marker color
@@ -178,7 +178,7 @@ constructor(id, parent, params={}, canvas=null){
         this.set_parent(parent);
         this.get_data();
 
-        this.svgObj = new MarkerObj(this.id, this.data, this.params);
+        this.svgObj = new MarkerObj(this.id, this.data, this.params, null, null, this.classname, this.duration, this.delay);
         this.assigne_to_canvas(canvas);
 
     }
@@ -245,7 +245,7 @@ constructor(id, parent, params={}, canvas=null){
 // class for placing markers at (two) secant intersection points 
 class SecantMarkerObj extends ExstensionObj{
 
-    constructor(id, secant, params={}, canvas=null ){
+    constructor(id, secant, params={}, canvas=null, duration=0, delay=0, classname="" ){
 
         super(id);
 
@@ -260,7 +260,7 @@ class SecantMarkerObj extends ExstensionObj{
 
         this.get_data();
         
-        this.svgObj = new MarkerObj(this.id, this.data, this.params);
+        this.svgObj = new MarkerObj(this.id, this.data, this.params, null, null, this.classname, this.duration, this.delay);
 
         this.assigne_to_canvas(canvas);
 
@@ -301,7 +301,7 @@ class SecantMarkerObj extends ExstensionObj{
 // class for placing markers along function (graph) at specified x positions
 class PointMarkerFxObj extends ExstensionObj{
     
-    constructor(id, fx, params={}, canvas=null, graph=null){
+    constructor(id, fx, params={}, canvas=null, graph=null, duration=0, delay=0, classname=""){
 
         super(id);
 
@@ -318,7 +318,7 @@ class PointMarkerFxObj extends ExstensionObj{
         this.set_parent(graph);
         this.get_data();
 
-        this.svgObj = new MarkerObj(this.id, this.data, this.params);
+        this.svgObj = new MarkerObj(this.id, this.data, this.params, null, null, this.classname, this.duration, this.delay);
         this.assigne_to_canvas(canvas);
 
     }
@@ -358,9 +358,9 @@ class PointMarkerFxObj extends ExstensionObj{
 // place marker along parent function at position x0; require parent with fx and x0 parameters
 class X0MarkerObj extends ExstensionObj{
 
-    constructor(id, parent, params={}, canvas=null){
+    constructor(id, parent, params={}, canvas=null, duration=0, delay=0, classname=""){
 
-        super(id);
+        super(id, classname, duration, delay);
 
         this.params={
             "r": "3.5",         // marker (circle) radius
@@ -372,7 +372,9 @@ class X0MarkerObj extends ExstensionObj{
         
         this.get_data();
 
-        this.svgObj = new MarkerObj(this.id, this.data, this.params, canvas);
+        this.svgObj = new MarkerObj(this.id, this.data, this.params, null, null, this.classnamem, this.duration, this.delay);
+
+        this.assigne_to_canvas(canvas);
 
     }
 

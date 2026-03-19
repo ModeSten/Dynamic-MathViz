@@ -7,9 +7,9 @@
 class TangentObj extends ExstensionObj{
 
 
-    constructor(id, fx, params={}, canvas=null, graph=null){
+    constructor(id, fx, params={}, canvas=null, graph=null, classname="", duration=0, delay=0){
 
-        super(id);
+        super(id, classname, duration, delay);
 
         this.fx = fx;                  // tangent reference function
         this.slope = 0;
@@ -24,13 +24,11 @@ class TangentObj extends ExstensionObj{
         };
         this.parse_params(params);
 
-        this.duration = 50;            // default transition duration
-
         if(graph===null){
             this.get_data();
         }
 
-        this.svgObj = new LineObj(this.id, this.data, this.params);
+        this.svgObj = new LineObj(this.id, this.data, this.params, null, this.classname, this.duration, this.delay);
 
         this.set_parent(graph);         // set Graph object as reference; update on graph update
         this.assigne_to_canvas(canvas);
@@ -96,9 +94,9 @@ class TangentObj extends ExstensionObj{
 // Class creating chain of tangent lines
 class TangentChainObj extends ExstensionObj{
 
-    constructor(id, fx, xRange, params={}, canvas=null, graph=null){
+    constructor(id, fx, xRange, params={}, canvas=null, graph=null, classname="", duration=0, delay=0){
 
-        super(id);
+        super(id, classname, duration, delay);
 
         this.params = {
             "fx": fx,           // reference function
@@ -193,9 +191,9 @@ class TangentChainObj extends ExstensionObj{
 // Class creating an aproximation of derivative based on function
 class DerivativeApxObj extends ExstensionObj{
 
-    constructor(id, fx, xRange, params={}, canvas=null, graph=null){
+    constructor(id, fx, xRange, params={}, canvas=null, graph=null, classname="", duration=0, delay=0){
 
-        super(id);
+        super(id, classname, duration, delay);
         this.params = {
             "fx": fx,              // reference function      
              "width":2.5 ,         // line width
@@ -261,13 +259,6 @@ class DerivativeApxObj extends ExstensionObj{
 // class for creating derivative aproximation based on parent (graph) data
 class DxApxDataObj extends DerivativeApxObj{
 
-    constructor(id, params={}, canvas=null, graph=null){
-
-        super(id, null, null, params, canvas, graph);
-
-    }
-
-
     // parent class override; get data based on parent data rather than function
     get_data(){
 
@@ -280,16 +271,15 @@ class DxApxDataObj extends DerivativeApxObj{
 
     }
 
-
 }
 
 
 // class for creating graph colored based on derivative / second derivative greater or smaller than 0
 class DxColorObj extends ExstensionMultiObj{
 
-    constructor(id, fx, xRange, params={}, canvas){
+    constructor(id, fx, xRange, params={}, canvas=null, classname="", duration=0, delay=0){
 
-        super(id);
+        super(id, classname, duration, delay);
 
         this.params = {
             "fx": fx,           // function
@@ -310,12 +300,12 @@ class DxColorObj extends ExstensionMultiObj{
 
         this.get_data();
 
-        this.svgObj.push ( new LineObj(this.id+"0", this.data, {"color": this.params.color0}) );    
+        this.svgObj.push ( new LineObj(this.id+"0", this.data, {"color": this.params.color0}, null, this.classname, this.duration, this.delay) );    
         this.svgObj[0].isDefined = (d, i )=>{ return this.definedPos( d, i ) };
-        this.svgObj.push( new LineObj(this.id+"1", this.data, {"color": this.params.color1}) );
+        this.svgObj.push( new LineObj(this.id+"1", this.data, {"color": this.params.color1}, null, this.classname, this.duration, this.delay) );
         this.svgObj[1].isDefined = (d, i )=>{ return this.definedNeg( d, i ) };
-        //this.svgObj.push( new LineObj(this.id+"3", this.data, {"color": "black"}) );
-        //this.svgObj[2].isDefined = (d, i)=>{ return this.definedZero( d, i) };
+        this.svgObj.push( new LineObj(this.id+"3", this.data, {"color": "black"}, null, this.classname, this.duration, this.delay) );
+        this.svgObj[2].isDefined = (d, i)=>{ return this.definedZero( d, i) };
         
         this.update(new UpdateNode(this.params, 0, 0));
         this.assigne_to_canvas(canvas);
@@ -453,9 +443,9 @@ class DxColorObj extends ExstensionMultiObj{
 
 class DxAproxColoredObj extends ExstensionMultiObj{
 
-    constructor(id, fx, xRange, params={}, canvas=null, graph){
+    constructor(id, fx, xRange, params={}, canvas=null, graph=null, classname="", duration=0, delay=0){
 
-        super(id);
+        super(id, classname, duration, delay);
 
         this.params ={
             "fx": fx,              // reference function      
@@ -571,9 +561,9 @@ class DxAproxDataColoredObj extends DxAproxColoredObj{
 // Class creating series of (n) lines, aproximating orginal graph
 class SecantObj extends ExstensionObj{
 
- constructor(id, fx, params={}, canvas=null, graph=null){
+ constructor(id, fx, params={}, canvas=null, graph=null, classname="", duration=0, delay=0){
 
-        super(id);
+        super(id, classname, duration, delay);
 
         this.params = {
             "fx": fx,           // function: (x)=>{return some function}
@@ -582,11 +572,9 @@ class SecantObj extends ExstensionObj{
              "width":2.5 ,      
              "color":"red", 
              "draw": false,      // specifiy line should animated as if drawn (true || false)
-             "lenght": 50
+             "lenght": 40
             };   
         this.parse_params(params); 
-
-        this.duration = 50;
 
         if(graph === null){
             this.get_data();
@@ -672,9 +660,9 @@ class SecantObj extends ExstensionObj{
 // class for creating lines, highligthing slope (secant) delta y and delta x (h) between intersection points
 class SecantSuportObj extends ExstensionObj{
 
-    constructor(id, secant, params={}, canvas=null){
+    constructor(id, secant, params={}, canvas=null, classname="", duration=0, delay=0){
 
-        super(id);
+        super(id, classname, duration, delay);
         this.labels = null;
 
         this.labelPos = [];
@@ -691,7 +679,9 @@ class SecantSuportObj extends ExstensionObj{
 
         this.get_data();
 
-        this.svgObj = new LineObj(this.id+"Line", this.data, this.params, canvas);
+        this.svgObj = new LineObj(this.id+"Line", this.data, this.params, null, this.classname, this.duration, this.delay);
+
+        this.assigne_to_canvas(canvas);
 
     }
 
@@ -746,9 +736,9 @@ class SecantSuportObj extends ExstensionObj{
 // Class creating series of lines aproximating orginal graph
 class SlopeChainObj extends ExstensionObj{
 
- constructor(id, fx, xRange, params={}, canvas=null, graph=null){
+ constructor(id, fx, xRange, params={}, canvas=null, graph=null, classname="", duration=0, delay=0){
 
-        super(id);
+        super(id, classname, duration, delay);
 
         this.params = {
             "fx": fx,           // reference function
@@ -768,8 +758,7 @@ class SlopeChainObj extends ExstensionObj{
             this.get_data();
         }
 
-        this.svgObj = new LineObj( this.id, this.data, this.params );
-        this.svgObj.duration = this.duration;
+        this.svgObj = new LineObj( this.id, this.data, this.params, null, this.classname, this.duration, this.delay );
 
         this.set_parent(graph);
         this.assigne_to_canvas(canvas);
