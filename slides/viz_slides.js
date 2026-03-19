@@ -304,9 +304,9 @@ function dx_color_slide(i, slide = null){
         let select = new SelectorObj("dxClFxSelect", fxTxt, fxI, slide.ctrlContainer);
         slide.inputs["fxSelect"] = select;
 
-        let dxCheck = new CheckBoxObj("dxColorDxCheck", "f `(x)", 0, slide.ctrlContainer);
+        let dxCheck = new CheckBoxObj("dxColorDxCheck", "f `(x)", slide.ctrlContainer);
         slide.inputs["dxCheck"] = dxCheck;
-        let dDxCheck = new CheckBoxObj("dDxColorDxCheck", "f ``(x)", 0, slide.ctrlContainer);
+        let dDxCheck = new CheckBoxObj("dDxColorDxCheck", "f ``(x)", slide.ctrlContainer);
         slide.inputs["dDxCheck"] = dDxCheck;
 
         slides[i] = slide;
@@ -408,6 +408,15 @@ function multi_tangent_slide(i, slide = null){
         let select = new SelectorObj("tanChainFxSelect", fxTxt, fxI, slide.ctrlContainer);
         slide.inputs["fxSelect"] = select;
 
+        let checkPos = new CheckBoxObj("tanChainPosCheck", "dx>0", slide.ctrlContainer, "", true);
+        slide.inputs["posCheck"] = checkPos;
+
+        let checkNeg = new CheckBoxObj("tanChainPosCheck", "dx<0", slide.ctrlContainer, "", true);
+        slide.inputs["negCheck"] = checkNeg;
+
+        let checkZero = new CheckBoxObj("tanChainPosCheck", "dx=0", slide.ctrlContainer, "", true);
+        slide.inputs["zeroCheck"] = checkZero;
+
         slides[i] = slide;
 
     }
@@ -420,7 +429,7 @@ function multi_tangent_slide(i, slide = null){
 
         let tanX0 = [ [0, 1.879, 3.7, 5.375, 7.3 ], [-1, 3, 7], [-0.5, 3, 6.5], [0, 1.57, 3.2, 4.712, 6.3, 7.854] ];
         let tanLen = [[4, 1.5, 2.5, 1.5, 4 ], [8, 4, 8], [7.5, 4, 7.5], [7, 2, 7, 2, 7, 2]];
-
+        
         let canvas = new CanvasObj("tanChainCanvas", width, height, margin, Xrange, yRange, slide.svgDiv[0].id);
         let chart = new ChartObj("tanChainChart", {}, canvas);
         let graph = new GraphObj("tanChainG", fx[0], [-3, 10], {"draw": true}, canvas);
@@ -436,9 +445,32 @@ function multi_tangent_slide(i, slide = null){
 
         });
 
+        slide.inputs.posCheck.addListener((val)=>{
+
+            tanChain.defineDxPos = val;
+            tanChain.update( new UpdateNode({}, 1000));
+
+        });
+
+        slide.inputs.negCheck.addListener((val)=>{
+
+            tanChain.defineDxNeg = val;
+            tanChain.update( new UpdateNode({}, 1000));
+
+        })
+
+        slide.inputs.zeroCheck.addListener((val)=>{
+
+            tanChain.defineDxZero = val;
+            tanChain.update( new UpdateNode({}, 1000));
+
+        })
+
+
     }
 
 }
+
 
 
 

@@ -118,7 +118,12 @@ class TangentChainObj extends ExstensionObj{
             this.get_data();
         }
 
-        this.svgObj = new LineObj( this.id, this.data, this.params );
+        this.defineDxPos = true;
+        this.defineDxNeg = true;
+        this.defineDxZero = true;
+
+        this.svgObj = new LineObj( this.id, this.data, this.params, null, this.classname, this.duration, this.delay );
+        this.svgObj.isDefined = (d, i)=>{ return this.defined_pos_neg_zero(d, i) };
 
         this.set_parent(graph);
         this.assigne_to_canvas(canvas);
@@ -181,6 +186,40 @@ class TangentChainObj extends ExstensionObj{
 
         let update = new UpdateNode({"fx": this.parent.params.fx}, duration);
         this.update(update);
+
+    }
+
+
+    defined_pos_neg_zero(d, i){
+
+        if( d[1] === null || d[0] === null ){
+            return false;
+        } 
+
+        if(this.defineDxPos && this.defineDxNeg && this.defineDxZero){
+            return true;
+        }
+
+        let delta=0;
+        if( i > this.data.length-2 || this.data[i+1][1]===null ){
+            delta = d[1] - this.data[i-1][1];
+        } else{
+            delta = this.data[i+1][1] - d[1];
+        }
+
+        if( !this.defineDxPos && delta > 0.1 ){
+            return false;
+        }
+
+        if( !this.defineDxNeg && delta < -0.1){
+            return false;
+        }
+
+        if( !this.defineDxZero && Math.abs(delta) < 0.1){
+            return false
+        }
+
+        return true;
 
     }
 

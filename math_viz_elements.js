@@ -379,17 +379,16 @@ class SelectorObj{
 
 class CheckBoxObj{
 
-    constructor(id, label, value, parentDiv=null, className=""){
+    constructor(id, label, parentDiv=null, className="", checked=false){
 
         this.id = id;
         this.listener = [];
         this.parentDiv = null;
-        this.value = value
 
         this.check = document.createElement("input");
         this.check.type = "checkbox";
         this.check.id = this.id;
-        this.check.value = value;
+        this.check.checked = checked;
         this.check.onchange = ()=>{this.on_change()};
 
         this.label = document.createElement("label");
