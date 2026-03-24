@@ -62,10 +62,11 @@ h3{
     display: flex;
     align-content: center;
     justify-content: center;
+
     width: 100%;
     height: fit-content;
-    background-color: #faebd7;
 
+    background-color: #faebd7;
     border: 0.5px solid;
 }
 
@@ -75,13 +76,13 @@ h3{
     align-content: center;
     justify-content: center;
     height: fit-content;
-    margin-top: 5px;
+    margin-top: 20px;
     margin-left: 1%;
     width: 900px;
 }
 
 .svg_div.half{
-    width: 600px;
+    width: 650px;
 }
 
 
