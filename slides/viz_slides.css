@@ -77,8 +77,11 @@ h3{
     height: fit-content;
     margin-top: 5px;
     margin-left: 1%;
-    width: 80%;
-    height: fit-content;
+    width: 900px;
+}
+
+.svg_div.half{
+    width: 600px;
 }
 
 
@@ -132,3 +135,4 @@ h3{
     fill: #faebd7;
 
 }
+

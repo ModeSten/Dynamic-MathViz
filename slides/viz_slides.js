@@ -15,7 +15,7 @@ class Slide{
     constructor(id, svgN){
 
         let widhtClassLst = ["full", "half", "third"];
-        let widhtClass = widhtClassLst[svgN%widhtClassLst.length];
+        let widhtClass = widhtClassLst[svgN%widhtClassLst.length-1];
 
         this.init = false;
         this.id = id;
