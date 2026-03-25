@@ -199,9 +199,9 @@ function dx_continued_slide(i, slide=null){
         let trueDx = new GraphObj("dxCtnTrueDx", Dx[0], [-3, 10], {"color": "red", "dashArray": "6, 6"}, canvas2);
         let marker = new X0MarkerObj("dxCtnRightMarker", secant, {}, canvas2);
 
-        let legX = -2
-        let rect = new RectObj("dxCtn", [[legX-0.75, 10.75]], {"width": [80], "height":[100]}, canvas2, "txtBack")
-        let legend = new LabelObj("dxCtnLegend", [[legX,10], [legX,9], [legX,8]], ["–––f(x)", "– – f `(x)", "–––∆y/h"], {"color":["black", "red", "red"]}, canvas2);
+        let legX = -2.7;
+        let rect = new RectObj("dxCtn", [[legX-0.6, 10.5]], {"width": [80], "height":[100]}, canvas2, "txtBack")
+        let legend = new LabelObj("dxCtnLegend", [[legX,10], [legX,9.5], [legX,9]], ["–––f(x)", "– – f `(x)", "–––∆y/h"], {"color":["black", "red", "red"]}, canvas2);
         
 
         slide.inputs.xSlider.addListener((val)=>{
@@ -325,11 +325,10 @@ function dx_color_slide(i, slide = null){
         let dx = new DerivativeApxObj("dxColorDx", fx[0], [-3, 10], { "color": "black", "width": 0}, canvas, dxColor);
         let ddx = new DxAproxDataColoredObj("dxColorDdx", { "width": 0, "dashArray": "5, 5", "draw": false}, canvas, dx);
 
-        let rect = new RectObj("dxColorLblBack", [[-3.2, 11]], {"height":[120], "width":[130]}, canvas, "txtBack");
-
         let legendTxt = ["–––f(x), f ``(x)>0", "–––f(x), f ``(x)<0", "–––f `(x)", "– – f ``(x), < 0", "– – f ``(x), >0",];
         let labelX = -3;
-        let legend = new LabelObj("dxColorLegend", [[labelX,10],[labelX,9],[labelX,8],[labelX,7], [labelX,6]], [legendTxt[0], legendTxt[1]] , {"color":["red", "blue"], "anchors": ["start"]},canvas);
+        let rect = new RectObj("dxColorLblBack", [[labelX-0.2, 11]], {"height":[150], "width":[150]}, canvas, "txtBack");
+        let legend = new LabelObj("dxColorLegend", [[labelX,10.25],[labelX,9.50],[labelX,8.75],[labelX,8.0], [labelX,7.25]], [legendTxt[0], legendTxt[1]] , {"color":["red", "blue"], "anchors": ["start"]},canvas);
 
         slide.inputs.fxSelect.addListener((val)=>{
 

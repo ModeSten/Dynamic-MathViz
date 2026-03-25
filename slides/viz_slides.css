@@ -19,15 +19,14 @@ button{
 
 h3{
     margin: 5px;
+    font-size: 20px;
 }
 
-.slider_container{
+p{
 
-    display: flex;
+    font-size: 20px;
+
 }
-
-
-
 
 
 #header{
@@ -56,6 +55,13 @@ h3{
     margin-top: 10px;
     height: fit-content;
 }
+
+
+.slider_container{
+    display: flex;
+}
+
+
 
 .viz_container{
     position: relative;
@@ -137,3 +143,9 @@ h3{
 
 }
 
+
+.labelTxt{
+
+    font-size: 19px;
+
+}

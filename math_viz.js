@@ -771,6 +771,8 @@ class LabelObj extends VisualObj{
 
         this.data = this.params.data;
 
+        this.classname = "labelTxt" + " " + classname;
+
         this.assigne_to_canvas(canvas);
         this.svg_init(0);
 
