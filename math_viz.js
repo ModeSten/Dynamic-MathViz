@@ -510,6 +510,8 @@ class LineObj extends VisualObj{
 
     constructor( id, points, params={}, canvas=null, classname="", duration=0, delay=0){  // if no canvas has been assigned or canvas has no svg (not assigned to div)
 
+        classname += " line";
+
         super(id, classname, duration, delay);
 
         this.params = {
@@ -669,6 +671,8 @@ class MarkerObj extends VisualObj{
 
     constructor( id,  data, params={}, canvas=null, parent=null, classname="", duration=0, delay=0){
 
+        classname += "marker";
+
         super(id, classname, duration, delay);
 
         this.params={
@@ -754,6 +758,8 @@ class LabelObj extends VisualObj{
 
     constructor(id, pos, text, params={}, canvas=null, classname="", duration=0, delay=0){
 
+        classname += " labelTxt";
+
         super(id, classname, duration, delay);
 
         this.params={
@@ -770,8 +776,6 @@ class LabelObj extends VisualObj{
         this.textObj = null;
 
         this.data = this.params.data;
-
-        this.classname += "labelTxt" + " " + classname;
 
         this.assigne_to_canvas(canvas);
         this.svg_init(0);
