@@ -1,0 +1,35 @@
+
+h3{
+    margin: 7px;
+    font-size: 20px;
+}
+
+
+#header{
+    position: relative;
+    width: 98%;
+    margin-left: 1%;
+    margin-top: 10px;
+    height: fit-content;
+    background-color:aliceblue;
+}
+
+#header div{
+    position: relative;
+    display: flex;
+    width: 100%;
+    align-content: center;
+    justify-content: center;
+    height: fit-content;
+}
+
+
+#content{
+    position: relative;
+    width: 98%;
+    margin-left: 1%;
+    margin-top: 10px;
+    height: 100px;
+
+    background-color: antiquewhite;
+}
