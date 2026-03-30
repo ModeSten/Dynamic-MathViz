@@ -41,6 +41,55 @@ class DivObj {
 }
 
 
+
+class InputObj{
+
+    constructor(id){
+
+        this.id = id;
+        this.parent = null;
+        this.container = document.createElement("div");
+        this.listener = [];
+
+    }
+
+
+    assignToDiv(div){
+
+        if(div === null){
+            return
+        }
+
+        div.appendChild(this.container);
+
+    }
+
+
+    removeFromDiv(){
+
+        this.container.remove();
+        this.parent = null;
+
+    }
+
+
+
+    addListener(callback){
+
+        this.listener.push(callback);
+        return ()=>{ this.listener = this.listener.filter( (func)=>{func !== callback}) };
+
+    }
+
+
+    removeAllListeners(){
+        this.listener = [];
+    }
+
+
+}
+
+
 // for creating and managing sliders (inputs)
 class SliderObj{
 
@@ -436,6 +485,77 @@ class CheckBoxObj{
 
 }
 
+
+class RadioBtnObj extends InputObj{
+
+    constructor(id ,  labels, parentDiv=null, className=""){
+
+        super(id);
+
+        this.selected = null;
+        this.selectedLabel = null;
+        this.selectedI = null;
+        this.labels = labels;
+
+        this.form = document.createElement("form");
+        this.form.onchange = ()=>{this.on_change()};
+
+        this.container.appendChild(this.form);
+
+        this.buttons = [];
+
+        this.set_elements();
+
+        this.assignToDiv(parentDiv);
+
+    }
+
+    set_elements(){
+
+        this.labels.forEach( ( label, i )=>{
+
+            let input = document.createElement("input");
+            input.setAttribute("type", "radio");
+            input.setAttribute("id", this.id+i);
+            input.setAttribute("name", this.id);
+
+            let txtL = document.createElement("label");
+            txtL.textContent = label;
+            txtL.setAttribute("for", this.id+i);
+
+            this.form.appendChild(input);
+            this.form.appendChild(txtL);
+
+            this.buttons.push(input);
+            
+        })
+
+    }
+
+    on_change(){
+
+        this.buttons.forEach((btn,i )=>{
+
+            if(btn.checked){
+                
+                this.selected = btn;
+                this.selectedI = i;
+                this.selectedLabel = this.labels[i];
+                this.listener.forEach(( func )=>{
+                    func(this);
+                });
+
+                return
+
+            }
+
+
+        });
+
+    }
+
+
+}
 
 
 
