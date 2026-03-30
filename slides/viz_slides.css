@@ -146,6 +146,12 @@ p{
 
 .labelTxt{
 
-    font-size: 19px;
+    font-size: 20px;
+
+}
+
+.labelTxt.large{
+
+    font-size: 24px;
 
 }

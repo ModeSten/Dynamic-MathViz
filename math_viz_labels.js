@@ -77,7 +77,9 @@ class LabelAxisLineObj extends ExstensionObj{
 // class for creating labels for graph slope (secant)
 class slopeLabels extends ExstensionObj{
 
-    constructor(id, slope, params={}, canvas=null, duration=0, delay=0, classname=""){
+    constructor(id, slope, params={}, canvas=null, classname="", duration=0, delay=0){
+
+        classname += " slopeLabel";
 
         super(id, classname, duration, delay);
         this.labelText = [];
@@ -97,7 +99,9 @@ class slopeLabels extends ExstensionObj{
 
         this.get_data();
 
-        this.svgObj = new LabelObj(this.id+"label", this.data, this.labelTxt, this.params, this.canvas );
+        console.log(this.classname);
+
+        this.svgObj = new LabelObj(this.id+"label", this.data, this.labelTxt, this.params, this.canvas, this.classname );
 
         this.assigne_to_canvas(canvas);
 
