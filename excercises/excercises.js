@@ -1,15 +1,70 @@
 
+const margin = { top: 40, right: 10, bottom: 10, left: 30 },
+width = 700;
+height = 500;
+
+var fx = [(x)=>{return x**3/12 - 0.9*x**2 + 2.5*x + 4}, (x)=>{return x**2/4 - 3*x/2 + 5 }, (x)=>{ return x**3/12 - 3*x**2/4 + 9*x/4 + 1}, (x)=>{ return 4*Math.sin(x)+5}];
+var Dx = [(x)=>{return x**2/4 - 1.8*x + 2.5}, (x)=>{return x/2 - 3/2}, (x)=>{return x**2/4 - 3*x/2 +9/4}, (x)=>{ return 4*Math.cos(x) }];
+var fxTxt = ["f(x)= 1/12*x^3 - 0.9x^2 + 2.5x +4", "f(x)= 1/4*x^2 - 3/2*x^2 +5", "f(x)= 1/12*x^3 - 3/4*x^2 +9/4*x +1", "f(x)= 4*sin(x)+5"];
+var Xrange = [-3, 10];
+var yRange = [-5, 10];
+
 
 class Excercise{
 
-    constructor(){
+    constructor(id, root){
 
         this.questions = [];
+
+        this.id = id;
+        this.root = root;
+        this.P = 0;
+        this.R = 0;
+
+        this.containterDiv = document.createElement("div");
+        this.containterDiv.id = this.id;
+        this.containterDiv.className = "excerise";
+        root.appendChild(this.containterDiv);
+
+        this.headerDiv = document.createElement("div");
+        this.headerDiv.className = "headerDiv";
+        this.containterDiv.appendChild(this.headerDiv);
+
+        this.vizDiv = document.createElement("div");
+        this.vizDiv.className = "vizDiv";
+        this.containterDiv.appendChild(this.vizDiv);
+
+        this.quizDiv = document.createElement("div");
+        this.quizDiv.className = "quizDiv";
+        this.containterDiv.appendChild(this.quizDiv);
+
+        this.svgDiv = document.createElement("div");
+        this.svgDiv.className = "svgDiv";
+        this.svgDiv.id = this.id+"svgDiv";
+        this.vizDiv.appendChild(this.svgDiv);
+
+    }
+
+
+    add_question(quiz){
+
+        this.questions.push(quiz);
+        this.P += quiz.N;
+        quiz.assign_to_div(this.quizDiv);
 
     }
 
 
     check(){
+
+        this.R = 0;
+
+        this.questions.forEach((q)=>{
+
+            q.check();
+            this.R += q.R;
+
+        });
 
     }
 
@@ -95,6 +150,27 @@ class QuestionSelectOne extends Question{
     }
 
 
+    update(opts=this.options, keys=this.keys, text=this.text, Optheader=this.Optheader){
+
+        this.key = keys;
+        this.options = opts;
+        this.header = Optheader;
+
+        this.N = Object.keys(this.key).length;
+        this.answer = new Array(this.N).fill(null);
+        
+        this.text.innerHTML = text;
+
+        while(this.answerDiv.lastChild ){
+            this.answerDiv.removeChild(this.answerDiv.lastChild);
+        }
+
+        this.set_selection();
+
+    }
+
+
+
     set_selection(){
 
         for(let i=0; i<this.N; i++){
@@ -130,6 +206,27 @@ class QuestionMenSelect extends Question{
     }
 
 
+    update( labels=this.labels, keys=this.keys, opts=this.options, text=this.text.innerHTML ){
+
+        this.key = keys;
+        this.labels = labels;
+        this.options = opts;
+
+        this.N = Object.keys(this.key).length;
+        this.answer = new Array(this.N).fill(null);
+        
+        this.text.innerHTML = text;
+
+        while(this.answerDiv.lastChild ){
+            this.answerDiv.removeChild(this.answerDiv.lastChild);
+        }
+
+        this.set_selection();
+
+    }
+
+
+
     set_selection(){
 
         for(let i=0; i<this.N; i++){
@@ -143,6 +240,7 @@ class QuestionMenSelect extends Question{
             this.selector.addListener((obj)=>{
 
                 this.answer[i] = obj.select.value;
+                this.check();
 
             });
 
@@ -153,14 +251,43 @@ class QuestionMenSelect extends Question{
 }
 
 
-let div = document.getElementById("content");
-//let x = new QuestionSelectOne("q1", "this is a test question", ["ja", "nej"], [["ja", "nej", "kanske"]], div);
-let x = new QuestionMenSelect("q1", "test question", ["ja", "ja", "kanske"], ["a)", "b)", "c)"],[["ja", "nej", "kanske"]], div);
-let btn = new ButtonObj("checkbtn", "check answers", div);
-btn.addListener(()=>{
+class QuizMulti extends Question{
 
-   let p = x.check();
-   console.log(x.R);
+    constructor(id, text, keys, parentDiv=null){
+
+        super(id, text, keys, parentDiv);
+
+    }
+
+}
 
 
-});
+
+
+let root = document.getElementById("root");
+
+let x = new Excercise("test1", root);
+
+let text = document.createElement("p");
+text.innerHTML = "some text"
+
+x.quizDiv.appendChild(text);
+
+let canvas = new CanvasObj("Canvas1", width, height, margin, Xrange, yRange, x.svgDiv.id);
+let chart = new ChartObj("chart1", {}, canvas);
+let graph = new GraphObj("graph1", fx[0], Xrange);
+let tangent = new TangentObj("tangent1", fx[0], {"x0": 2}, canvas, graph);
+
+
+let q1 = new QuestionMenSelect("q1", "how many ex point?", ["2"], [["n="]], [["0", "1", "2", "3", "4", "5"]]);
+x.add_question(q1);
+
+let q2 = new QuestionMenSelect("q2", "function?", ["ax^3+bx^2+cx+d"], [["f(x)="]], [["ax^2+bx+c", "ax^3+bx^2+cx+d"]]);
+x.add_question(q2);
+
+let testB = new ButtonObj("testB", "checkQ2", x.quizDiv);
+testB.addListener(()=>{
+
+    x.check();
+
+})
