@@ -27,21 +27,34 @@ class Excercise{
         root.appendChild(this.containterDiv);
 
         this.headerDiv = document.createElement("div");
-        this.headerDiv.className = "headerDiv";
+        this.headerDiv.className = "contextDiv";
         this.containterDiv.appendChild(this.headerDiv);
 
         this.vizDiv = document.createElement("div");
         this.vizDiv.className = "vizDiv";
         this.containterDiv.appendChild(this.vizDiv);
 
-        this.quizDiv = document.createElement("div");
-        this.quizDiv.className = "quizDiv";
-        this.containterDiv.appendChild(this.quizDiv);
-
         this.svgDiv = document.createElement("div");
         this.svgDiv.className = "svgDiv";
         this.svgDiv.id = this.id+"svgDiv";
         this.vizDiv.appendChild(this.svgDiv);
+
+        this.vizFooterDiv = document.createElement("div");
+        this.vizFooterDiv.className = "contextDiv";
+        this.containterDiv.appendChild(this.vizFooterDiv);
+        
+        this.figTxtDiv = document.createElement("div");
+        this.vizFooterDiv.appendChild(this.figTxtDiv);
+        this.controlDiv = document.createElement("div");
+        this.vizFooterDiv.appendChild(this.controlDiv);
+
+        this.quizDiv = document.createElement("div");
+        this.quizDiv.className = "quizDiv";
+        this.containterDiv.appendChild(this.quizDiv);
+
+        this.textDiv = document.createElement("div");
+        this.textDiv.className = "quizTxtDiv";
+        this.quizDiv.appendChild(this.textDiv);
 
     }
 
@@ -86,14 +99,16 @@ class Question{
 
         this.containterDiv = document.createElement("div");
         this.containterDiv.id = this.id;
-        this.containterDiv.className = "quiz" + " " + className;
+        this.containterDiv.className = "questionDiv" + " " + className;
 
         this.textDiv = document.createElement("div");
+        this.textDiv.className = "quizTxtDiv";
         this.text = document.createElement("p");
         this.text.innerHTML = text;
         this.textDiv.appendChild(this.text);
 
         this.answerDiv = document.createElement("div");
+        this.answerDiv.className = "answerDiv";
 
         this.containterDiv.appendChild(this.textDiv);
         this.containterDiv.appendChild(this.answerDiv);
@@ -268,22 +283,37 @@ let root = document.getElementById("root");
 
 let x = new Excercise("test1", root);
 
-let text = document.createElement("p");
-text.innerHTML = "some text"
-
-x.quizDiv.appendChild(text);
+let introTxt = document.createElement("p");
+let div = document.createElement("div");
+div.appendChild(introTxt);
+introTxt.innerHTML = "bellow is shown the tangent line to a hidden graph ..."
+x.headerDiv.appendChild(div);
 
 let canvas = new CanvasObj("Canvas1", width, height, margin, Xrange, yRange, x.svgDiv.id);
 let chart = new ChartObj("chart1", {}, canvas);
 let graph = new GraphObj("graph1", fx[0], Xrange);
-let tangent = new TangentObj("tangent1", fx[0], {"x0": 2}, canvas, graph);
+let tangent = new TangentObj("tangent1", fx[0], {"x0": 2, "length": 50}, canvas, graph);
+let marker = new SegmentMarkerFxObj("tangentMarker", tangent, {}, canvas);
+
+let slider = new SliderObj("tanSlider", [-5, 10], 1, "x= ", x.headerDiv);
+slider.addListener((val)=>{
+    tangent.translate_center(val);
+});
 
 
-let q1 = new QuestionMenSelect("q1", "how many ex point?", ["2"], [["n="]], [["0", "1", "2", "3", "4", "5"]]);
+let text = document.createElement("p");
+text.innerHTML = "Genom att flytta runt tangetlinjen, svara på följande frågor om den gömda grafen"; 
+x.textDiv.appendChild(text);
+
+
+let q1 = new QuestionMenSelect("q1", "Hur mång extrempunkter har grafen?", ["2"], [["n="]], [["0", "1", "2", "3", "4", "5"]]);
 x.add_question(q1);
 
-let q2 = new QuestionMenSelect("q2", "function?", ["ax^3+bx^2+cx+d"], [["f(x)="]], [["ax^2+bx+c", "ax^3+bx^2+cx+d"]]);
+let q2 = new QuestionSelectOne("q2", "Vilka är extrempunkterna?", ["(2,6),(5,4)"], [["(0,0),(2,3)", "(2,6),(5,4)", "(0,0),(5,4)", "(2,6),(0,0)"]]);
 x.add_question(q2);
+
+let q3 = new QuestionSelectOne("q3", "Vad är grafens funktion", ["ax^3+bx^2+cx+d"], [["ax^2+bx+c", "ax^3+bx^2+cx+d"]]);
+x.add_question(q3);
 
 let testB = new ButtonObj("testB", "checkQ2", x.quizDiv);
 testB.addListener(()=>{
