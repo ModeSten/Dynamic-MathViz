@@ -115,6 +115,8 @@ class Question{
 
         this.selector = null;
 
+        this.listener = [];
+
         this.assign_to_div(parentDiv);
 
     }
@@ -148,6 +150,23 @@ class Question{
 
     }
 
+
+    addListener(func){
+
+        this.listener.push(func);
+
+    }
+
+
+    notify_listeners(){
+
+        this.listener.forEach( (func)=>{
+            func(this);
+        });
+
+    }
+
+
 }
 
 
@@ -165,7 +184,7 @@ class QuestionSelectOne extends Question{
     }
 
 
-    update(opts=this.options, keys=this.keys, text=this.text, Optheader=this.Optheader){
+    update(opts=this.options, keys=this.key, text=this.text.textContent, Optheader=this.header){
 
         this.key = keys;
         this.options = opts;
@@ -221,7 +240,7 @@ class QuestionMenSelect extends Question{
     }
 
 
-    update( labels=this.labels, keys=this.keys, opts=this.options, text=this.text.innerHTML ){
+    update( labels=this.labels, keys=this.key, opts=this.options, text=this.text.textContent ){
 
         this.key = keys;
         this.labels = labels;
@@ -235,6 +254,7 @@ class QuestionMenSelect extends Question{
         while(this.answerDiv.lastChild ){
             this.answerDiv.removeChild(this.answerDiv.lastChild);
         }
+
 
         this.set_selection();
 
@@ -256,12 +276,21 @@ class QuestionMenSelect extends Question{
 
                 this.answer[i] = obj.select.value;
                 this.check();
+                this.on_select();
 
             });
 
         }
 
     }
+
+
+    on_select(){
+
+        this.notify_listeners();
+
+    }
+
 
 }
 
@@ -295,11 +324,15 @@ let graph = new GraphObj("graph1", fx[0], Xrange);
 let tangent = new TangentObj("tangent1", fx[0], {"x0": 2, "length": 50}, canvas, graph);
 let marker = new SegmentMarkerFxObj("tangentMarker", tangent, {}, canvas);
 
-let slider = new SliderObj("tanSlider", [-5, 10], 1, "x= ", x.headerDiv);
+let slider = new SliderObj("tanSlider", [-5, 10], 1, "x= ", x.controlDiv);
 slider.addListener((val)=>{
     tangent.translate_center(val);
 });
 
+
+let figTxt = document.createElement("p");
+figTxt.innerHTML = "<b>Figure 1:</b> Tangentent till en dold graf";
+x.figTxtDiv.appendChild(figTxt);
 
 let text = document.createElement("p");
 text.innerHTML = "Genom att flytta runt tangetlinjen, svara på följande frågor om den gömda grafen"; 
@@ -309,15 +342,27 @@ x.textDiv.appendChild(text);
 let q1 = new QuestionMenSelect("q1", "Hur mång extrempunkter har grafen?", ["2"], [["n="]], [["0", "1", "2", "3", "4", "5"]]);
 x.add_question(q1);
 
-let q2 = new QuestionSelectOne("q2", "Vilka är extrempunkterna?", ["(2,6),(5,4)"], [["(0,0),(2,3)", "(2,6),(5,4)", "(0,0),(5,4)", "(2,6),(0,0)"]]);
+
+let q2pt = [[], ["(0,0),(2,3)", "(2,6),(5,4)", "(0,0),(5,4)", "(2,6),(0,0)"]];
+let q2 = new QuestionSelectOne("q2", "Vilka är extrempunkterna?", ["(2,6),(5,4)"], [q2pt[0]]);
 x.add_question(q2);
 
-let q3 = new QuestionSelectOne("q3", "Vad är grafens funktion", ["ax^3+bx^2+cx+d"], [["ax^2+bx+c", "ax^3+bx^2+cx+d"]]);
+q1.addListener((obj)=>{
+    let val = Number(obj.answer);
+    q2.update([q2pt[val]]);
+});
+
+
+let q3 = new QuestionMenSelect("q3", "För varje extrempunkt, är det en maximum, minimum eller tersspunkt?", ["max", "min"], ["(2,6)","(5,4)"], [["max", "min", "teras"]]);
 x.add_question(q3);
 
-let testB = new ButtonObj("testB", "checkQ2", x.quizDiv);
+let q4 = new QuestionSelectOne("q4", "Vad är grafens funktion", ["ax^3+bx^2+cx+d"], [["ax^2+bx+c", "ax^3+bx^2+cx+d"]], null);
+x.add_question(q4);
+
+let testB = new ButtonObj("testB", "check", x.quizDiv);
 testB.addListener(()=>{
 
     x.check();
+    console.log(q1.R, q2.R, q3.R, q4.R);
 
 })

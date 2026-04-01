@@ -88,6 +88,15 @@ h3{
 }
 
 
+.contextDiv div{
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: fit-content;
+
+}
+
+
 
 
 .quizDiv{
