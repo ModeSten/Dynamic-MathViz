@@ -27,7 +27,7 @@ class Excercise{
         root.appendChild(this.containterDiv);
 
         this.headerDiv = document.createElement("div");
-        this.headerDiv.className = "contextDiv";
+        this.headerDiv.className = "contextDiv flooter";
         this.containterDiv.appendChild(this.headerDiv);
 
         this.vizDiv = document.createElement("div");
@@ -40,12 +40,14 @@ class Excercise{
         this.vizDiv.appendChild(this.svgDiv);
 
         this.vizFooterDiv = document.createElement("div");
-        this.vizFooterDiv.className = "contextDiv";
+        this.vizFooterDiv.className = "contextDiv footer";
         this.containterDiv.appendChild(this.vizFooterDiv);
         
         this.figTxtDiv = document.createElement("div");
+        this.figTxtDiv.className = "half";
         this.vizFooterDiv.appendChild(this.figTxtDiv);
         this.controlDiv = document.createElement("div");
+        this.controlDiv.className = "half";
         this.vizFooterDiv.appendChild(this.controlDiv);
 
         this.quizDiv = document.createElement("div");
@@ -53,7 +55,7 @@ class Excercise{
         this.containterDiv.appendChild(this.quizDiv);
 
         this.textDiv = document.createElement("div");
-        this.textDiv.className = "quizTxtDiv";
+        this.textDiv.className = "contextDiv header";
         this.quizDiv.appendChild(this.textDiv);
 
     }
@@ -99,16 +101,16 @@ class Question{
 
         this.containterDiv = document.createElement("div");
         this.containterDiv.id = this.id;
-        this.containterDiv.className = "questionDiv" + " " + className;
+        this.containterDiv.className = "questionDiv " + className;
 
         this.textDiv = document.createElement("div");
-        this.textDiv.className = "quizTxtDiv";
+        this.textDiv.className = "qTxtDiv half";
         this.text = document.createElement("p");
         this.text.innerHTML = text;
         this.textDiv.appendChild(this.text);
 
         this.answerDiv = document.createElement("div");
-        this.answerDiv.className = "answerDiv";
+        this.answerDiv.className = "answerDiv half";
 
         this.containterDiv.appendChild(this.textDiv);
         this.containterDiv.appendChild(this.answerDiv);
@@ -198,6 +200,10 @@ class QuestionSelectOne extends Question{
         while(this.answerDiv.lastChild ){
             this.answerDiv.removeChild(this.answerDiv.lastChild);
         }
+
+        this.options.forEach(()=>{
+
+        });
 
         this.set_selection();
 
@@ -295,7 +301,7 @@ class QuestionMenSelect extends Question{
 }
 
 
-class QuizMulti extends Question{
+class QusetionMultiSelect extends Question{
 
     constructor(id, text, keys, parentDiv=null){
 
@@ -307,8 +313,25 @@ class QuizMulti extends Question{
 
 
 
+class Option{
+
+    constructor(label, value){
+
+        this.label = label;
+        this.value = value;
+
+    }
+
+}
+
+
 
 let root = document.getElementById("root");
+let header = document.getElementById("header");
+
+let stpBtn = new ButtonStepObj("excersieStep", "Uppg: ", [1, 10], 1, 1);
+stpBtn.assignToDiv(header);
+
 
 let x = new Excercise("test1", root);
 
@@ -366,3 +389,4 @@ testB.addListener(()=>{
     console.log(q1.R, q2.R, q3.R, q4.R);
 
 })
+

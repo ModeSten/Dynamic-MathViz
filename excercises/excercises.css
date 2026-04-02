@@ -1,8 +1,20 @@
 
-h3{
+h2{
     margin: 7px;
     font-size: 20px;
 }
+
+h3{
+    font-size: 15px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+button{
+    height: 20px;
+    margin-top: 5px;
+}
+
 
 
 #header{
@@ -10,6 +22,7 @@ h3{
     width: 98%;
     margin-left: 1%;
     margin-top: 10px;
+    margin-bottom: 15px;
     height: fit-content;
     background-color:aliceblue;
     padding-bottom: 10px;
@@ -26,16 +39,12 @@ h3{
 }
 
 
-#content{
+.excerise{
     position: relative;
     width: 98%;
     margin-left: 1%;
-    margin-top: 10px;
-    height: 100px;
-
-    background-color: antiquewhite;
+    height: fit-content;
 }
-
 
 .vizDiv{
     position: relative;
@@ -43,8 +52,7 @@ h3{
     align-content: center;
     justify-content: center;
 
-    width: 98%;
-    margin-left: 1%;
+    width: 100%;
     height: fit-content;
 
     background-color: #faebd7;
@@ -73,10 +81,10 @@ h3{
 
 
 .contextDiv{
+
     position: relative;
     display: flex;
-    width: 98%;
-    margin-left: 1%;
+    width: 100%;
     height: fit-content;
     background-color: #f5f5f5;
 
@@ -87,31 +95,50 @@ h3{
 
 }
 
+.footer{
+    margin-bottom: 20px;
+}
 
 .contextDiv div{
     position: relative;
     display: flex;
-    width: 100%;
     height: fit-content;
-
+    margin-top: 5px;
 }
 
 
+.contextDiv .full{
+    width: 100%;
+}
+
+.contextDiv .half{
+    width: 49%;
+    margin-left: 0.5%;
+}
 
 
 .quizDiv{
 
     position: relative;
-    width: 98%;
-    margin-left: 1%;
+    width: 100%;
     height: fit-content;
-    background-color: antiquewhite;
 
     border: 0.5px solid;
 
     background-color: #f5f5f5;
 
 }
+
+.quizTxtDiv{
+
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    border-bottom: solid 1px;
+
+}
+
 
 
 .questionDiv{
@@ -120,8 +147,7 @@ h3{
     width: 100%;
     height: fit-content;
 
-    border-bottom: solid black 1px;
-    padding-top: 5px;
+    border-bottom: dashed black 1px;
 
 }
 
@@ -130,7 +156,14 @@ h3{
     display: flex;
     width: 50%;
     height: fit-content;
+    margin: 5px;
 
     align-content: center;
     justify-content: center;
+}
+
+.answerDiv div{
+
+    width: fit-content;
+
 }
