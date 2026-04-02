@@ -89,11 +89,11 @@ class Excercise{
 
 class Question{
 
-    constructor(id, text, keys, parentDiv=null, className=""){
+    constructor(id, text, N, P, parentDiv=null, className=""){
 
         this.id = id;
-        this.N = Object.keys(keys).length;
-        this.key = keys;
+        this.N = N;
+        this.P = P;
         this.answer = new Array(this.N).fill(null);
 
         this.passed = false;
@@ -137,12 +137,13 @@ class Question{
 
     check(){
 
-        this.R = this.N;
+
+        this.R = 0;
 
         this.answer.forEach((ans, i)=>{
 
-            if(ans !== this.key[i]){
-                this.R--;
+            if(ans !== null){
+                this.R += ans.points;
             }
 
         });
@@ -174,9 +175,9 @@ class Question{
 
 class QuestionSelectOne extends Question{
 
-    constructor(id, text, keys, opts, parentDiv=null, Optheader=["a)", "b)", "c)", "d)"]){
+    constructor(id, text, N, P, opts, parentDiv=null, Optheader=["a)", "b)", "c)", "d)"]){
 
-        super(id, text, keys, parentDiv );
+        super(id, text, N, P, parentDiv );
 
         this.options = opts;
         this.header = Optheader;
@@ -186,13 +187,13 @@ class QuestionSelectOne extends Question{
     }
 
 
-    update(opts=this.options, keys=this.key, text=this.text.textContent, Optheader=this.header){
+    update(opts=this.options, N=this.N, P=this.P, text=this.text.textContent, Optheader=this.header){
 
-        this.key = keys;
         this.options = opts;
         this.header = Optheader;
 
-        this.N = Object.keys(this.key).length;
+        this.N = N;
+        this.P = P;
         this.answer = new Array(this.N).fill(null);
         
         this.text.innerHTML = text;
@@ -213,11 +214,14 @@ class QuestionSelectOne extends Question{
 
     set_selection(){
 
+        let optL = this.options.length;
+
         for(let i=0; i<this.N; i++){
 
-            let optL = Object.keys(this.options).length;
             let opt = this.options[i%optL];
-            this.selector = new RadioBtnObj(this.id+"select", opt, this.answerDiv);
+            let optStr = [];
+            opt.forEach((e)=>{ optStr.push(e.label) });
+            this.selector = new RadioBtnObj(this.id+"select", optStr, this.answerDiv);
 
             this.selector.addListener((obj)=>{
 
@@ -234,9 +238,9 @@ class QuestionSelectOne extends Question{
 
 class QuestionMenSelect extends Question{
 
-    constructor(id, text, keys, labels, opts, parentDiv=null){
+    constructor(id, text, N, P, labels, opts, parentDiv=null){
 
-        super(id, text, keys, parentDiv);
+        super(id, text, N, P, parentDiv);
 
         this.labels = labels;
         this.options = opts;
@@ -246,13 +250,13 @@ class QuestionMenSelect extends Question{
     }
 
 
-    update( labels=this.labels, keys=this.key, opts=this.options, text=this.text.textContent ){
+    update( labels=this.labels, N=this.N, P=this.P, opts=this.options, text=this.text.textContent ){
 
-        this.key = keys;
         this.labels = labels;
         this.options = opts;
 
-        this.N = Object.keys(this.key).length;
+        this.N = N;
+        this.P = P;
         this.answer = new Array(this.N).fill(null);
         
         this.text.innerHTML = text;
@@ -270,17 +274,24 @@ class QuestionMenSelect extends Question{
 
     set_selection(){
 
+        let optL = Object.keys(this.options).length;
+        let labelL = Object.keys(this.labels).length;
+
         for(let i=0; i<this.N; i++){
 
-            let optL = Object.keys(this.options).length;
             let opt = this.options[i%optL];
-            let labelL = Object.keys(this.labels).length;
             let label = this.labels[i%labelL];
-            this.selector = new SelectorObj(this.id+"select", opt, opt, label, this.answerDiv);
+
+            let optStr = [];
+            let optI = [];
+            opt.forEach((e, i)=>{optStr.push(e.label); optI.push(i)});
+
+            this.selector = new SelectorObj(this.id+"select", optStr, optI, label, this.answerDiv);
 
             this.selector.addListener((obj)=>{
 
-                this.answer[i] = obj.select.value;
+                let selectI = Number(obj.select.value);
+                this.answer[i] = this.options[i%optL][selectI];
                 this.check();
                 this.on_select();
 
@@ -315,12 +326,26 @@ class QusetionMultiSelect extends Question{
 
 class Option{
 
-    constructor(label, value){
+    constructor(label, value, points){
 
         this.label = label;
         this.value = value;
+        this.points = points;
 
     }
+
+}
+
+
+function get_options(labels, values, points){
+
+    let opts = [];
+
+    for(let i=0; i<labels.length; i++){
+        opts.push( new Option(labels[i], values[i], points[i]));
+    }
+
+    return opts;
 
 }
 
@@ -362,24 +387,33 @@ text.innerHTML = "Genom att flytta runt tangetlinjen, svara på följande frågo
 x.textDiv.appendChild(text);
 
 
-let q1 = new QuestionMenSelect("q1", "Hur mång extrempunkter har grafen?", ["2"], [["n="]], [["0", "1", "2", "3", "4", "5"]]);
+let q1opts = get_options(["0", "1", "2", "3", "4", "5"], [0, 1, 2, 3, 4, 5], [0, 0, 1, 0, 0, 0]);
+let q1 = new QuestionMenSelect("q1", "Hur mång extrempunkter har grafen?", 1, 1, ["N="], [q1opts]);
 x.add_question(q1);
 
 
-let q2pt = [[], ["(0,0),(2,3)", "(2,6),(5,4)", "(0,0),(5,4)", "(2,6),(0,0)"]];
-let q2 = new QuestionSelectOne("q2", "Vilka är extrempunkterna?", ["(2,6),(5,4)"], [q2pt[0]]);
+let q2pt = [];
+q2pt.push( get_options(["()", "()", "()", "()"], [[0, 0], [0, 0], [0, 0], [0, 0]], [0, 1, 0, 0]) );
+q2pt.push( get_options(["(1)", "()", "()", "()"], [[0, 0], [0, 0], [0, 0], [0, 0]], [0, 1, 0, 0]) );
+q2pt.push( get_options(["()", "()", "()", "()"], [[0, 0], [0, 0], [0, 0], [0, 0]], [0, 1, 0, 0]) );
+q2pt.push( get_options(["()", "()", "()", "()"], [[0, 0], [0, 0], [0, 0], [0, 0]], [0, 1, 0, 0]) );
+q2pt.push( get_options(["()", "()", "()", "()"], [[0, 0], [0, 0], [0, 0], [0, 0]], [0, 1, 0, 0]) );
+q2pt.push( get_options(["()", "()", "()", "()"], [[0, 0], [0, 0], [0, 0], [0, 0]], [0, 1, 0, 0]) );
+let q2 = new QuestionSelectOne("q2", "Vilka är extrempunkterna?", 1, 1, [q2pt[0]]);
 x.add_question(q2);
 
 q1.addListener((obj)=>{
-    let val = Number(obj.answer);
+    let val = obj.answer[0].value;
     q2.update([q2pt[val]]);
 });
 
-
-let q3 = new QuestionMenSelect("q3", "För varje extrempunkt, är det en maximum, minimum eller tersspunkt?", ["max", "min"], ["(2,6)","(5,4)"], [["max", "min", "teras"]]);
+let q3Opts1 = get_options(["min", "max", "terass"], ["min", "max", "teras"], [0, 1, 0]);
+let q3Opts2 = get_options(["min", "max", "terass"], ["min", "max", "teras"], [1, 0, 0]);
+let q3 = new QuestionMenSelect("q3", "För varje extrempunkt, är det en maximum, minimum eller tersspunkt?", 2, 2, ["(2, 3)", "(4, 2)"], [q3Opts1, q3Opts2]);
 x.add_question(q3);
 
-let q4 = new QuestionSelectOne("q4", "Vad är grafens funktion", ["ax^3+bx^2+cx+d"], [["ax^2+bx+c", "ax^3+bx^2+cx+d"]], null);
+let q4Opts = get_options(["ax^2+bx+c", "ax^3+bx^2+cx+d"], ["ax^2+bx+c", "ax^3+bx^2+cx+d"], [0, 1]);
+let q4 = new QuestionSelectOne("q4", "Vad är grafens funktion", 1, 1, [q4Opts]);
 x.add_question(q4);
 
 let testB = new ButtonObj("testB", "check", x.quizDiv);
