@@ -226,6 +226,7 @@ class QuestionSelectOne extends Question{
             this.selector.addListener((obj)=>{
 
                 this.answer[i] = opt[obj.selectedI];
+                this.notify_listeners();
 
             });
 
@@ -368,7 +369,7 @@ x.headerDiv.appendChild(div);
 
 let canvas = new CanvasObj("Canvas1", width, height, margin, Xrange, yRange, x.svgDiv.id);
 let chart = new ChartObj("chart1", {}, canvas);
-let graph = new GraphObj("graph1", fx[0], Xrange);
+let graph = new GraphObj("graph1", fx[0], Xrange, {}, canvas);
 let tangent = new TangentObj("tangent1", fx[0], {"x0": 2, "length": 50}, canvas, graph);
 let marker = new SegmentMarkerFxObj("tangentMarker", tangent, {}, canvas);
 
@@ -387,16 +388,16 @@ text.innerHTML = "Genom att flytta runt tangetlinjen, svara på följande frågo
 x.textDiv.appendChild(text);
 
 
-let q1opts = get_options(["0", "1", "2", "3", "4", "5"], [0, 1, 2, 3, 4, 5], [0, 0, 1, 0, 0, 0]);
+let q1opts = get_options(["-", "1", "2", "3", "4"], [0, 1, 2, 3, 4], [0, 0, 1, 0, 0]);
 let q1 = new QuestionMenSelect("q1", "Hur mång extrempunkter har grafen?", 1, 1, ["N="], [q1opts]);
 x.add_question(q1);
 
 
 let q2pt = [];
-q2pt.push( get_options(["()", "()", "()", "()"], [[0, 0], [0, 0], [0, 0], [0, 0]], [0, 1, 0, 0]) );
-q2pt.push( get_options(["(1)", "()", "()", "()"], [[0, 0], [0, 0], [0, 0], [0, 0]], [0, 1, 0, 0]) );
-q2pt.push( get_options(["()", "()", "()", "()"], [[0, 0], [0, 0], [0, 0], [0, 0]], [0, 1, 0, 0]) );
-q2pt.push( get_options(["()", "()", "()", "()"], [[0, 0], [0, 0], [0, 0], [0, 0]], [0, 1, 0, 0]) );
+q2pt.push( get_options([], [], []) );
+let q2P = [ [ [[0.5, 0]], [[2, 6]], [[4, 5]], [[5, 4]]], [[[0, 0], [4, 5]], [[5, 4], [8, 8]], [[2, 6], [5, 4]], [[2, 6], [4, 4]]] ];
+q2pt.push( get_options( ptVal_to_labels(q2P[0]) , q2P[0], [0, 1, 0, 1] ) );
+q2pt.push( get_options( ptVal_to_labels(q2P[1]), q2P[1], [0, 1, 2, 1] ) );
 q2pt.push( get_options(["()", "()", "()", "()"], [[0, 0], [0, 0], [0, 0], [0, 0]], [0, 1, 0, 0]) );
 q2pt.push( get_options(["()", "()", "()", "()"], [[0, 0], [0, 0], [0, 0], [0, 0]], [0, 1, 0, 0]) );
 let q2 = new QuestionSelectOne("q2", "Vilka är extrempunkterna?", 1, 1, [q2pt[0]]);
@@ -407,10 +408,35 @@ q1.addListener((obj)=>{
     q2.update([q2pt[val]]);
 });
 
-let q3Opts1 = get_options(["min", "max", "terass"], ["min", "max", "teras"], [0, 1, 0]);
-let q3Opts2 = get_options(["min", "max", "terass"], ["min", "max", "teras"], [1, 0, 0]);
-let q3 = new QuestionMenSelect("q3", "För varje extrempunkt, är det en maximum, minimum eller tersspunkt?", 2, 2, ["(2, 3)", "(4, 2)"], [q3Opts1, q3Opts2]);
+let mmOptV = [null, "max", "min", "teras"];
+let mmOptS = ["-", "max", "min", "teras"];
+
+let q3Opts = [[]];
+q3Opts.push([ get_options( mmOptS, mmOptV, [0, 1, 0, 0]) ] );
+q3Opts.push([ get_options( mmOptS, mmOptV, [0, 0, 1, 0]) , get_options(mmOptS, mmOptV, [0, 0, 0, 0]) ] );
+q3Opts.push( [  get_options( mmOptS, mmOptV, [0, 0, 1, 0]) , get_options(mmOptS, mmOptV, [0, 0, 1, 0]), get_options(mmOptS, mmOptV, [0, 0, 1, 0]) ]  );
+q3Opts.push( [  get_options( mmOptS, mmOptV, [0, 0, 1, 0]) , get_options(mmOptS, mmOptV, [0, 0, 1, 0]), get_options(mmOptS, mmOptV, [0, 0, 1, 0]), get_options(mmOptS, mmOptV, [0, 0, 1, 0]) ]  );
+let q3 = new QuestionMenSelect("q3", "För varje extrempunkt, ange om det är en maximum, minimum eller terasspunkt?", 0, 0, [], []);
 x.add_question(q3);
+
+q2.addListener((obj)=>{
+
+    let answers = [];
+    let labels = [];
+    obj.answer.forEach((ans)=>{
+       ans.value.forEach((val)=>{
+        labels.push( point_to_str([val]) );
+       });
+    });
+    let N = q1.answer[0].value;
+    console.log(N);
+    q3.update( labels, N, N, q3Opts[N] );
+
+});
+
+q1.addListener(()=>{    
+    q3.update([], 0, 0, []);
+});
 
 let q4Opts = get_options(["ax^2+bx+c", "ax^3+bx^2+cx+d"], ["ax^2+bx+c", "ax^3+bx^2+cx+d"], [0, 1]);
 let q4 = new QuestionSelectOne("q4", "Vad är grafens funktion", 1, 1, [q4Opts]);
@@ -423,4 +449,39 @@ testB.addListener(()=>{
     console.log(q1.R, q2.R, q3.R, q4.R);
 
 })
+
+
+function ptVal_to_labels(vals){
+
+    let L = [];
+
+    vals.forEach((v)=>{
+        L.push(point_to_str(v));
+    });
+
+    return L;
+
+}
+
+
+function point_to_str(points){
+
+let s = "";
+points.forEach((p, i)=>{
+
+    if(i>0){
+        s += " & ";
+    }
+
+    s += `(${p[0]}, ${p[1]})`;
+
+});
+
+    return s;
+
+}
+
+
+
+
 
