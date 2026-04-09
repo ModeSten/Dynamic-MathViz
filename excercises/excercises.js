@@ -220,7 +220,10 @@ class QuestionSelectOne extends Question{
 
             let opt = this.options[i%optL];
             let optStr = [];
-            opt.forEach((e)=>{ optStr.push(e.label) });
+            opt.forEach((e,i)=>{ 
+                let str = this.header[i%this.header.length] + e.label;
+                optStr.push(str);
+            });
             this.selector = new RadioBtnObj(this.id+"select", optStr, this.answerDiv);
 
             this.selector.addListener((obj)=>{
@@ -338,6 +341,21 @@ class Option{
 }
 
 
+class Point{
+
+    constructor(x, y, type=""){
+
+        this.x = x;
+        this.y = y;
+        this.type = type;
+
+        this.label = `(${this.x}, ${this.y})`;
+
+    }
+
+}
+
+
 function get_options(labels, values, points){
 
     let opts = [];
@@ -349,6 +367,89 @@ function get_options(labels, values, points){
     return opts;
 
 }
+
+
+function get_xy_options(data, N=4){
+
+    let optionsLst = [get_options([], [], [])];
+    let L = [];
+
+    data.forEach((d)=>{
+
+        let labels = [];
+        let points = new Array(d.length).fill(0);
+
+        d.forEach((opt, i)=>{
+
+            labels.push( xyLst_to_labelTxt(opt) ); 
+            
+            opt.forEach((xy)=>{
+
+                if(xy.type === "min" || xy.type === "max" || xy.type === "teras"){
+                    points[i] ++;
+                }
+
+            });
+
+        });
+
+        optionsLst.push(get_options(labels, d, points));
+
+    });
+
+    return optionsLst;
+
+}
+
+
+function xyLst_to_labelTxt(data, separator=" & "){
+
+    let str = "";
+
+    data.forEach( (d,i)=>{
+
+
+        if(i>0){
+            str += separator;
+        }
+
+        str += d.label;
+
+    } );
+
+    return str;
+
+}
+
+
+function get_minMax_opts(data){
+
+
+    let refStr = ["-", "min", "max", "teras"];
+    let refVal = [...refStr];
+    refVal[0] = null;
+    let options = [];
+
+    data.forEach((d)=>{
+
+        let points = new Array(refStr.length).fill(0);
+
+        for(let i=1; i<refStr.length; i++){
+            if(d.type === refStr[i]){
+                points[i] = 1;
+            }
+        }
+
+        options.push( get_options( refStr, refVal, points ) );
+
+    });
+
+    return(options);
+
+}
+
+
+
 
 
 
@@ -393,19 +494,27 @@ let q1 = new QuestionMenSelect("q1", "Hur mång extrempunkter har grafen?", 1, 1
 x.add_question(q1);
 
 
-let q2pt = [];
-q2pt.push( get_options([], [], []) );
-let q2P = [ [ [[0.5, 0]], [[2, 6]], [[4, 5]], [[5, 4]]], [[[0, 0], [4, 5]], [[5, 4], [8, 8]], [[2, 6], [5, 4]], [[2, 6], [4, 4]]] ];
-q2pt.push( get_options( ptVal_to_labels(q2P[0]) , q2P[0], [0, 1, 0, 1] ) );
-q2pt.push( get_options( ptVal_to_labels(q2P[1]), q2P[1], [0, 1, 2, 1] ) );
-q2pt.push( get_options(["()", "()", "()", "()"], [[0, 0], [0, 0], [0, 0], [0, 0]], [0, 1, 0, 0]) );
-q2pt.push( get_options(["()", "()", "()", "()"], [[0, 0], [0, 0], [0, 0], [0, 0]], [0, 1, 0, 0]) );
-let q2 = new QuestionSelectOne("q2", "Vilka är extrempunkterna?", 1, 1, [q2pt[0]]);
+let points = [];
+let p0_0 = new Point(0, 0);
+let p1_2 = new Point(1, 2);
+let p2_6 = new Point(2, 6, "max");
+let p4_5 = new Point(4, 5);
+let p5_4 = new Point(5, 4, "min");
+
+let q2XY = [ 
+    [[p0_0], [p2_6], [p1_2], [p4_5]], 
+    [[p0_0, p4_5], [p1_2, p2_6], [p2_6, p5_4], [p0_0, p1_2] ],
+    [[p0_0, p4_5, p1_2], [p1_2, p2_6, p2_6], [p2_6, p5_4, p4_5], [p0_0, p1_2, p4_5]], 
+    [[p0_0, p4_5, p1_2, p2_6], [p1_2, p2_6, p2_6, p5_4], [p2_6, p5_4, p1_2, p4_5], [p0_0, p1_2, p1_2, p4_5]] 
+];
+let q2Opts = get_xy_options(q2XY);
+let q2 = new QuestionSelectOne("q2", "Vilka är extrempunkterna?", 1, 1, [q2Opts[0]]);
+
 x.add_question(q2);
 
 q1.addListener((obj)=>{
     let val = obj.answer[0].value;
-    q2.update([q2pt[val]]);
+    q2.update([q2Opts[val]]);
 });
 
 let mmOptV = [null, "max", "min", "teras"];
@@ -421,16 +530,14 @@ x.add_question(q3);
 
 q2.addListener((obj)=>{
 
-    let answers = [];
+    let opts = get_minMax_opts(obj.answer[0].value);
     let labels = [];
-    obj.answer.forEach((ans)=>{
-       ans.value.forEach((val)=>{
-        labels.push( point_to_str([val]) );
-       });
+    obj.answer[0].value.forEach((d)=>{
+        labels.push(xyLst_to_labelTxt([d]));
     });
-    let N = q1.answer[0].value;
-    console.log(N);
-    q3.update( labels, N, N, q3Opts[N] );
+    
+    let nP = opts.length;
+    q3.update(labels, nP, nP, opts);
 
 });
 
@@ -450,36 +557,6 @@ testB.addListener(()=>{
 
 })
 
-
-function ptVal_to_labels(vals){
-
-    let L = [];
-
-    vals.forEach((v)=>{
-        L.push(point_to_str(v));
-    });
-
-    return L;
-
-}
-
-
-function point_to_str(points){
-
-let s = "";
-points.forEach((p, i)=>{
-
-    if(i>0){
-        s += " & ";
-    }
-
-    s += `(${p[0]}, ${p[1]})`;
-
-});
-
-    return s;
-
-}
 
 
 

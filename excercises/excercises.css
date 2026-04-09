@@ -15,6 +15,9 @@ button{
     margin-top: 5px;
 }
 
+.radio{
+    margin-left: 10px;
+}
 
 
 #header{
@@ -167,3 +170,4 @@ button{
     width: fit-content;
 
 }
+
