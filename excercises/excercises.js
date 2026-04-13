@@ -470,9 +470,9 @@ x.headerDiv.appendChild(div);
 
 let canvas = new CanvasObj("Canvas1", width, height, margin, Xrange, yRange, x.svgDiv.id);
 let chart = new ChartObj("chart1", {}, canvas);
-let graph = new GraphObj("graph1", fx[0], Xrange, {}, canvas);
-let tangent = new TangentObj("tangent1", fx[0], {"x0": 2, "length": 50}, canvas, graph);
-let marker = new SegmentMarkerFxObj("tangentMarker", tangent, {}, canvas);
+let graph = new GraphObj("graph1", fx[0], Xrange, {"draw": true, "drawT":0}, canvas);
+let tangent = new TangentObj("tangent1", fx[0], {"x0": 2, "length": 50, "color": "black"}, canvas, graph);
+let marker = new SegmentMarkerFxObj("tangentMarker", tangent, {"color": "black"}, canvas);
 
 let slider = new SliderObj("tanSlider", [-5, 10], 1, "x= ", x.controlDiv);
 slider.addListener((val)=>{
@@ -555,7 +555,43 @@ testB.addListener(()=>{
     x.check();
     console.log(q1.R, q2.R, q3.R, q4.R);
 
-})
+    let update = new UpdateNode({"drawT": 1}, 2000);
+    graph.update(update);
+
+
+    let rightData = [];
+    let wrongData = [];
+    let missedData = [];
+    let foundPts = [];
+    let keyPts = [p2_6, p5_4];
+    q2.answer[0].value.forEach((point)=>{
+
+        if(point.type === "max" || point.type === "min" || point.type === "teras"){
+            rightData.push([point.x, point.y]);
+            foundPts.push(point);
+        } else{
+            wrongData.push( [point.x, point.y] );
+        }
+
+    });
+
+    keyPts.forEach((key)=>{
+
+        if(!foundPts.includes(key)){
+            missedData.push([key.x, key.y]);
+        }
+
+    });
+    
+
+    let rMarker = new MarkerObj("rMarker", rightData, {"color": "black"}, canvas);
+    let wMarker = new MarkerObj("wMarker", wrongData, {"color": "red"}, canvas);
+    let missedMarker = new MarkerObj("mMarker", missedData, {"color": "blue"}, canvas);
+
+
+    window.scrollTo(0, 0);
+
+});
 
 
 
