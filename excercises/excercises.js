@@ -1,7 +1,8 @@
-
+/*
 const margin = { top: 40, right: 10, bottom: 10, left: 30 },
 width = 700;
 height = 500;
+*/
 
 var fx = [(x)=>{return x**3/12 - 0.9*x**2 + 2.5*x + 4}, (x)=>{return x**2/4 - 3*x/2 + 5 }, (x)=>{ return x**3/12 - 3*x**2/4 + 9*x/4 + 1}, (x)=>{ return 4*Math.sin(x)+5}];
 var Dx = [(x)=>{return x**2/4 - 1.8*x + 2.5}, (x)=>{return x/2 - 3/2}, (x)=>{return x**2/4 - 3*x/2 +9/4}, (x)=>{ return 4*Math.cos(x) }];
@@ -12,19 +13,22 @@ var yRange = [-5, 10];
 
 class Excercise{
 
-    constructor(id, root){
+    constructor(id){
 
         this.questions = [];
 
         this.id = id;
-        this.root = root;
+        this.init = false;
+
         this.P = 0;
         this.R = 0;
+
+        this.inputs = {};
+        this.Elements = {};
 
         this.containterDiv = document.createElement("div");
         this.containterDiv.id = this.id;
         this.containterDiv.className = "excerise";
-        root.appendChild(this.containterDiv);
 
         this.headerDiv = document.createElement("div");
         this.headerDiv.className = "contextDiv flooter";
@@ -463,7 +467,7 @@ function get_minMax_opts(data){
 
 
 
-
+/*
 
 
 let root = document.getElementById("root");
@@ -558,7 +562,9 @@ q1.addListener(()=>{
     q3.update([], 0, 0, []);
 });
 
-let q4Opts = get_options(["ax^2+bx+c", "ax^3+bx^2+cx+d"], ["ax^2+bx+c", "ax^3+bx^2+cx+d"], [0, 1]);
+let fxText = ["ax^2+bx+c", "ax^3+bx^2+cx+d"];
+
+let q4Opts = get_options(fxText, fxText, [0, 1]);
 let q4 = new QuestionSelectOne("q4", "Vad är grafens funktion", 1, 1, [q4Opts]);
 x.add_question(q4);
 
@@ -637,7 +643,15 @@ testB.addListener(()=>{
     let M = new MarkerObj("ansMarker", markerData, {"color": markerC}, canvas);
     let L = new LabelObj("answerLabel", labelData, labelTxt, {"color": labelC}, canvas);
 
-    let fxL = new LabelObj("fxAnswerL", [[2, 10]], [q4.answer[0].value], {}, canvas);
+
+    let fxC = "black";
+
+    if(q4.answer[0].points < 1){
+        fxC = "red";
+    }
+
+    let fxAnsTxt = `f(x)= ${q4.answer[0].value}`;
+    let fxL = new LabelObj("fxAnswerL", [[2, 10]], [fxAnsTxt], {"color": [fxC]}, canvas);
 
 
 
@@ -649,6 +663,6 @@ testB.addListener(()=>{
 
 
 
-
+//*/
 
 
