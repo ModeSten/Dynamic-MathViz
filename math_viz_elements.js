@@ -49,6 +49,7 @@ class InputObj{
         this.id = id;
         this.parent = null;
         this.container = document.createElement("div");
+        this.container.className = "inputContainer";
         this.listener = [];
 
     }
@@ -350,30 +351,31 @@ class ButtonStepObj{
 
 
 
-class SelectorObj{
+class SelectorObj extends InputObj{
 
-    constructor(id, labels, values, parentDiv=null, className=""){
+    constructor(id, optName, optVal, label="a)", parentDiv=null, className=""){
 
-        this.id = id;
-
-        this.listener = [];
+        super(id);
 
         this.select = document.createElement("select");
         this.select.name = this.id;
         this.select.id = this.id;
         this.className = "selector";
 
+        this.label = document.createElement("label");
+        this.label.for = this.id;
+        this.label.innerHTML = label;
 
-        this.labels = labels;
-        this.values = values;
+        this.optNames = optName;
+        this.optValues = optVal;
 
         this.options = [];
 
-        for(let i=0; i<Object.keys(values).length; i++){
+        for(let i=0; i<optVal.length; i++){
 
             let opt = document.createElement("option");
-            opt.value = values[i];
-            opt.innerHTML = labels[i];
+            opt.value = optVal[i];
+            opt.innerHTML = optName[i];
 
             this.options.push(opt);
             this.select.appendChild(opt);
@@ -382,11 +384,11 @@ class SelectorObj{
 
         this.select.onchange = () => {this.on_change()};
 
+        this.container.appendChild(this.label);
+        this.container.appendChild(this.select);
 
 
         this.assignToDiv(parentDiv);
-
-
 
     }
 
@@ -397,14 +399,16 @@ class SelectorObj{
             return
         }
 
-        parentDiv.appendChild(this.select);
+        //parentDiv.appendChild(this.label);
+        //parentDiv.appendChild(this.select);
+        parentDiv.appendChild(this.container);
 
     }
 
 
     on_change(){
 
-        this.listener.forEach( (func)=>{ func(this.select.value) } ); 
+        this.listener.forEach( (func)=>{ func(this) } ); 
 
     }
 
@@ -488,7 +492,7 @@ class CheckBoxObj{
 
 class RadioBtnObj extends InputObj{
 
-    constructor(id ,  labels, parentDiv=null, className=""){
+    constructor(id , labels, parentDiv=null, className=""){
 
         super(id);
 
@@ -496,6 +500,8 @@ class RadioBtnObj extends InputObj{
         this.selectedLabel = null;
         this.selectedI = null;
         this.labels = labels;
+
+        this.className += " "+className;
 
         this.form = document.createElement("form");
         this.form.onchange = ()=>{this.on_change()};
@@ -517,6 +523,8 @@ class RadioBtnObj extends InputObj{
             let input = document.createElement("input");
             input.setAttribute("type", "radio");
             input.setAttribute("id", this.id+i);
+            input.className = this.className + " radio";
+
             input.setAttribute("name", this.id);
 
             let txtL = document.createElement("label");

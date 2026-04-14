@@ -677,7 +677,7 @@ class MarkerObj extends VisualObj{
 
         this.params={
             "data": data,       // marker positions
-            "color": "red",     // marker color
+            "color": ["red"],     // marker color
             "r": 3,             // marker (circle) radius 
         };
         this.parse_params(params);
@@ -712,22 +712,9 @@ class MarkerObj extends VisualObj{
             return
         }
 
+
         let u = this.canvas.svg.selectAll("."+this.id) // selected target SVG elements 
         .data( this.data );    // bind data
-        
-
-
-        if(duration === 0){     // duration = 0  =>   update without transition
-
-            u.join("circle")
-                    .attr("class", this.id)
-                    .attr("clip-path", "url(#clip)")
-                    .attr("cx", (d)=>{ return this.canvas.xScale(d[0]) })
-                    .attr("cy", (d)=>{ return this.canvas.yScale(d[1]) })
-                    .attr("r", this.params.r)
-                    .attr("fill", this.params.color);
-
-        } else{
 
             u.enter()
                 .append("circle")
@@ -738,7 +725,7 @@ class MarkerObj extends VisualObj{
             .merge(u)
                 .transition()
                 .duration(duration)
-                    .attr("fill", this.params.color)
+                    .attr("fill", (d, i)=>{ return this.params.color[i%this.params.color.length] })
                     .attr("r", this.params.r)
                     .attr("cx", (d)=>{ return this.canvas.xScale(d[0]) })
                     .attr("cy", (d)=>{ return this.canvas.yScale(d[1]) })
@@ -748,7 +735,7 @@ class MarkerObj extends VisualObj{
             u.exit().remove();
         }
 
-    }
+    
 
 }
 

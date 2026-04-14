@@ -99,8 +99,6 @@ class slopeLabels extends ExstensionObj{
 
         this.get_data();
 
-        console.log(this.classname);
-
         this.svgObj = new LabelObj(this.id+"label", this.data, this.labelTxt, this.params, this.canvas, this.classname );
 
         this.assigne_to_canvas(canvas);
