@@ -64,7 +64,7 @@ class Excercise{
     add_question(quiz){
 
         this.questions.push(quiz);
-        this.P += quiz.N;
+        this.P += quiz.P;
         quiz.assign_to_div(this.quizDiv);
 
     }
@@ -74,12 +74,19 @@ class Excercise{
 
         this.R = 0;
 
-        this.questions.forEach((q)=>{
+        for(let i=0; i<this.questions.length; i++){
 
-            q.check();
-            this.R += q.R;
+            let q = this.questions[i];
 
-        });
+            if(q.check()){
+                this.R += q.R;
+            }   else{
+                return false;
+            }
+
+        }
+
+        return true;
 
     }
 
@@ -137,20 +144,26 @@ class Question{
 
     check(){
 
-
         this.R = 0;
 
-        this.answer.forEach((ans, i)=>{
+        if(this.answer.length < 1){
+            return false;
+        }
 
-            if(ans !== null){
+        for (let i=0; i<this.answer.length; i++){
+
+            let ans = this.answer[i];
+
+            if(ans === null){
+                return false
+            } else{
                 this.R += ans.points;
             }
 
-        });
+        }
 
-        this.passed = this.R === this.N;
-        return this.passed;
-
+        return true;
+        
     }
 
 
@@ -508,7 +521,7 @@ let q2XY = [
     [[p0_0, p4_5, p1_2, p2_6], [p1_2, p2_6, p2_6, p5_4], [p2_6, p5_4, p1_2, p4_5], [p0_0, p1_2, p1_2, p4_5]] 
 ];
 let q2Opts = get_xy_options(q2XY);
-let q2 = new QuestionSelectOne("q2", "Vilka är extrempunkterna?", 1, 1, [q2Opts[0]]);
+let q2 = new QuestionSelectOne("q2", "Vilka är grafens extrempunkter, (x, y)?", 1, 2, [q2Opts[0]]);
 
 x.add_question(q2);
 
@@ -525,7 +538,7 @@ q3Opts.push([ get_options( mmOptS, mmOptV, [0, 1, 0, 0]) ] );
 q3Opts.push([ get_options( mmOptS, mmOptV, [0, 0, 1, 0]) , get_options(mmOptS, mmOptV, [0, 0, 0, 0]) ] );
 q3Opts.push( [  get_options( mmOptS, mmOptV, [0, 0, 1, 0]) , get_options(mmOptS, mmOptV, [0, 0, 1, 0]), get_options(mmOptS, mmOptV, [0, 0, 1, 0]) ]  );
 q3Opts.push( [  get_options( mmOptS, mmOptV, [0, 0, 1, 0]) , get_options(mmOptS, mmOptV, [0, 0, 1, 0]), get_options(mmOptS, mmOptV, [0, 0, 1, 0]), get_options(mmOptS, mmOptV, [0, 0, 1, 0]) ]  );
-let q3 = new QuestionMenSelect("q3", "För varje extrempunkt, ange om det är en maximum, minimum eller terasspunkt?", 0, 0, [], []);
+let q3 = new QuestionMenSelect("q3", "För varje extrempunkt, ange om det är en maximum, minimum eller terasspunkt?", 0, 2, [], []);
 x.add_question(q3);
 
 q2.addListener((obj)=>{
@@ -550,46 +563,87 @@ let q4 = new QuestionSelectOne("q4", "Vad är grafens funktion", 1, 1, [q4Opts])
 x.add_question(q4);
 
 let testB = new ButtonObj("testB", "check", x.quizDiv);
+let pointsP = document.createElement("P");
+x.quizDiv.appendChild(pointsP);
 testB.addListener(()=>{
 
-    x.check();
-    console.log(q1.R, q2.R, q3.R, q4.R);
+    if(!x.check()){
 
-    let update = new UpdateNode({"drawT": 1}, 2000);
+        pointsP.innerHTML = "All frågor ej besvarade";
+        return
+
+    }
+
+    let update = new UpdateNode({"drawT": 1}, 1000);
     graph.update(update);
 
 
-    let rightData = [];
-    let wrongData = [];
-    let missedData = [];
-    let foundPts = [];
-    let keyPts = [p2_6, p5_4];
-    q2.answer[0].value.forEach((point)=>{
+    let key = [p2_6, p5_4];
 
-        if(point.type === "max" || point.type === "min" || point.type === "teras"){
-            rightData.push([point.x, point.y]);
-            foundPts.push(point);
+    let markerData = [];
+    let answerPts = [...q2.answer[0].value];
+    let markerC = [];
+
+    let labelData = [];
+    let labelTxt = [];
+    let labelC = [];
+
+    answerPts.forEach((pt)=>{
+
+        let d = [pt.x, pt.y];
+
+        if(pt.type!==""){
+            markerC.push("black");
+            labelData.push(d);
+            labelTxt.push(pt.type);
         } else{
-            wrongData.push( [point.x, point.y] );
+            markerC.push("red");
+        }
+
+        markerData.push(d);
+
+    });
+
+
+    q3.answer.forEach((ans, i)=>{
+
+        if(ans.value === answerPts[i].type){
+            labelC.push("black");
+        } else if(answerPts[i].type !== ""){
+            labelC.push("red");
         }
 
     });
 
-    keyPts.forEach((key)=>{
 
-        if(!foundPts.includes(key)){
-            missedData.push([key.x, key.y]);
+    key.forEach((k)=>{
+
+        if(!answerPts.includes(k)){
+
+            let d = [k.x, k.y];
+
+            answerPts.push(k);
+            markerC.push("blue");
+            markerData.push(d);
+
+            labelData.push(d);
+            labelTxt.push(k.type);
+            labelC.push("blue");
+
         }
 
     });
-    
 
-    let rMarker = new MarkerObj("rMarker", rightData, {"color": "black"}, canvas);
-    let wMarker = new MarkerObj("wMarker", wrongData, {"color": "red"}, canvas);
-    let missedMarker = new MarkerObj("mMarker", missedData, {"color": "blue"}, canvas);
+    let M = new MarkerObj("ansMarker", markerData, {"color": markerC}, canvas);
+    let L = new LabelObj("answerLabel", labelData, labelTxt, {"color": labelC}, canvas);
+
+    let fxL = new LabelObj("fxAnswerL", [[2, 10]], [q4.answer[0].value], {}, canvas);
+
 
 
     window.scrollTo(0, 0);
+
+    pointsP.innerHTML = `${x.R}/${x.P} P`;
 
 });
 
