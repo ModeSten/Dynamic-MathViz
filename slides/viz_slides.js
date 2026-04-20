@@ -6,7 +6,7 @@ height = 500;
 
 var fx = [(x)=>{return x**3/12 - 0.9*x**2 + 2.5*x + 4}, (x)=>{return x**2/4 - 3*x/2 + 5 }, (x)=>{ return x**3/12 - 3*x**2/4 + 9*x/4 + 1}, (x)=>{ return 4*Math.sin(x)+5}];
 var Dx = [(x)=>{return x**2/4 - 1.8*x + 2.5}, (x)=>{return x/2 - 3/2}, (x)=>{return x**2/4 - 3*x/2 +9/4}, (x)=>{ return 4*Math.cos(x) }];
-var fxTxt = ["f(x)= 1/12*x^3 - 0.9x^2 + 2.5x +4", "f(x)= 1/4*x^2 - 3/2*x^2 +5", "f(x)= 1/12*x^3 - 3/4*x^2 +9/4*x +1", "f(x)= 4*sin(x)+5"];
+var fxTxt = ["1/12*x^3 - 0.9x^2 + 2.5x + 4", "1/4*x^2 - 3/2*x^2 + 5", "1/12*x^3 - 3/4*x^2 + 9/4*x + 1", "4*sin(x) + 5"];
 var Xrange = [-3, 10];
 var yRange = [-5, 10];
 
@@ -106,8 +106,7 @@ function dx_intro_slide(i, slide=null){
         slide.inputs["hSlider"] = new SliderObj("dxIntroSliderH", [0.1, 7], 2, "h=", slide.ctrlContainer, "viz_slider", 1000);
 
         let fxI = Array(fx.length).fill(null).map((x, i)=>{return i});
-        let select = new SelectorObj("dxIntroFxSelect", fxTxt, fxI, slide.ctrlContainer);
-        slide.inputs["fxSelect"] = select;
+        slide.inputs["fxSelect"] = new SelectorObj("DxIntroFxSelect", fxTxt, fxI, "f(x)=", slide.ctrlContainer );
 
         slides[i] = slide;
 
@@ -138,7 +137,9 @@ function dx_intro_slide(i, slide=null){
             secant.update(update);
         });
 
-        slide.inputs.fxSelect.addListener((val)=>{
+        slide.inputs.fxSelect.addListener((obj)=>{
+
+            let val = obj.select.value;
 
             let update = new UpdateNode({"fx": fx[val]}, 1500);
             graph.update(update);
@@ -169,8 +170,7 @@ function dx_continued_slide(i, slide=null){
         slide.inputs["hSlider"] = new SliderObj("dxIntroSliderH", [0.1, 7], 2, "h=", slide.ctrlContainer, "viz_slider", 1000);
 
         let fxI = Array(fx.length).fill(null).map((x, i)=>{return i});
-        let select = new SelectorObj("dxCtnFxSelect", fxTxt, fxI, slide.ctrlContainer);
-        slide.inputs["fxSelect"] = select;
+        slide.inputs["fxSelect"] = new SelectorObj("DxIntroFxSelect", fxTxt, fxI, "f(x)=", slide.ctrlContainer );
 
         slides[i] = slide;
 
@@ -215,7 +215,9 @@ function dx_continued_slide(i, slide=null){
             derivative.update(update);
         })
 
-        slide.inputs.fxSelect.addListener((val)=>{
+        slide.inputs.fxSelect.addListener((obj)=>{
+
+            let val = obj.select.value;
 
             let update = new UpdateNode({"fx": fx[val]}, 1500);
             let updateDx = new UpdateNode({"fx": Dx[val]}, 1500);
@@ -248,8 +250,7 @@ function tangent_slide(i, slide=null){
         slide.inputs["xSlider"] = new SliderObj("dxIntroSliderX", [-5, 10], -2, "x=", slide.ctrlContainer, "viz_slider", 1000);
 
         let fxI = Array(fx.length).fill(null).map((x, i)=>{return i});
-        let select = new SelectorObj("tangentFxSelect", fxTxt, fxI, slide.ctrlContainer);
-        slide.inputs["fxSelect"] = select;
+        slide.inputs["fxSelect"] = new SelectorObj("DxIntroFxSelect", fxTxt, fxI, "f(x)=", slide.ctrlContainer );
 
         slides[i] = slide;
 
@@ -273,7 +274,9 @@ function tangent_slide(i, slide=null){
             tangent.update(update);
         });
 
-        slide.inputs.fxSelect.addListener((val)=>{
+        slide.inputs.fxSelect.addListener((obj)=>{
+
+            let val = obj.select.value;
 
             let update = new UpdateNode({"fx": fx[val]}, 1500);
             graph.update(update);
@@ -301,8 +304,7 @@ function dx_color_slide(i, slide = null){
         slide.txtContainer.appendChild(txt);
 
         let fxI = Array(fx.length).fill(null).map((x, i)=>{return i});
-        let select = new SelectorObj("dxClFxSelect", fxTxt, fxI, slide.ctrlContainer);
-        slide.inputs["fxSelect"] = select;
+        slide.inputs["fxSelect"] = new SelectorObj("DxIntroFxSelect", fxTxt, fxI, "f(x)=", slide.ctrlContainer );
 
         let dxCheck = new CheckBoxObj("dxColorDxCheck", "f `(x)", slide.ctrlContainer);
         slide.inputs["dxCheck"] = dxCheck;
@@ -330,7 +332,9 @@ function dx_color_slide(i, slide = null){
         let rect = new RectObj("dxColorLblBack", [[labelX-0.1, 11]], {"height":[150], "width":[150]}, canvas, "txtBack");
         let legend = new LabelObj("dxColorLegend", [[labelX,10.25],[labelX,9.50],[labelX,8.75],[labelX,8.0], [labelX,7.25]], [legendTxt[0], legendTxt[1]] , {"color":["red", "blue"], "anchors": ["start"]},canvas);
 
-        slide.inputs.fxSelect.addListener((val)=>{
+        slide.inputs.fxSelect.addListener((obj)=>{
+
+            let val = obj.select.value;
 
             let update = new UpdateNode({"fx": fx[val]}, 1500);
             dxColor.update(update);
@@ -403,9 +407,8 @@ function multi_tangent_slide(i, slide = null){
         txt.innerHTML = figTxt;
         slide.txtContainer.appendChild(txt);
 
-        let fxI = Array(fx.length).fill(null).map((x, i)=>{return i});
-        let select = new SelectorObj("tanChainFxSelect", fxTxt, fxI, slide.ctrlContainer);
-        slide.inputs["fxSelect"] = select;
+        let fxI = new Array(fx.length).fill(null).map((x, i)=>{return i});
+        slide.inputs["fxSelect"] = new SelectorObj("DxIntroFxSelect", fxTxt, fxI, "f(x)=", slide.ctrlContainer );
 
         let checkPos = new CheckBoxObj("tanChainPosCheck", "dx>0", slide.ctrlContainer, "", true);
         slide.inputs["posCheck"] = checkPos;
@@ -434,7 +437,9 @@ function multi_tangent_slide(i, slide = null){
         let graph = new GraphObj("tanChainG", fx[0], [-3, 10], {"draw": true}, canvas);
         let tanChain = new TangentChainObj("tanChain", fx[0], [-7, 7], {"x0": tanX0[0], "lenght": tanLen[0]}, canvas);
 
-        slide.inputs.fxSelect.addListener((val)=>{
+        slide.inputs.fxSelect.addListener((obj)=>{
+
+            let val = obj.select.value;
 
             let update = new UpdateNode({"fx": fx[val]}, 1500);
             graph.update(update);

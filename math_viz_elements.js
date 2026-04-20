@@ -41,6 +41,52 @@ class DivObj {
 }
 
 
+class Paragraph{
+
+    constructor(id, text, parentDiv=null, className=""){
+
+        this.id = id;
+
+        this.parentDiv = null;
+
+        this.text = text;
+
+        this.container = document.createElement("div");
+        this.container.className = "pContainer " + className;
+
+        this.P = document.createElement("P");
+        this.P.innerHTML = this.text;
+        this.container.appendChild(this.P);
+
+
+        this.assignToDiv(parentDiv);
+
+    }
+
+
+    assignToDiv(div){
+
+        if(div === null){
+            return
+        }
+
+        this.parentDiv = div;
+        this.parentDiv.appendChild(this.container);
+
+    }
+
+
+    update_text(text){
+
+        this.text = text;
+        this.P.innerHTML = this.text;
+
+    }
+
+
+}
+
+
 
 class InputObj{
 
@@ -188,12 +234,16 @@ class ButtonObj{
         this.id = id;
         this.parentDiv = null;
         this.listener = [];     // call on button click
-
+        
         this.button = document.createElement("button"); // create button
             this.button.id = this.id;
             this.button.className = className;
             this.button.textContent = label;   
             this.button.onclick = ()=>{this.onClick();};
+
+        this.container = document.createElement("div");
+        this.container.className = "inputContainer";
+        this.container.appendChild(this.button);
 
         this.assignToDiv(parentDiv);
 
@@ -207,7 +257,7 @@ class ButtonObj{
         }
 
         this.parentDiv = parentDiv;
-        this.parentDiv.appendChild(this.button);
+        this.parentDiv.appendChild(this.container);
 
     }
 
@@ -531,8 +581,16 @@ class RadioBtnObj extends InputObj{
             txtL.textContent = label;
             txtL.setAttribute("for", this.id+i);
 
-            this.form.appendChild(input);
-            this.form.appendChild(txtL);
+            let container = document.createElement("div");
+            container.setAttribute("className", "radioEntry inputEntry");
+
+            container.appendChild(input);
+            container.appendChild(txtL);
+
+            this.form.appendChild(container);
+
+            //this.form.appendChild(input);
+            //this.form.appendChild(txtL);
 
             this.buttons.push(input);
             
