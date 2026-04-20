@@ -1,4 +1,5 @@
 
+
 h2{
     margin: 7px;
     font-size: 20px;
@@ -99,6 +100,7 @@ button{
 }
 
 .footer{
+    padding-top: 10px;
     margin-bottom: 20px;
 }
 
@@ -132,15 +134,7 @@ button{
 
 }
 
-.quizTxtDiv{
 
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    border-bottom: solid 1px;
-
-}
 
 
 
@@ -161,13 +155,41 @@ button{
     height: fit-content;
     margin: 5px;
 
-    align-content: center;
-    justify-content: center;
+    margin-left: 5%;
+
 }
+
+
+.answerDiv{
+    position: relative;
+    display: block;
+}
+
 
 .answerDiv div{
 
-    width: fit-content;
+    position: relative;
+    width: 100%;
 
 }
 
+
+.inputContainer{
+
+    position: relative;
+    display: flex;
+
+    align-content: center;
+    justify-content: center;
+
+}
+
+.pContainer{
+
+    position: relative;
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+}

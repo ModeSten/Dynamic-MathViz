@@ -11,56 +11,59 @@ var Xrange = [-3, 10];
 var yRange = [-5, 10];
 
 
-class Excercise{
+class Excercise{ // excercise base class
 
     constructor(id){
 
-        this.questions = [];
+        this.questions = [];    // Questions (class instances)
 
-        this.id = id;
-        this.init = false;
+        this.id = id;          
+        this.init = false;      // Specify if visual (svg) elements have been created
 
-        this.P = 0;
-        this.R = 0;
+        this.P = 0;             // Number of points which can be earned;
+        this.R = 0;             // Number of earned points
 
-        this.inputs = {};
-        this.Elements = {};
+        this.inputs = {};       // input elements (class instances); References for simplifying adding and removing listeners
+        this.elements = {};     // Other elements which may need to be referenced
 
-        this.containterDiv = document.createElement("div");
+        this.containterDiv = document.createElement("div"); // Excercise base div 
         this.containterDiv.id = this.id;
         this.containterDiv.className = "excerise";
 
-        this.headerDiv = document.createElement("div");
+        this.headerDiv = document.createElement("div");     // Div containing excericise 'introductory' information
         this.headerDiv.className = "contextDiv flooter";
         this.containterDiv.appendChild(this.headerDiv);
 
-        this.vizDiv = document.createElement("div");
+        this.vizDiv = document.createElement("div");        // Div containing visual elements
         this.vizDiv.className = "vizDiv";
         this.containterDiv.appendChild(this.vizDiv);
 
-        this.svgDiv = document.createElement("div");
+        this.svgDiv = document.createElement("div");        // Div containing svg canvas
         this.svgDiv.className = "svgDiv";
         this.svgDiv.id = this.id+"svgDiv";
         this.vizDiv.appendChild(this.svgDiv);
 
-        this.vizFooterDiv = document.createElement("div");
+        this.vizFooterDiv = document.createElement("div");  // Div containing figure information and inputs 
         this.vizFooterDiv.className = "contextDiv footer";
         this.containterDiv.appendChild(this.vizFooterDiv);
         
-        this.figTxtDiv = document.createElement("div");
+        this.figTxtDiv = document.createElement("div");     // Div containing figure description
         this.figTxtDiv.className = "half";
         this.vizFooterDiv.appendChild(this.figTxtDiv);
-        this.controlDiv = document.createElement("div");
+        this.controlDiv = document.createElement("div");    // Div containing figure inputs
         this.controlDiv.className = "half";
         this.vizFooterDiv.appendChild(this.controlDiv);
 
-        this.quizDiv = document.createElement("div");
+        this.quizDiv = document.createElement("div");       // Base div for excercise questions
         this.quizDiv.className = "quizDiv";
         this.containterDiv.appendChild(this.quizDiv);
 
-        this.textDiv = document.createElement("div");
-        this.textDiv.className = "contextDiv header";
-        this.quizDiv.appendChild(this.textDiv);
+        this.qHeaderDiv = document.createElement("div");    // Header div for question section
+        this.qHeaderDiv.className = "contextDiv header";
+        this.quizDiv.appendChild(this.qHeaderDiv);
+
+        this.qFooterDiv = document.createElement("div");    // Footer div for question div section
+        this.qFooterDiv.className = "contextDiv, footer";
 
     }
 
@@ -68,13 +71,13 @@ class Excercise{
     add_question(quiz){
 
         this.questions.push(quiz);
-        this.P += quiz.P;
+        this.P += quiz.P;   // add question potential score to excercise (total) potential score
         quiz.assign_to_div(this.quizDiv);
 
     }
 
 
-    check(){
+    check(){    // check answers
 
         this.R = 0;
 
@@ -82,9 +85,9 @@ class Excercise{
 
             let q = this.questions[i];
 
-            if(q.check()){
-                this.R += q.R;
-            }   else{
+            if(q.check()){  
+                this.R += q.R;  // Add question score to toal score
+            }   else{   // Question has not been answered
                 return false;
             }
 
@@ -98,32 +101,32 @@ class Excercise{
 
 
 
-class Question{
+class Question{ // Question base class
 
     constructor(id, text, N, P, parentDiv=null, className=""){
 
         this.id = id;
-        this.N = N;
-        this.P = P;
-        this.answer = new Array(this.N).fill(null);
+        this.N = N;     // NUmber of answers to be given
+        this.P = P;     // Potential score (number of points)
+        this.answer = new Array(this.N).fill(null);     // Submited answers
 
-        this.passed = false;
-        this.R = 0;
+        this.passed = false;    
+        this.R = 0;     // Number of earned points
 
-        this.containterDiv = document.createElement("div");
+        this.containterDiv = document.createElement("div");     // Question base div
         this.containterDiv.id = this.id;
         this.containterDiv.className = "questionDiv " + className;
 
-        this.textDiv = document.createElement("div");
+        this.textDiv = document.createElement("div");   // div for question text
         this.textDiv.className = "qTxtDiv half";
         this.text = document.createElement("p");
         this.text.innerHTML = text;
         this.textDiv.appendChild(this.text);
 
-        this.answerDiv = document.createElement("div");
+        this.answerDiv = document.createElement("div"); // Duv for question answer inputs
         this.answerDiv.className = "answerDiv half";
 
-        this.containterDiv.appendChild(this.textDiv);
+        this.containterDiv.appendChild(this.textDiv);   
         this.containterDiv.appendChild(this.answerDiv);
 
         this.selector = null;
@@ -146,7 +149,7 @@ class Question{
     }
     
 
-    check(){
+    check(){    // check answers
 
         this.R = 0;
 
@@ -158,10 +161,10 @@ class Question{
 
             let ans = this.answer[i];
 
-            if(ans === null){
+            if(ans === null){   // Missing answer
                 return false
             } else{
-                this.R += ans.points;
+                this.R += ans.points;   // add answer (option) point to score
             }
 
         }
@@ -190,38 +193,32 @@ class Question{
 }
 
 
-class QuestionSelectOne extends Question{
+class QuestionSelectOne extends Question{   // Question class, single selection (radio) answer
 
     constructor(id, text, N, P, opts, parentDiv=null, Optheader=["a)", "b)", "c)", "d)"]){
 
         super(id, text, N, P, parentDiv );
 
-        this.options = opts;
-        this.header = Optheader;
+        this.options = opts;        // Options (class instances)
+        this.header = Optheader;    // Label (prefix) for each option
 
         this.set_selection();
 
     }
 
 
-    update(opts=this.options, N=this.N, P=this.P, text=this.text.textContent, Optheader=this.header){
+    update(opts=this.options, N=this.N, P=this.P, Optheader=this.header){   // Update question parameters
 
         this.options = opts;
         this.header = Optheader;
 
-        this.N = N;
-        this.P = P;
-        this.answer = new Array(this.N).fill(null);
-        
-        this.text.innerHTML = text;
+        this.N = N;     // Number of answers to be submited
+        this.P = P;     // max score 
+        this.answer = new Array(this.N).fill(null); 
 
         while(this.answerDiv.lastChild ){
-            this.answerDiv.removeChild(this.answerDiv.lastChild);
+            this.answerDiv.removeChild(this.answerDiv.lastChild);   // remove existing answer inputs
         }
-
-        this.options.forEach(()=>{
-
-        });
 
         this.set_selection();
 
@@ -229,19 +226,19 @@ class QuestionSelectOne extends Question{
 
 
 
-    set_selection(){
-
-        let optL = this.options.length;
+    set_selection(){    // Create answer inputs 
+    
+        let optN = this.options.length;     // number of answer fields
 
         for(let i=0; i<this.N; i++){
 
-            let opt = this.options[i%optL];
-            let optStr = [];
+            let opt = this.options[i%optN]; 
+            let optLabels = [];
             opt.forEach((e,i)=>{ 
                 let str = this.header[i%this.header.length] + e.label;
-                optStr.push(str);
+                optLabels.push(str);
             });
-            this.selector = new RadioBtnObj(this.id+"select", optStr, this.answerDiv);
+            this.selector = new RadioBtnObj(this.id+"select", optLabels, this.answerDiv);
 
             this.selector.addListener((obj)=>{
 
@@ -257,7 +254,7 @@ class QuestionSelectOne extends Question{
 }
 
 
-class QuestionMenSelect extends Question{
+class QuestionMenSelect extends Question{   // Question class, drop down select
 
     constructor(id, text, N, P, labels, opts, parentDiv=null){
 
@@ -271,7 +268,7 @@ class QuestionMenSelect extends Question{
     }
 
 
-    update( labels=this.labels, N=this.N, P=this.P, opts=this.options, text=this.text.textContent ){
+    update( labels=this.labels, N=this.N, P=this.P, opts=this.options ){    // update option parameters
 
         this.labels = labels;
         this.options = opts;
@@ -279,8 +276,6 @@ class QuestionMenSelect extends Question{
         this.N = N;
         this.P = P;
         this.answer = new Array(this.N).fill(null);
-        
-        this.text.innerHTML = text;
 
         while(this.answerDiv.lastChild ){
             this.answerDiv.removeChild(this.answerDiv.lastChild);
@@ -293,7 +288,7 @@ class QuestionMenSelect extends Question{
 
 
 
-    set_selection(){
+    set_selection(){    // Create answer inputs; Drop down selectors
 
         let optL = Object.keys(this.options).length;
         let labelL = Object.keys(this.labels).length;
@@ -345,35 +340,35 @@ class QusetionMultiSelect extends Question{
 
 
 
-class Option{
+class Option{   // Answer option class
 
     constructor(label, value, points){
 
-        this.label = label;
-        this.value = value;
-        this.points = points;
+        this.label = label;     // Option (answer) text label; displayed text
+        this.value = value;     // Option stored value 
+        this.points = points;   // Point value (score earned) of option 
 
     }
 
 }
 
 
-class Point{
+class Point{    // class specifying a cordinated point
 
     constructor(x, y, type=""){
 
-        this.x = x;
-        this.y = y;
-        this.type = type;
+        this.x = x;     // point x value 
+        this.y = y;     // point y value
+        this.type = type;   // point type; ex min, max, teras, "" (not an extreme point)
 
-        this.label = `(${this.x}, ${this.y})`;
+        this.label = `(${this.x}, ${this.y})`;  // point text label
 
     }
 
 }
 
 
-function get_options(labels, values, points){
+function get_options(labels, values, points){   // create answer options; Simplyfies creation of multiple options
 
     let opts = [];
 
@@ -386,9 +381,9 @@ function get_options(labels, values, points){
 }
 
 
-function get_xy_options(data, N=4){
+function get_xy_options(data, N=1){     // get options for qusetion rerquring the selection of one or more points; Simplifies option creation
 
-    let optionsLst = [get_options([], [], [])];
+    let optionsLst = [];
     let L = [];
 
     data.forEach((d)=>{
@@ -403,8 +398,9 @@ function get_xy_options(data, N=4){
             opt.forEach((xy)=>{
 
                 if(xy.type === "min" || xy.type === "max" || xy.type === "teras"){
-                    points[i] ++;
-                }
+                    let ptMod = Math.max(N, opt.length);
+                    points[i] += 1/ptMod;
+                } 
 
             });
 
@@ -439,7 +435,7 @@ function xyLst_to_labelTxt(data, separator=" & "){
 }
 
 
-function get_minMax_opts(data){
+function get_minMax_opts(data, N=1){
 
 
     let refStr = ["-", "min", "max", "teras"];
@@ -453,7 +449,8 @@ function get_minMax_opts(data){
 
         for(let i=1; i<refStr.length; i++){
             if(d.type === refStr[i]){
-                points[i] = 1;
+                let ptMod = Math.max(N, data.length);
+                points[i] = 1/ptMod;
             }
         }
 

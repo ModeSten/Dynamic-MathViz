@@ -10,11 +10,22 @@ var excercises = new Array(ExcerciseN).fill(null);
 
 
 
-function ex1(i, exc=null){
+function ex1(i, exc=null){  // create / set excercise 1xw
 
     let root = document.getElementById("content");
 
-    if(exc === null){
+    /* cordinate points, used for answer optios */
+    let pt1_6 = new Point(1.9, 6, "max");   // graph max point
+    let pt5_4 = new Point(5.3, 4.4, "min"); // graph min point
+    let pt0_0 = new Point(0, 0, "");
+    let pt1_4 = new Point(1.9, 4.4, "");
+    let pt4_1 = new Point(4.4, 1.9, "");
+    let pt3_6 = new Point(3.2, 6.4, "");
+    let pt5_5 = new Point(5.3, 5.2, "");
+    let pt1_5 = new Point(1.9, 5.2, "");
+
+
+    if(exc === null){   // excercise not already created
 
         exc = new Excercise("quiz1");
         excercises[i]= exc;
@@ -29,59 +40,139 @@ function ex1(i, exc=null){
         exc.inputs["tanSlider"] = tanSlider;
 
         let quizTxt = "<b>Övning 1:</b> Utgå från tangentlinjen och svara på följande frågor om den dold grafen";
-        let quizP = new Paragraph("q1descript", quizTxt, exc.textDiv);
+        let quizP = new Paragraph("q1descript", quizTxt, exc.qHeaderDiv);
 
-        let q1opts = get_options(["-", "1", "2", "3", "4"], [null, 1, 2, 3, 4], [0, 0, 1, 0, 0]);
-        console.log(q1opts);
-        let q1 = new QuestionMenSelect("exc1Q1", "<b>Q1:</b> Hur många extrempunkter har grafen?", 1, 1, [""], [q1opts]); 
+        let q1opts = get_options([" 1", " 2", " 3"], [1, 2, 3], [0, 1, 0]);
+        let q1 = new QuestionSelectOne("exc1Q1", "<b>Q1:</b> Hur många extrempunkter har grafen?", 1, 1, [q1opts]); // create question 1 (q1)
         exc.add_question(q1);
 
-        let pt1_6 = new Point(1.9, 6, "max");
-        let pt5_4 = new Point(5.3, 4.4, "min");
-        let pt0_0 = new Point(0, 0, "");
-        let pt1_4 = new Point(1.9, 4.4, "");
-        let pt4_1 = new Point(4.4, 1.9, "");
-        let pt3_6 = new Point(3.2, 6.4, "");
-        let pt5_5 = new Point(5.3, 5.2, "");
-        let pt1_5 = new Point(1.9, 5.2, "");
-
-        let q2Pts = [
+        // cordinate points (combinations) for q2 answer options
+        let q2Pts = [   
+            [],
             [[pt1_4],[pt5_4],[pt3_6],[pt1_6]],
-            [[pt1_4, pt5_5],[pt1_6, pt5_4],[pt5_4, pt4_1],[pt1_5, pt3_6]],
+            [[pt1_4, pt5_5],[pt1_6, pt5_4],[pt4_1, pt5_4],[pt1_5, pt3_6]],
+            [[pt1_4, pt3_6, pt5_5],[pt1_6, pt4_1, pt5_4],[pt0_0, pt4_1, pt5_4],[pt1_5, pt3_6, pt5_5]],
         ];
-        let q2Opts = get_xy_options(q2Pts);
+        let q2Opts = get_xy_options(q2Pts, 2);
 
-        let q2 = new QuestionSelectOne("exc1Q2", "<b>Q2:</b> Vilka är grafens extrempunkter?<br>Svar i formatet (x, y)", 1, 2, [q2Opts[1]]);
+        let q2 = new QuestionSelectOne("exc1Q2", "<b>Q2:</b> Vilka är grafens extrempunkter?<br> Svar i formatet (x, y)", 1, 1, [q2Opts[0]]);   // create question 2 (q2); initaly without answer inputs
         exc.add_question(q2);
 
-        let q3 = new QuestionMenSelect("exc1Q3", "<b>Q3:</b> För varje extrempunkt, ange om det är en maximum, minimum eller teras - punkt", 0, 2, [], []);
-        exc.add_question(q3);
+        let q3Txt = "<b>Q3:</b> För varje extrempunkt, ange om det är en maximum, minimum eller teras - punkt";
 
-        let q4opts = get_options(["-3*x^2 - 2x + 3 ", "x^3/12 - 0.9*x^2 + 2.5*x + 4", "6*Sin(x+0.5)"], ["x2", "x3", "sin"], [0, 1, 0]);
-        let q4 = new QuestionSelectOne("exc1Q4", "<b>Q4:</b> Vad är grafens funktion?", 1, 1, [q4opts]);
+        let q3 = new QuestionMenSelect("exc1Q3", q3Txt, 0, 1, [], []);  // create question 3 (q3); initaly without answer inputs
+        exc.add_question(q3);
+        
+        let q4opts = get_options([" -3*x^2 - 2x + 3 ", " x^3/12 - 0.9*x^2 + 2.5*x + 4", " 6*Sin(x+0.5)"], [" x2", "x3", "sin"], [0, 1, 0]);
+        let q4 = new QuestionSelectOne("exc1Q4", "<b>Q4:</b> Vad är grafens funktion?", 1, 1, [q4opts]);    // Create question 4 (q4)
         exc.add_question(q4);
+        exc.quizDiv.appendChild(exc.qFooterDiv);
+
+        exc.inputs["checkBtn"] = new ButtonObj("exc1CheckBtn", "check answers", exc.qFooterDiv);    // create and store button for checking answers
+        exc.elements["scoreP"] = new Paragraph("scoreP", "", exc.qFooterDiv);
+
+
+        q1.addListener((obj)=>{     // update q2 options based on the answer to q1 and reset q3
+            
+            let i = obj.answer[0].value;
+            if(i===null){i=0}
+
+            q2.update([q2Opts[i]]);
+            q3.update([], 0);
+
+        });
+
+
+        q2.addListener((obj)=>{     //  Update q3 based on the answer to q2
+            
+            let opts = get_minMax_opts(obj.answer[0].value, 2);
+            let labels = [];
+            obj.answer[0].value.forEach((d)=>{
+                labels.push(xyLst_to_labelTxt([d]));
+            });
+            
+            let nP = opts.length;   // number of answer inputs (= number of points in q2 answer)
+            q3.update(labels, nP, 1, opts);
+
+        });
 
     }
 
     root.appendChild(exc.containterDiv);
 
 
-    if(!exc.init){
+    if(!exc.init){  // Svg elements have not been created
 
         exc.init = true;
 
-        let fx = (x)=>{return x**3/12 - 0.9*x**2 + 2.5*x + 4};
+        let fx = (x)=>{return x**3/12 - 0.9*x**2 + 2.5*x + 4};  // graph function
 
-        let canvas = new CanvasObj("exc1Canvas", width, height, margin, [-3, 10], [-5, 10], exc.svgDiv.id);
-        let chart = new ChartObj("exc1Chart", {}, canvas);
-        let graph = new GraphObj("q1Graph", fx, canvas.params.xRange, {"draw": true, "drawT": 0}, canvas, "", 1000);
-        let tangent = new TangentObj("q1Tangent", fx, {"color": "black", "length": 30}, canvas, graph);
-        let tangentM = new SegmentMarkerFxObj("q1TanM", tangent, {"color": "black", "r": 5}, canvas);
+        /* Visuals elements */
+        let canvas = new CanvasObj("exc1Canvas", width, height, margin, [-3, 10], [-5, 10], exc.svgDiv.id);             // svg canvas
+        let chart = new ChartObj("exc1Chart", {}, canvas);                                                              // Chart (x y axis and labels)
+        let graph = new GraphObj("q1Graph", fx, canvas.params.xRange, {"draw": true, "drawT": 0}, canvas, "", 1000);    // Function graph
+        let tangent = new TangentObj("q1Tangent", fx, {"color": "black", "length": 100}, canvas, graph);                // Tangent line
+        let tangentM = new SegmentMarkerFxObj("q1TanM", tangent, {"color": "black", "r": 5}, canvas);                   // Tangent line center marker
 
-        
         exc.inputs["tanSlider"].addListener((val)=>{
             tangent.translate_center(val);
         });
+
+        exc.inputs.checkBtn.addListener(()=>{ 
+
+            if(!exc.check()){
+                exc.elements.scoreP.update_text("En eller flera frågor ej besvarade");
+                return
+            }
+
+            exc.elements.scoreP.update_text(`${exc.R}/${exc.P} P`);     // Set to show earned score out of max potential 
+
+            window.scrollTo(0, 0);      // Scroll to page to to see graph
+
+            graph.update(new UpdateNode({"drawT":1}, 1500));    // Reveal graph
+
+            let xyPts = [[pt1_6.x, pt1_6.y], [pt5_4.x, pt5_4.y]];   // cordinate points; initaly graph max and min point (right answer)
+            let xyCols = ["blue", "blue"];                          // Point marker colors; blue => miseed right answer, red => incroect answer, black => right answer
+
+            let ptLabels = ["max", "min"];                          // cordinate point labels
+            let ptLabelCol = ["red", "red"];                        // cordinate label colors; blue => miseed right answer, red => incroect answer, black => right answer
+
+            exc.questions[1].answer[0].value.forEach((ans,i)=>{
+
+                if(ans.type === ""){    // answered cordinate point is not an extreme point (incorct answer)
+
+                   xyPts.push([ans.x, ans.y]);  // add incroect answer point
+                   xyCols.push("red");          // add point color; red since point is not a right answer
+                   ptLabels.push("");           
+
+
+                } else if(ans === pt1_6){ // |can be simplified as loop|
+                    
+                    xyCols[0] = "black";    // change color from blue to black to indicate extreme point part of answer
+                    if(exc.questions[2].answer[i].value === pt1_6.type){    // check if indentied as corect type
+                        ptLabelCol[0] = "black";    
+                    }
+
+                } else if(ans === pt5_4){
+
+                    xyCols[1] = "black"; // change color from blue to black to indicate extreme point part of answer
+                    if(exc.questions[2].answer[i].value === pt5_4.type){ // check if indentied as corect type
+                        ptLabelCol[1] = "black";
+                    }
+
+
+                }
+                
+            });
+
+
+            let M = new MarkerObj("extrMarkers", xyPts, {"color": xyCols, "r":3}, canvas, null, "", 1000);  // create markers for showing answered (and coreect) cordinate points
+            let L = new LabelObj("extrLabels", xyPts, ptLabels, {"color": ptLabelCol}, canvas, "", 1000 );  // Create labels showing cordinate point types
+
+            //exc.questions.forEach((q)=>{console.log(q.R)});
+            //console.log(exc.questions[0].answer[0]);
+
+        }); 
 
     }
 
