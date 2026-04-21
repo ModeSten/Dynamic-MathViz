@@ -55,12 +55,13 @@ function ex1(i, exc=null){  // create / set excercise 1xw
         ];
         let q2Opts = get_xy_options(q2Pts, 2);
 
-        let q2 = new QuestionSelectOne("exc1Q2", "<b>Q2:</b> Vilka är grafens extrempunkter?<br> Svar i formatet (x, y)", 1, 1, [q2Opts[0]]);   // create question 2 (q2); initaly without answer inputs
+        //let q2 = new QuestionSelectOne("exc1Q2", "<b>Q2:</b> Vilka är grafens extrempunkter?<br> Svar i formatet (x, y)", 1, 1, [q2Opts[0]]);   // create question 2 (q2); initaly without answer inputs
+        let q2 = new QusetionMultiSelect("exc1Q2", "<b>Q2:</b> Vilka är grafens extrempunkter?<br> Svar i formatet (x, y)", 2, 1, q2Opts[1]);
         exc.add_question(q2);
 
         let q3Txt = "<b>Q3:</b> För varje extrempunkt, ange om det är en maximum, minimum eller teras - punkt";
-
-        let q3 = new QuestionMenSelect("exc1Q3", q3Txt, 0, 1, [], []);  // create question 3 (q3); initaly without answer inputs
+        let q3Opts = get_minMax_opts([pt1_6, pt1_5], 2);
+        let q3 = new QuestionMenSelect("exc1Q3", q3Txt, 2, 1, [pt1_6.label, pt5_4.label], q3Opts);  // create question 3 (q3); initaly without answer inputs
         exc.add_question(q3);
         
         let q4opts = get_options([" -3*x^2 - 2x + 3 ", " x^3/12 - 0.9*x^2 + 2.5*x + 4", " 6*Sin(x+0.5)"], [" x2", "x3", "sin"], [0, 1, 0]);
@@ -74,10 +75,10 @@ function ex1(i, exc=null){  // create / set excercise 1xw
 
         q1.addListener((obj)=>{     // update q2 options based on the answer to q1 and reset q3
             
-            let i = obj.answer[0].value;
-            if(i===null){i=0}
+            let n = obj.answer[0].value;
+            if(n===null){i=0}
 
-            q2.update([q2Opts[i]]);
+            q2.update(q2.options, n);
             q3.update([], 0);
 
         });

@@ -149,7 +149,7 @@ class Question{ // Question base class
     }
     
 
-    check(){    // check answers
+    input(){    // check answers
 
         this.R = 0;
 
@@ -186,6 +186,31 @@ class Question{ // Question base class
         this.listener.forEach( (func)=>{
             func(this);
         });
+
+    }
+
+
+    check(){
+
+        this.R = 0;
+
+        if(this.answer.length < this.N){
+            return false;
+        }
+
+        for (let i=0; i<this.answer.length; i++){
+
+            if(this.answer[i] === null){
+                return;
+            }
+
+            this.R += this.answer[i].points;
+
+        }
+
+
+        return true;
+
 
     }
 
@@ -263,6 +288,15 @@ class QuestionMenSelect extends Question{   // Question class, drop down select
         this.labels = labels;
         this.options = opts;
 
+        this.input = [];
+
+        this.inputContainer = document.createElement("div");
+        this.inputContainer.className = "inputContainer";
+        this.form = document.createElement("form");
+
+        this.inputContainer.appendChild(this.form);
+        this.answerDiv.appendChild(this.inputContainer);
+
         this.set_selection();
 
     }
@@ -290,25 +324,26 @@ class QuestionMenSelect extends Question{   // Question class, drop down select
 
     set_selection(){    // Create answer inputs; Drop down selectors
 
-        let optL = Object.keys(this.options).length;
-        let labelL = Object.keys(this.labels).length;
+        let optN = Object.keys(this.options).length;
+        let labelN = Object.keys(this.labels).length;
 
         for(let i=0; i<this.N; i++){
 
-            let opt = this.options[i%optL];
-            let label = this.labels[i%labelL];
+            let opt = this.options[i%optN];
+            let label = this.labels[i%labelN];
 
             let optStr = [];
             let optI = [];
             opt.forEach((e, i)=>{optStr.push(e.label); optI.push(i)});
 
-            this.selector = new SelectorObj(this.id+"select", optStr, optI, label, this.answerDiv);
+            let selector = new SelectorObj(this.id+"select", optStr, optI, label, this.form);
+            this.input.push(selector);
 
-            this.selector.addListener((obj)=>{
+            selector.addListener((obj)=>{
 
                 let selectI = Number(obj.select.value);
-                this.answer[i] = this.options[i%optL][selectI];
-                this.check();
+                this.answer[i] = this.options[i%optN][selectI];
+                this.input();
                 this.on_select();
 
             });
@@ -330,11 +365,115 @@ class QuestionMenSelect extends Question{   // Question class, drop down select
 
 class QusetionMultiSelect extends Question{
 
-    constructor(id, text, keys, parentDiv=null){
+    constructor(id, text, N, P, opts, parentDiv=null){
 
-        super(id, text, keys, parentDiv);
+        super(id, text, N, P, parentDiv);
+
+        this.options = opts;
+        this.N = N;
+        this.P = P;
+
+        this.answeredN = 0;
+
+        this.input = [];
+
+        this.ansPointer = new Array(this.options.length).fill(false);
+
+        this.answer = [];
+
+        this.answeredN = 0;
+
+        this.set_selection();
 
     }
+
+
+    set_selection(){
+
+        this.inputContainer = document.createElement("div");
+        this.inputContainer.className = "inputContainer";
+        this.form = document.createElement("form");
+
+        this.inputContainer.appendChild(this.form);
+        this.answerDiv.appendChild(this.inputContainer);
+
+        let optN = this.options.length;
+
+        for(let i=0; i<optN; i++){
+
+            let id = this.id + "_" + i;
+            let label = this.options[i].label;
+
+            let select = new CheckBoxObj(id, label, this.form);
+
+            select.addListener((selected)=>{
+
+                if(selected){
+                    this.answeredN ++;
+                } else{
+                    this.answeredN --;
+                    this.ansPointer[i] = false;
+                }
+
+                if(this.answeredN > this.N){
+
+                    for(let j=0; j<this.ansPointer.length; j++){
+                        this.ansPointer[j] = false;
+                    }
+
+                    this.input.forEach((input, j)=>{
+                        if(j!==i){
+                            input.check.checked = false;
+                        }
+                    });
+
+                    this.answeredN = 1;
+
+                }
+
+                if(selected){
+                    this.ansPointer[i] = true;
+                }
+
+                this.answer = [];
+
+                this.ansPointer.forEach((ptr, j)=>{
+
+                    if(ptr){
+                        this.answer.push(this.options[j]);
+                    }
+
+                });
+
+
+            });
+
+            this.input.push(select);
+
+        }
+
+    }
+
+
+    update(opts=this.options, N=this.N, P=this.P){
+
+        this.options = opts;
+
+        this.N = N;
+        this.P = P;
+        this.answer = [];
+
+        while(this.answerDiv.lastChild ){
+            this.answerDiv.removeChild(this.answerDiv.lastChild);
+        }
+
+        this.answeredN = 0;
+        this.input = [];
+
+        this.set_selection();
+
+    }
+
 
 }
 
