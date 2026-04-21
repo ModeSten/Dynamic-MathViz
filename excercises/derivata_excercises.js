@@ -151,23 +151,25 @@ function ex1(i, exc=null){  // create / set excercise 1xw
             let ptLabels = ["max", "min"];                          // cordinate point labels
             let ptLabelCol = ["red", "red"];                        // cordinate label colors; blue => miseed right answer, red => incroect answer, black => right answer
 
-            exc.questions[1].answer[0].value.forEach((ans,i)=>{
+            exc.questions[1].answer.forEach((ans,i)=>{
 
-                if(ans.type === ""){    // answered cordinate point is not an extreme point (incorct answer)
+                let pt = ans.value[0];
 
-                   xyPts.push([ans.x, ans.y]);  // add incroect answer point
+                if(pt.type === ""){    // answered cordinate point is not an extreme point (incorct answer)
+
+                   xyPts.push([pt.x, pt.y]);  // add incroect answer point
                    xyCols.push("red");          // add point color; red since point is not a right answer
                    ptLabels.push("");           
 
 
-                } else if(ans === pt1_6){ // |can be simplified as loop|
+                } else if(pt === pt1_6){ // |can be simplified as loop|
                     
                     xyCols[0] = "black";    // change color from blue to black to indicate extreme point part of answer
-                    if(exc.questions[2].answer[i].value === pt1_6.type){    // check if indentied as corect type
+                    if(exc.questions[2].answer[i].value === pt1_6.type){    // check if indentified as corect type
                         ptLabelCol[0] = "black";    
                     }
 
-                } else if(ans === pt5_4){
+                } else if(pt === pt5_4){
 
                     xyCols[1] = "black"; // change color from blue to black to indicate extreme point part of answer
                     if(exc.questions[2].answer[i].value === pt5_4.type){ // check if indentied as corect type
@@ -183,7 +185,7 @@ function ex1(i, exc=null){  // create / set excercise 1xw
             let M = new MarkerObj("extrMarkers", xyPts, {"color": xyCols, "r":3}, canvas, null, "", 1000);  // create markers for showing answered (and coreect) cordinate points
             let L = new LabelObj("extrLabels", xyPts, ptLabels, {"color": ptLabelCol}, canvas, "", 1000 );  // Create labels showing cordinate point types
 
-            //exc.questions.forEach((q)=>{console.log(q.R)});
+            //exc.questions.forEach((q)=>{console.log(q.answer)});
             //console.log(exc.questions[0].answer[0]);
 
         }); 

@@ -488,6 +488,8 @@ class CheckBoxObj{
         this.listener = [];
         this.parentDiv = null;
 
+        this.container = document.createElement("div");
+
         this.check = document.createElement("input");
         this.check.type = "checkbox";
         this.check.id = this.id;
@@ -497,6 +499,9 @@ class CheckBoxObj{
         this.label = document.createElement("label");
         this.label.for = this.id;
         this.label.innerHTML = label;
+
+        this.container.appendChild(this.check);
+        this.container.appendChild(this.label);
 
         this.assignToDiv(parentDiv);
 
@@ -509,8 +514,9 @@ class CheckBoxObj{
             return
         }
 
-        parentDiv.appendChild(this.check);
-        parentDiv.appendChild(this.label);
+        this.parentDiv = parentDiv;
+
+        parentDiv.appendChild(this.container);
 
     }
 
