@@ -208,9 +208,7 @@ class Question{ // Question base class
 
         }
 
-
         return true;
-
 
     }
 
@@ -366,7 +364,7 @@ class QuestionMenSelect extends Question{   // Question class, drop down select
 
 class QusetionMultiSelect extends Question{
 
-    constructor(id, text, N, P, opts, parentDiv=null){
+    constructor(id, text, N, P, opts, parentDiv=null, Optheader=["a)", "b)", "c)", "d)", "e)", "f)", "g)"]){
 
         super(id, text, N, P, parentDiv);
 
@@ -374,7 +372,7 @@ class QusetionMultiSelect extends Question{
         this.N = N;
         this.P = P;
 
-        this.answeredN = 0;
+        this.header = Optheader;
 
         this.input = [];
 
@@ -403,7 +401,7 @@ class QusetionMultiSelect extends Question{
         for(let i=0; i<optN; i++){
 
             let id = this.id + "_" + i;
-            let label = this.options[i].label;
+            let label = this.header[i] + " " +this.options[i].label;
 
             let select = new CheckBoxObj(id, label, this.form);
 
@@ -465,13 +463,15 @@ class QusetionMultiSelect extends Question{
 
         this.N = N;
         this.P = P;
-        this.answer = [];
 
         while(this.answerDiv.lastChild ){
             this.answerDiv.removeChild(this.answerDiv.lastChild);
         }
 
         this.answeredN = 0;
+        this.answer = [];
+        this.ansPointer = new Array(this.options.length).fill(false);
+
         this.input = [];
 
         this.set_selection();
