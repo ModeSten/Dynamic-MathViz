@@ -86,14 +86,27 @@ function ex1(i, exc=null){  // create / set excercise 1xw
 
         q2.addListener((obj)=>{     //  Update q3 based on the answer to q2
             
-            let opts = get_minMax_opts(obj.answer[0].value, 2);
-            let labels = [];
-            obj.answer[0].value.forEach((d)=>{
-                labels.push(xyLst_to_labelTxt([d]));
-            });
-            
-            let nP = opts.length;   // number of answer inputs (= number of points in q2 answer)
-            q3.update(labels, nP, 1, opts);
+            if(q2.check()){
+
+                let xyPts = [];
+                obj.answer.forEach((ans)=>{
+                    xyPts.push(ans.value[0]);
+                });
+
+                let opts = get_minMax_opts(xyPts, 2);
+                let labels = [];
+                xyPts.forEach((p)=>{
+                    labels.push(p.label);
+                });
+                let nP = opts.length;   // number of answer inputs (= number of points in q2 answer)
+
+                q3.update(labels, obj.N, 1, opts);
+
+            } else{
+
+                q3.update([], 0);
+
+            }
 
         });
 

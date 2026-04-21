@@ -290,13 +290,6 @@ class QuestionMenSelect extends Question{   // Question class, drop down select
 
         this.input = [];
 
-        this.inputContainer = document.createElement("div");
-        this.inputContainer.className = "inputContainer";
-        this.form = document.createElement("form");
-
-        this.inputContainer.appendChild(this.form);
-        this.answerDiv.appendChild(this.inputContainer);
-
         this.set_selection();
 
     }
@@ -315,6 +308,7 @@ class QuestionMenSelect extends Question{   // Question class, drop down select
             this.answerDiv.removeChild(this.answerDiv.lastChild);
         }
 
+        this.input = [];
 
         this.set_selection();
 
@@ -323,6 +317,14 @@ class QuestionMenSelect extends Question{   // Question class, drop down select
 
 
     set_selection(){    // Create answer inputs; Drop down selectors
+
+
+        this.inputContainer = document.createElement("div");
+        this.inputContainer.className = "inputContainer";
+        this.form = document.createElement("form");
+
+        this.inputContainer.appendChild(this.form);
+        this.answerDiv.appendChild(this.inputContainer);
 
         let optN = Object.keys(this.options).length;
         let labelN = Object.keys(this.labels).length;
@@ -343,7 +345,6 @@ class QuestionMenSelect extends Question{   // Question class, drop down select
 
                 let selectI = Number(obj.select.value);
                 this.answer[i] = this.options[i%optN][selectI];
-                this.input();
                 this.on_select();
 
             });
@@ -444,6 +445,9 @@ class QusetionMultiSelect extends Question{
                     }
 
                 });
+
+
+                this.notify_listeners();
 
 
             });
