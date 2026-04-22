@@ -196,6 +196,116 @@ function ex1(i, exc=null){  // create / set excercise 1xw
 }
 
 
+function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx){
+
+    let xRange = [-3, 10];
+    let yRange = [-5, 10];
+
+    let excercise = new Excercise(id);
+
+    /* excercise description texts */
+    let headerTxt = " Figuren nedan visar tangenten, i en markad punkt (x, y), till en dold graf. Fundera på på vad tangenten kan avslöja om den dolda grafen.<br>Du kan flytta tangent längs grafen med hjälp av slidern nedan.";
+    let figureTxt = " <b>Figur 1:</b> Tangenten, i en markad punkt (x, y), till en dold graf ";
+    let quizTxt = "<b>Övning 1:</b> Utgå från tangentlinjen och svara på följande frågor om den dold grafen";
+
+    /* Text Paragraphs */
+    let headerP = new Paragraph(id+"HeaderP", headerTxt, excercise.headerDiv);  
+    let FigureP = new Paragraph(id+"FigureP", figureTxt, excercise.figTxtDiv);
+    let quizP = new Paragraph(id+"QuizP", quizTxt, excercise.qHeaderDiv);
+    
+    /* graph control (input) elements*/
+    let tangentSlider = new SliderObj(id, Xrange, 2, "x= ", excercise.controlDiv);
+    excercise.inputs["tangentSlider"] = tangentSlider;
+
+    /* Quesion 1: Number of extreme points*/
+    let q1Txt = "<b>Q1:</b> Hur många extrempunkter har grafen?"
+    let q1Points = new Array(4).fill(0);
+    q1Points[extremeN-1] = 1;   // One point for correct number of extreme points
+    let q1Opts = get_options([" 1", " 2", " 3"], [1, 2, 3], q1Points);
+    let q1 = new QuestionSelectOne(id+"Q1", q1Txt, 1, 1, [q1Opts]);
+    excercise.add_question(q1);
+
+    /* Question 2: identifying extrem points*/
+    let q2Txt = "<b>Q2:</b> Vilka är grafens extrempunkter?<br>Svar i formatetet (x, y)<br>Välj samma antal punkter som svra ovan (Q1)";
+    let q2Opts = get_xy_options(dataPts, 1);
+    let q2 = new QusetionMultiSelect(id+"Q2", q2Txt, 1, 1, q2Opts);
+    excercise.add_question(q2);
+
+    /* Question 3: Type of extreme points */ 
+    let q3Txt = "<b>Q3:</b> För varje extrempunkt, ange om det är en min, max eller teraspunkt<br>Välj först vilka extrempunkterna är (Q2)";
+    let q3 = new QuestionMenSelect(id+"Q3", q3Txt, 0, 1, [], []);
+    excercise.add_question(q3);
+
+    /* Question 4: Graph function */
+    let q4Txt = "<b>Q4:</b> Vilken är grafens function?";
+    let q4Opts = get_options([" x2", " x3", " sin"], ["x2", "x3", "sin"], [0, 1, 0]);
+    let q4 = new QuestionSelectOne(id+"q4", q4Txt, 1, 1, [q4Opts]);
+    excercise.add_question(q4);
 
 
-ex1(1);
+    /* Question listners handling dependency between questions: updating subsequent questions based on answer */
+    q1.addListener((q)=>{
+
+        let N = q.answer[0].value;
+        let options = get_xy_options(dataPts, N);
+        q2.update(options, N);
+
+        q3.update([], 0);
+
+    });
+    q2.addListener((q)=>{
+            
+            let allSelected = q.check();
+
+            if(allSelected){
+
+                let ansPoints = [];
+                let labels = [];
+                q.answer.forEach((ans)=>{ 
+                    ansPoints.push(ans.value);  
+                    labels.push(ans.value.label);
+                });
+                let options = get_minMax_opts(ansPoints, q.N);
+                q3.update(labels, q.N, 1, options);
+
+            } else{
+
+                q3.update([], 0);
+
+            }
+
+        });
+
+
+    rootDiv.appendChild(excercise.containterDiv);
+
+
+        /* SVG elements */
+
+    let canvas = new CanvasObj(id+"Canvas", width, height, margin, Xrange, yRange, excercise.svgDiv.id);
+    let chart = new ChartObj(id+"Chart",{}, canvas);
+    let graph = new GraphObj(id+"Graph", fx, Xrange, {"draw": true, "drawT": 0}, canvas);
+    let tangent = new TangentObj(id+"Tangent", fx, {"x0": 2, "length": 100, "color": "black"}, canvas, graph);
+    let tangentMarker = new SegmentMarkerObj(id+"TangMark", tangent, {"color": "black", "r": 5}, canvas);
+
+    tangentSlider.addListener((val)=>{
+        tangent.translate_center(val);
+    });
+
+}
+
+
+    let pt1_6 = new Point(1.9, 6, "max");   // graph max point
+    let pt5_4 = new Point(5.3, 4.4, "min"); // graph min point
+    let pt0_0 = new Point(0, 0, "");
+    let pt1_4 = new Point(1.9, 4.4, "");
+    let pt4_1 = new Point(4.4, 1.9, "");
+    let pt3_6 = new Point(3.2, 6.4, "");
+    let pt5_5 = new Point(5.3, 5.2, "");
+    let pt1_5 = new Point(1.9, 5.2, "");
+
+    let data = [pt0_0, pt1_6, pt3_6, pt4_1, pt5_4];
+
+
+//ex1(1);
+hidden_graph_tangent("ex1", document.getElementById("content"), 2, data, (x)=>{return x**3/12 - 0.9*x**2 + 2.5*x + 4});

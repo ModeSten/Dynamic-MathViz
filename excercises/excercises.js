@@ -483,7 +483,7 @@ class QusetionMultiSelect extends Question{
 
 
 
-class Option{   // Answer option class
+class QuizOption{   // Answer option class
 
     constructor(label, value, points){
 
@@ -526,34 +526,22 @@ function get_options(labels, values, points){   // create answer options; Simply
 
 function get_xy_options(data, N=1){     // get options for qusetion rerquring the selection of one or more points; Simplifies option creation
 
-    let optionsLst = [];
-    let L = [];
+    let extremDict = ["min", "max", "teras"];
+
+    let options = [];
 
     data.forEach((d)=>{
 
-        let labels = [];
-        let points = new Array(d.length).fill(0);
+        let p=0
+        if(extremDict.includes(d.type)){
+            p += 1/N;
+        }
 
-        d.forEach((opt, i)=>{
-
-            labels.push( xyLst_to_labelTxt(opt) ); 
-            
-            opt.forEach((xy)=>{
-
-                if(xy.type === "min" || xy.type === "max" || xy.type === "teras"){
-                    let ptMod = Math.max(N, opt.length);
-                    points[i] += 1/ptMod;
-                } 
-
-            });
-
-        });
-
-        optionsLst.push(get_options(labels, d, points));
+        options.push( new QuizOption(d.label, d, p ));
 
     });
 
-    return optionsLst;
+    return options;
 
 }
 
