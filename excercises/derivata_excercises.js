@@ -1,9 +1,10 @@
 
-
+    /* SVG sizing parameters */
 const margin = { top: 40, right: 10, bottom: 10, left: 30 };
 const width = 800;
 const height = 500;
 
+var extremeDict = ["min", "max", "teras"] // String (labels) denoting extreme points
 
 var ExcerciseN = 1
 var excercises = new Array(ExcerciseN).fill(null);
@@ -203,21 +204,21 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx){
 
     let excercise = new Excercise(id);
 
-    /* excercise description texts */
+        /* excercise description texts */
     let headerTxt = " Figuren nedan visar tangenten, i en markad punkt (x, y), till en dold graf. Fundera på på vad tangenten kan avslöja om den dolda grafen.<br>Du kan flytta tangent längs grafen med hjälp av slidern nedan.";
     let figureTxt = " <b>Figur 1:</b> Tangenten, i en markad punkt (x, y), till en dold graf ";
     let quizTxt = "<b>Övning 1:</b> Utgå från tangentlinjen och svara på följande frågor om den dold grafen";
 
-    /* Text Paragraphs */
+        /* Text Paragraphs */
     let headerP = new Paragraph(id+"HeaderP", headerTxt, excercise.headerDiv);  
     let FigureP = new Paragraph(id+"FigureP", figureTxt, excercise.figTxtDiv);
     let quizP = new Paragraph(id+"QuizP", quizTxt, excercise.qHeaderDiv);
     
-    /* graph control (input) elements*/
+        /* graph control (input) elements*/
     let tangentSlider = new SliderObj(id, Xrange, 2, "x= ", excercise.controlDiv);
     excercise.inputs["tangentSlider"] = tangentSlider;
 
-    /* Quesion 1: Number of extreme points*/
+        /* Quesion 1: Number of extreme points*/
     let q1Txt = "<b>Q1:</b> Hur många extrempunkter har grafen?"
     let q1Points = new Array(4).fill(0);
     q1Points[extremeN-1] = 1;   // One point for correct number of extreme points
@@ -225,25 +226,29 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx){
     let q1 = new QuestionSelectOne(id+"Q1", q1Txt, 1, 1, [q1Opts]);
     excercise.add_question(q1);
 
-    /* Question 2: identifying extrem points*/
+        /* Question 2: identifying extrem points*/
     let q2Txt = "<b>Q2:</b> Vilka är grafens extrempunkter?<br>Svar i formatetet (x, y)<br>Välj samma antal punkter som svra ovan (Q1)";
     let q2Opts = get_xy_options(dataPts, 1);
     let q2 = new QusetionMultiSelect(id+"Q2", q2Txt, 1, 1, q2Opts);
     excercise.add_question(q2);
 
-    /* Question 3: Type of extreme points */ 
+        /* Question 3: Type of extreme points */ 
     let q3Txt = "<b>Q3:</b> För varje extrempunkt, ange om det är en min, max eller teraspunkt<br>Välj först vilka extrempunkterna är (Q2)";
     let q3 = new QuestionMenSelect(id+"Q3", q3Txt, 0, 1, [], []);
     excercise.add_question(q3);
 
-    /* Question 4: Graph function */
+        /* Question 4: Graph function */
     let q4Txt = "<b>Q4:</b> Vilken är grafens function?";
     let q4Opts = get_options([" x2", " x3", " sin"], ["x2", "x3", "sin"], [0, 1, 0]);
     let q4 = new QuestionSelectOne(id+"q4", q4Txt, 1, 1, [q4Opts]);
     excercise.add_question(q4);
 
+        /* Quiz Footer elements */
+    let checkAnsBtn = new ButtonObj(id+"CheckAns", "kolla svar", excercise.qFooterDiv);
+    let scoreP = new Paragraph(id+"ScoreP", "", excercise.qFooterDiv);
+    excercise.quizDiv.appendChild(excercise.qFooterDiv);
 
-    /* Question listners handling dependency between questions: updating subsequent questions based on answer */
+        /* Question listners handling dependency between questions: updating subsequent questions based on answer */
     q1.addListener((q)=>{
 
         let N = q.answer[0].value;
@@ -290,6 +295,68 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx){
 
     tangentSlider.addListener((val)=>{
         tangent.translate_center(val);
+    });
+
+
+
+        /* Check answers and reveal answer visual elements */
+    checkAnsBtn.addListener(()=>{
+
+        if(!excercise.check()){
+            scoreP.P.innerHTML = "En eller flera frågor ej besvarade";
+        } else{
+
+            scoreP.P.innerHTML = `${excercise.R}/${excercise.P} P`;     // Display scored points out of total possible
+
+            graph.update(new UpdateNode({"drawT": 1}, 1500));   // Reveal hidden graph
+
+            let ansDataPts = [];
+            q2.answer.forEach((ans)=>{ansDataPts.push(ans.value)});
+
+            let missedExtPts = [];
+            let ansExtPts = [];
+            let ansErrPts = [];
+
+            let missedLabels = [];
+            let foundLabels = [];
+            let foundLabelColor = [];
+            let errLabels = [];
+
+            dataPts.forEach((d)=>{
+                if(extremeDict.includes(d.type) && !ansDataPts.includes(d)){
+                    missedExtPts.push([d.x, d.y]);
+                    missedLabels.push(d.label+" "+d.type);
+                }
+            });
+
+            ansDataPts.forEach((d, i)=>{
+                if(extremeDict.includes(d.type)){
+                    ansExtPts.push([d.x, d.y]);
+                    foundLabels.push(d.label+" "+d.type);
+                    if(d.type === q3.answer[i].value){
+                        foundLabelColor.push("black");
+                    } else{
+                        foundLabelColor.push("red");
+                    }
+                } else{
+                    ansErrPts.push([d.x, d.y]);
+                    errLabels.push(d.label);
+                }
+            });
+
+                /* Mark answered points and missed extreme points */
+            let missedM = new MarkerObj(id+"missedM", missedExtPts, {"color": ["blue"]}, canvas);   // Mark missed extreme points
+            let ansExtM = new MarkerObj(id+"foundM", ansExtPts, {"color": ["blaxk"]}, canvas);      // Mark found extreme points
+            let errM = new MarkerObj(id+"wrongAnsM", ansErrPts, {"color": ["red"]}, canvas );       // Mark answered none extreme points (wrong answersx)
+
+            let miseedL = new LabelObj(id+"missedL", missedExtPts, missedLabels, {"color": ["blue"]}, canvas);
+            let ansExtL = new LabelObj(id+"foundExtL", ansExtPts, foundLabels, {"color": foundLabelColor }, canvas);
+            let errL = new LabelObj(id+"wrongAnsL", ansErrPts, errLabels, {"color": ["red"]}, canvas);
+
+            window.scrollTo(0, 0);  // Scroll to window top to display visual elements
+
+        }
+
     });
 
 }

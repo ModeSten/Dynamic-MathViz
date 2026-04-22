@@ -201,7 +201,7 @@ class Question{ // Question base class
         for (let i=0; i<this.answer.length; i++){
 
             if(this.answer[i] === null){
-                return;
+                return false;
             }
 
             this.R += this.answer[i].points;
@@ -516,7 +516,7 @@ function get_options(labels, values, points){   // create answer options; Simply
     let opts = [];
 
     for(let i=0; i<labels.length; i++){
-        opts.push( new Option(labels[i], values[i], points[i]));
+        opts.push( new QuizOption(labels[i], values[i], points[i]));
     }
 
     return opts;
