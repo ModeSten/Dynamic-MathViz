@@ -27,7 +27,10 @@ function ex1(rootName="content"){  // create / set excercise 1xw
 
     let data = [pt0_0, pt1_6, pt3_6, pt4_1, pt5_4, pt6_5];
 
-    return hidden_graph_tangent("Excercise1", root, 2, data, fx);
+    let fxLabels = ["x^3/12 - 0.9x^3", "x^2/4 - 3*x/2 +5"];
+    let fxOptions = get_options(fxLabels, fxLabels, [1, 0]);
+
+    return hidden_graph_tangent("Excercise1", root, 2, data, fx, fxOptions);
 
 }
 
@@ -47,12 +50,15 @@ function ex2(rootName = "content"){
 
     let data = [pt0_0, pt1_6, pt3_2, pt3_6, pt4_1, pt6_5];
 
-    return hidden_graph_tangent("Excercise2", root, 1, data, fx);
+    let fxLabels = ["x^3/12 - 0.9x^3", "x^2/4 - 3*x/2 +5"];
+    let fxOptions = get_options(fxLabels, fxLabels, [0, 1]);
+
+    return hidden_graph_tangent("Excercise2", root, 1, data, fx, fxOptions);
 
 }
 
 
-function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx){
+function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
 
     let xRange = [-3, 10];
     let yRange = [-5, 10];
@@ -95,7 +101,7 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx){
         /* Question 4: Graph function */
     let q4Txt = "<b>Q4:</b> Vilken är grafens function?";
     let q4Opts = get_options([" x2", " x3", " sin"], ["x2", "x3", "sin"], [0, 1, 0]);
-    let q4 = new QuestionSelectOne(id+"q4", q4Txt, 1, 1, [q4Opts]);
+    let q4 = new QuestionSelectOne(id+"q4", q4Txt, 1, 1, [fxOptions]);
     excercise.add_question(q4);
 
         /* Quiz Footer elements */
