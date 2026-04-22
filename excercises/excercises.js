@@ -26,17 +26,17 @@ class Excercise{ // excercise base class
         this.inputs = {};       // input elements (class instances); References for simplifying adding and removing listeners
         this.elements = {};     // Other elements which may need to be referenced
 
-        this.containterDiv = document.createElement("div"); // Excercise base div 
-        this.containterDiv.id = this.id;
-        this.containterDiv.className = "excerise";
+        this.containerDiv = document.createElement("div"); // Excercise base div 
+        this.containerDiv.id = this.id;
+        this.containerDiv.className = "excerise";
 
         this.headerDiv = document.createElement("div");     // Div containing excericise 'introductory' information
         this.headerDiv.className = "contextDiv flooter";
-        this.containterDiv.appendChild(this.headerDiv);
+        this.containerDiv.appendChild(this.headerDiv);
 
         this.vizDiv = document.createElement("div");        // Div containing visual elements
         this.vizDiv.className = "vizDiv";
-        this.containterDiv.appendChild(this.vizDiv);
+        this.containerDiv.appendChild(this.vizDiv);
 
         this.svgDiv = document.createElement("div");        // Div containing svg canvas
         this.svgDiv.className = "svgDiv";
@@ -45,7 +45,7 @@ class Excercise{ // excercise base class
 
         this.vizFooterDiv = document.createElement("div");  // Div containing figure information and inputs 
         this.vizFooterDiv.className = "contextDiv footer";
-        this.containterDiv.appendChild(this.vizFooterDiv);
+        this.containerDiv.appendChild(this.vizFooterDiv);
         
         this.figTxtDiv = document.createElement("div");     // Div containing figure description
         this.figTxtDiv.className = "half";
@@ -56,7 +56,7 @@ class Excercise{ // excercise base class
 
         this.quizDiv = document.createElement("div");       // Base div for excercise questions
         this.quizDiv.className = "quizDiv";
-        this.containterDiv.appendChild(this.quizDiv);
+        this.containerDiv.appendChild(this.quizDiv);
 
         this.qHeaderDiv = document.createElement("div");    // Header div for question section
         this.qHeaderDiv.className = "contextDiv header";

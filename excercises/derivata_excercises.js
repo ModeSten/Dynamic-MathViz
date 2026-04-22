@@ -6,7 +6,8 @@ const height = 500;
 
 var extremeDict = ["min", "max", "teras"] // String (labels) denoting extreme points
 
-var ExcerciseN = 1
+var excerciseFx = [ex1, ex2];
+var ExcerciseN = excerciseFx.length;
 var excercises = new Array(ExcerciseN).fill(null);
 
 
@@ -136,7 +137,7 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx){
         });
 
 
-    rootDiv.appendChild(excercise.containterDiv);
+    rootDiv.appendChild(excercise.containerDiv);
 
 
         /* SVG elements */
@@ -220,6 +221,32 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx){
 }
 
 
-ex1();
-//ex2();
-//hidden_graph_tangent("ex1", document.getElementById("content"), 2, data, (x)=>{return x**3/12 - 0.9*x**2 + 2.5*x + 4})
+
+function togle_excercises(i){
+
+    let root = document.getElementById("content");
+
+    while(root.lastChild){
+        root.removeChild(root.lastChild);
+    }
+
+    if(excercises[i] === null){
+        excercises[i] = excerciseFx[i]();
+    } else{
+        root.appendChild(excercises[i].containerDiv);
+    }
+
+}
+
+
+togle_excercises(0);
+
+let togleBtn = new ButtonStepObj("toggleExcercise", "", [1, excerciseFx.length-1], 1, 1);
+togleBtn.assignToDiv(document.getElementById("header"));
+togleBtn.addListener((val)=>{
+
+    togle_excercises(val-1);
+
+})
+
+
