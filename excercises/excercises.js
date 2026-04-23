@@ -93,6 +93,11 @@ class Excercise{ // excercise base class
 
         }
 
+
+        this.questions.forEach((q)=>{
+            q.reveal_score();
+        });
+
         return true;
 
     }
@@ -119,9 +124,13 @@ class Question{ // Question base class
 
         this.textDiv = document.createElement("div");   // div for question text
         this.textDiv.className = "qTxtDiv half";
-        this.text = document.createElement("p");
-        this.text.innerHTML = text;
-        this.textDiv.appendChild(this.text);
+        this.textP = document.createElement("p");
+        this.text = text;
+        this.textP.innerHTML = this.text;
+        this.textDiv.appendChild(this.textP);
+
+        this.scoreP = document.createElement("p");
+        this.textDiv.appendChild(this.scoreP);
 
         this.answerDiv = document.createElement("div"); // Duv for question answer inputs
         this.answerDiv.className = "answerDiv half";
@@ -149,30 +158,6 @@ class Question{ // Question base class
     }
     
 
-    input(){    // check answers
-
-        this.R = 0;
-
-        if(this.answer.length < 1){
-            return false;
-        }
-
-        for (let i=0; i<this.answer.length; i++){
-
-            let ans = this.answer[i];
-
-            if(ans === null){   // Missing answer
-                return false
-            } else{
-                this.R += ans.points;   // add answer (option) point to score
-            }
-
-        }
-
-        return true;
-        
-    }
-
 
     addListener(func){
 
@@ -190,17 +175,20 @@ class Question{ // Question base class
     }
 
 
-    check(){
+    check(reveal = true){
 
         this.R = 0;
+        this.textP.innerHTML = this.text;
 
         if(this.answer.length < this.N){
+            this.textP.innerHTML += `<br><br><b>Ej besvard</b>`;
             return false;
         }
 
         for (let i=0; i<this.answer.length; i++){
 
             if(this.answer[i] === null){
+                this.textP.innerHTML += `<br><br><b>Ej besvard</b>`;
                 return false;
             }
 
@@ -208,7 +196,15 @@ class Question{ // Question base class
 
         }
 
+
         return true;
+
+    }
+
+
+    reveal_score(){
+
+        this.textP.innerHTML = this.text + `<br><br><b>${this.R} / ${this.P} P</b>`;
 
     }
 
@@ -258,7 +254,7 @@ class QuestionSelectOne extends Question{   // Question class, single selection 
             let opt = this.options[i%optN]; 
             let optLabels = [];
             opt.forEach((e,i)=>{ 
-                let str = this.header[i%this.header.length] + e.label;
+                let str = `${this.header[i%this.header.length]} ${e.label}`;
                 optLabels.push(str);
             });
             this.selector = new RadioBtnObj(this.id+"select", optLabels, this.answerDiv);
@@ -503,6 +499,7 @@ class Point{    // class specifying a cordinated point
         this.x = x;     // point x value 
         this.y = y;     // point y value
         this.type = type;   // point type; ex min, max, teras, "" (not an extreme point)
+
 
         this.label = `(${this.x}, ${this.y})`;  // point text label
 

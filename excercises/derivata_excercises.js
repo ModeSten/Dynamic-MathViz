@@ -6,7 +6,7 @@ const height = 500;
 
 var extremeDict = ["min", "max", "teras"] // String (labels) denoting extreme points
 
-var excerciseFx = [ex1, ex2];
+var excerciseFx = [ex1, ex2, ex3, ex4];
 var ExcerciseN = excerciseFx.length;
 var excercises = new Array(ExcerciseN).fill(null);
 
@@ -18,17 +18,17 @@ function ex1(rootName="content"){  // create / set excercise 1xw
     
     let fx = (x)=>{return x**3/12 - 0.9*x**2 + 2.5*x + 4};
 
-    let pt1_6 = new Point(1.9, 6, "max");   // graph max point
+    let pt1_6 = new Point(1.9, 6.0, "max");   // graph max point
     let pt5_4 = new Point(5.3, 4.4, "min"); // graph min point
-    let pt0_0 = new Point(0, 0, "");
+    let pt0_0 = new Point(0.0, 0.0, "");
     let pt4_1 = new Point(4.4, 1.9, "");
     let pt3_6 = new Point(3.2, 6.4, "");
     let pt6_5 = new Point(6.3, 5.2, "");
 
     let data = [pt0_0, pt1_6, pt3_6, pt4_1, pt5_4, pt6_5];
 
-    let fxLabels = ["x^3/12 - 0.9x^3", "x^2/4 - 3*x/2 +5"];
-    let fxOptions = get_options(fxLabels, fxLabels, [1, 0]);
+    let fxLabels = ["(1/4)x^2  - 1.8x + 2.5", "(1/12)x^3 - 0.9x^2 + 2.5x + 4", "-x^2 + 3x + 2"];
+    let fxOptions = get_options(fxLabels, fxLabels, [0, 1, 0]);
 
     return hidden_graph_tangent("Excercise1", root, 2, data, fx, fxOptions);
 
@@ -41,19 +41,65 @@ function ex2(rootName = "content"){
     
     let fx = (x)=>{return x**2/4 - 3*x/2 + 5 };
 
-    let pt0_0 = new Point(0, 0, "");
-    let pt1_6 = new Point(1.9, 6, "");   // graph max point
-    let pt3_2 = new Point(3, 2.7, "min"); // graph min point
+    let pt0_0 = new Point(0.0, 0.0, "");
+    let pt1_6 = new Point(1.9, 6, "");
+    let pt3_2 = new Point(3.0, 2.7, "min"); // graph min point
     let pt3_6 = new Point(3.2, 6.4, "");
     let pt4_1 = new Point(4.4, 1.9, "");
     let pt6_5 = new Point(6.3, 5.2, "");
 
     let data = [pt0_0, pt1_6, pt3_2, pt3_6, pt4_1, pt6_5];
 
-    let fxLabels = ["x^3/12 - 0.9x^3", "x^2/4 - 3*x/2 +5"];
-    let fxOptions = get_options(fxLabels, fxLabels, [0, 1]);
+    let fxLabels = ["(1/4)x^2  - 1.8x + 2.5 ", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];
+    let fxOptions = get_options(fxLabels, fxLabels, [1, 0, 0]);
 
     return hidden_graph_tangent("Excercise2", root, 1, data, fx, fxOptions);
+
+}
+
+
+function ex3(rootName="content"){
+
+    let root = document.getElementById(rootName);
+
+    let fx = (x)=>{return x**3/3 - 2.5*x**2 + 6.25*x};
+
+    let pt0_0 = new Point(0.0, 0.0, "");
+    let pt2_5 = new Point(2.5, 5.1, "teras");   
+    let pt3_2 = new Point(3.2, 2.7, ""); 
+    let pt3_6 = new Point(3.2, 6.4, "");
+    let pt4_1 = new Point(4.4, 1.9, "");
+    let pt6_5 = new Point(6.3, 5.2, "");
+
+    let data = [pt0_0, pt2_5, pt3_2, pt3_6, pt4_1, pt6_5];
+
+    let fxLabels = ["x^2 - 5x +6.25", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];
+    let fxOptions = get_options(fxLabels, fxLabels, [0, 0, 1]);
+
+    return hidden_graph_tangent("Excercise3", root, 1, data, fx, fxOptions);
+
+}
+
+
+function ex4(rootName="content"){
+
+    let root = document.getElementById(rootName);
+
+    let fx = (x)=>{return -1*x**2 + 3*x + 2};
+
+    let pt0_0 = new Point(0.0, 0.0, "");
+    let pt1_5 = new Point(1.5, 4.2, "max"); // graph teras point
+    let pt3_2 = new Point(3.0, 2.7, ""); 
+    let pt3_6 = new Point(3.2, 6.4, "");
+    let pt4_1 = new Point(4.4, 1.9, "");
+    let pt6_5 = new Point(6.3, 5.2, "");
+
+    let data = [pt0_0, pt1_5, pt3_2, pt3_6, pt4_1, pt6_5];
+
+    let fxLabels = ["x^2 - 5x +6.25", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];
+    let fxOptions = get_options(fxLabels, fxLabels, [0, 1, 0]);
+
+    return hidden_graph_tangent("Excercise3", root, 1, data, fx, fxOptions);
 
 }
 
@@ -68,7 +114,7 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
         /* excercise description texts */
     let headerTxt = " Figuren nedan visar tangenten, i en markad punkt (x, y), till en dold graf. Fundera på på vad tangenten kan avslöja om den dolda grafen.<br>Du kan flytta tangent längs grafen med hjälp av slidern nedan.";
     let figureTxt = " <b>Figur 1:</b> Tangenten, i en markad punkt (x, y), till en dold graf ";
-    let quizTxt = "<b>Övning 1:</b> Utgå från tangentlinjen och svara på följande frågor om den dold grafen";
+    let quizTxt = "<b>Övning:</b> Utgå från tangentlinjen och svara på följande frågor om den dold grafen";
 
         /* Text Paragraphs */
     let headerP = new Paragraph(id+"HeaderP", headerTxt, excercise.headerDiv);  
@@ -88,7 +134,7 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
     excercise.add_question(q1);
 
         /* Question 2: identifying extrem points*/
-    let q2Txt = "<b>Q2:</b> Vilka är grafens extrempunkter?<br>Svar i formatetet (x, y)<br>Välj samma antal punkter som svra ovan (Q1)";
+    let q2Txt = "<b>Q2:</b> Vilka är grafens extrempunkter?<br>Svar i formatetet (x, y) och värdena är rundade till en decimal<br>Välj samma antal punkter som svra ovan (Q1)";
     let q2Opts = get_xy_options(dataPts, 1);
     let q2 = new QusetionMultiSelect(id+"Q2", q2Txt, 1, 1, q2Opts);
     excercise.add_question(q2);
@@ -121,7 +167,7 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
     });
     q2.addListener((q)=>{
             
-            let allSelected = q.check();
+            let allSelected = q.check(false);
 
             if(allSelected){
 
@@ -216,6 +262,8 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
 
             window.scrollTo(0, 0);  // Scroll to window top to display visual elements
 
+            
+
         }
 
     });
@@ -247,7 +295,7 @@ function togle_excercises(i){
 
 togle_excercises(0);
 
-let togleBtn = new ButtonStepObj("toggleExcercise", "", [1, excerciseFx.length-1], 1, 1);
+let togleBtn = new ButtonStepObj("toggleExcercise", "", [1, excerciseFx.length], 1, 1);
 togleBtn.assignToDiv(document.getElementById("header"));
 togleBtn.addListener((val)=>{
 
