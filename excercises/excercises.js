@@ -204,7 +204,7 @@ class Question{ // Question base class
 
     reveal_score(){
 
-        this.textP.innerHTML = this.text + `<br><br><b>${this.R} / ${this.P} P</b>`;
+        this.textP.innerHTML = this.text + `<br><br><b>${Math.round(this.R*100)/100} / ${this.P} P</b>`;
 
     }
 

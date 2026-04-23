@@ -18,7 +18,7 @@ function ex1(rootName="content"){  // create / set excercise 1xw
     
     let fx = (x)=>{return x**3/12 - 0.9*x**2 + 2.5*x + 4};
 
-    let pt1_6 = new Point(1.9, 6.0, "max");   // graph max point
+    let pt1_6 = new Point(1.9, 6.1, "max");   // graph max point
     let pt5_4 = new Point(5.3, 4.4, "min"); // graph min point
     let pt0_0 = new Point(0.0, 0.0, "");
     let pt4_1 = new Point(4.4, 1.9, "");
@@ -65,13 +65,13 @@ function ex3(rootName="content"){
     let fx = (x)=>{return x**3/3 - 2.5*x**2 + 6.25*x};
 
     let pt0_0 = new Point(0.0, 0.0, "");
-    let pt2_5 = new Point(2.5, 5.1, "teras");   
+    let pt1_5 = new Point(1.7, 5.2, "");
+    let pt2_5 = new Point(2.5, 5.2, "teras");   
     let pt3_2 = new Point(3.2, 2.7, ""); 
     let pt3_6 = new Point(3.2, 6.4, "");
     let pt4_1 = new Point(4.4, 1.9, "");
-    let pt6_5 = new Point(6.3, 5.2, "");
 
-    let data = [pt0_0, pt2_5, pt3_2, pt3_6, pt4_1, pt6_5];
+    let data = [pt0_0, pt1_5, pt2_5, pt3_2, pt3_6, pt4_1];
 
     let fxLabels = ["x^2 - 5x +6.25", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];
     let fxOptions = get_options(fxLabels, fxLabels, [0, 0, 1]);
@@ -229,17 +229,24 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
             let foundLabelColor = [];
             let errLabels = [];
 
+            let cords = [];
+            let cordLabelTxt = [];
+
             dataPts.forEach((d)=>{
+
                 if(extremeDict.includes(d.type) && !ansDataPts.includes(d)){
                     missedExtPts.push([d.x, d.y]);
-                    missedLabels.push(d.label+" "+d.type);
+                    missedLabels.push(d.type);
+                    cordLabelTxt.push(d.label);
+                    cords.push([d.x, d.y]);
                 }
+
             });
 
             ansDataPts.forEach((d, i)=>{
                 if(extremeDict.includes(d.type)){
                     ansExtPts.push([d.x, d.y]);
-                    foundLabels.push(d.label+" "+d.type);
+                    foundLabels.push(d.type);
                     if(d.type === q3.answer[i].value){
                         foundLabelColor.push("black");
                     } else{
@@ -249,16 +256,31 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
                     ansErrPts.push([d.x, d.y]);
                     errLabels.push(d.label);
                 }
+                cordLabelTxt.push(d.label);
+                cords.push([d.x, d.y]);
             });
 
                 /* Mark answered points and missed extreme points */
-            let missedM = new MarkerObj(id+"missedM", missedExtPts, {"color": ["blue"]}, canvas);   // Mark missed extreme points
-            let ansExtM = new MarkerObj(id+"foundM", ansExtPts, {"color": ["blaxk"]}, canvas);      // Mark found extreme points
-            let errM = new MarkerObj(id+"wrongAnsM", ansErrPts, {"color": ["red"]}, canvas );       // Mark answered none extreme points (wrong answersx)
+            let missedM = new MarkerObj(id+"missedM", missedExtPts, {"color": ["blue"], "r": 4}, canvas);   // Mark missed extreme points
+            let ansExtM = new MarkerObj(id+"foundM", ansExtPts, {"color": ["blaxk"], "r": 4}, canvas);      // Mark found extreme points
+            let errM = new MarkerObj(id+"wrongAnsM", ansErrPts, {"color": ["red"], "r": 4}, canvas );       // Mark answered none extreme points (wrong answersx)
 
-            let miseedL = new LabelObj(id+"missedL", missedExtPts, missedLabels, {"color": ["blue"]}, canvas);
-            let ansExtL = new LabelObj(id+"foundExtL", ansExtPts, foundLabels, {"color": foundLabelColor }, canvas);
-            let errL = new LabelObj(id+"wrongAnsL", ansErrPts, errLabels, {"color": ["red"]}, canvas);
+            let miseedL = new LabelObj(id+"missedL", missedExtPts, missedLabels, {"color": ["blue"], "dy": [15]}, canvas);
+            let ansExtL = new LabelObj(id+"foundExtL", ansExtPts, foundLabels, {"color": foundLabelColor, "dy": [15] }, canvas);
+            //let errL = new LabelObj(id+"wrongAnsL", ansErrPts, errLabels, {"color": ["red"], "dy": [15]}, canvas);
+            let cordL = new LabelObj(id+"cordL", cords, cordLabelTxt, {"dy": [-10]}, canvas);
+
+            let fxLabelColor = "black";
+            let fxLabel = "";
+            for(let i=0; i<fxOptions.length; i++){
+                console.log(fxOptions[i]);
+                if(fxOptions[i].points > 0){ 
+                    fxLabel = fxOptions[i].label;
+                    break;
+                 }
+            };
+            if(q4.answer[0].points < 1){ fxLabelColor = "red"; };
+            let fxL = new LabelObj(id+"fxLabel", [[0.5, 9]], ["f(x)= "+fxLabel], {"anchors": ["start"], "color": [fxLabelColor]}, canvas);
 
             window.scrollTo(0, 0);  // Scroll to window top to display visual elements
 
