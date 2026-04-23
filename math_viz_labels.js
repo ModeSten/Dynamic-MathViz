@@ -19,12 +19,71 @@ class LabelAxisLineObj extends ExstensionObj{
 
         this.set_parent(parent);
 
+        console.log(this.parent);
+
     }
 
 
     get_data(){
 
         this.data = [];
+
+        console.log(this.params.points.length);
+
+        let l = this.params.points.length;
+        let p = this.params.points;
+
+        for(let i=0; i<l; i++){
+
+            let px = p[i][0];
+            let py = p[i][1];
+
+            let x0 = 0;
+            if(px < 0){
+                 x0 += this.params.axisOfset[0];
+            } else{
+                x0 -= this.params.axisOfset[0];
+            }
+            let y0 = py;
+            let x1 = px;
+            let y1 = 0;
+            if(py < 0){
+                 y1 += this.params.axisOfset[1];
+            } else{
+                y1 -= this.params.axisOfset[1];
+            }
+
+            this.data.push([x0, y0]);
+            this.data.push([x1, y0]);
+            this.data.push([x1, y1]);
+            this.data.push([x1, null]);
+
+        }
+
+    }
+
+    resolve_update(){
+        this.get_data();
+    }
+
+
+    on_parent_update(obj, msg, duration){
+    
+        this.update( new UpdateNode({"points":this.parent.data}, duration));
+
+    }
+
+
+}
+
+
+class AxisLineSecant extends LabelAxisLineObj{
+
+    get_data(){
+
+        this.data = [];
+
+        console.log(this.params.points.length);
 
         let l = this.params.points.length;
         let p = this.params.points;
@@ -57,19 +116,6 @@ class LabelAxisLineObj extends ExstensionObj{
         }
 
     }
-
-
-    resolve_update(){
-        this.get_data();
-    }
-
-
-    on_parent_update(obj, msg, duration){
-    
-        this.update( new UpdateNode({"points":this.parent.params.data}, duration));
-
-    }
-
 
 }
 

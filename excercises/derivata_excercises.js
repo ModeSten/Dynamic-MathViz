@@ -199,6 +199,8 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
     let graph = new GraphObj(id+"Graph", fx, xRange, {"draw": true, "drawT": 0}, canvas);
     let tangent = new TangentObj(id+"Tangent", fx, {"x0": 2, "length": 100, "color": "black"}, canvas, graph);
     let tangentMarker = new SegmentMarkerObj(id+"TangMark", tangent, {"color": "black", "r": 5}, canvas);
+    let tangentL = new TangentLabel(id+"TangentM", tangent, {}, canvas);
+    let supLines = new LabelAxisLineObj(id+"valLines", tangentMarker.data, {}, canvas, tangentMarker);
 
     tangentSlider.addListener((val)=>{
         tangent.translate_center(val);

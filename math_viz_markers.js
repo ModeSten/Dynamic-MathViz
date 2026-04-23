@@ -147,12 +147,10 @@ constructor(id, parent, params={}, canvas=null, duration=0, delay=0, classname="
         this.get_data();
     }
 
+
     on_parent_update(obj, msg, duration){
 
-        this.get_data();
-        if(this.svgObj !==null){
-            this.svgObj.update(new UpdateNode({"data":this.data}, duration));
-        }
+            this.update(new UpdateNode({"data":this.data}, duration));
 
     }
 

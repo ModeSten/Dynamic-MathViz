@@ -125,7 +125,7 @@ function dx_intro_slide(i, slide=null){
         let secant = new SecantObj("dxIntroSlope", fx[0], {"x0": 2, "h": 3}, canvas, graph);
         let slopeSup = new SecantSuportObj("dxIntroSlopeBase", secant, {}, canvas);
         let labels = new slopeLabels("dxIntroLabels", secant, {}, canvas);
-        let LabelLines = new LabelAxisLineObj("dxIntroLabelL", secant.data, {}, canvas, secant.svgObj);
+        let LabelLines = new AxisLineSecant("dxIntroLabelL", secant.data, {}, canvas, secant.svgObj);
         let SecantMarker = new SecantMarkerObj("dxIntroSecMarker", secant, {}, canvas);
 
         slide.inputs.xSlider.addListener((val)=>{
@@ -189,7 +189,7 @@ function dx_continued_slide(i, slide=null){
         let secant = new SecantObj("dxCtnSlope", fx[0], {"width": 1.5, "x0": 2, "h":2}, canvas1, graph1);
         let slopeSup = new SecantSuportObj("dxCtnSlopeBase", secant, {}, canvas1);
         let labels = new slopeLabels("dxCtnLabels", secant, {}, canvas1, "large");
-        let LabelLines = new LabelAxisLineObj("dxCtnLabelL", secant.data, {}, canvas1, secant.svgObj);
+        let LabelLines = new AxisLineSecant("dxCtnLabelL", secant.data, {}, canvas1, secant.svgObj);
         let SecantMarker = new SecantMarkerObj("dxCtnSecantMarker", secant, {}, canvas1);
 
         let canvas2 = new CanvasObj("dxCtnCanvas2", width, height*1.5, margin, Xrange, yRange, slide.svgDiv[1].id);
