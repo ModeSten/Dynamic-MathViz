@@ -112,8 +112,8 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
     let excercise = new Excercise(id);
 
         /* excercise description texts */
-    let headerTxt = " Figuren nedan visar tangenten, i en markad punkt (x, y), till en dold graf. Fundera på på vad tangenten kan avslöja om den dolda grafen.<br>Du kan flytta tangent längs grafen med hjälp av slidern nedan.";
-    let figureTxt = " <b>Figur 1:</b> Tangenten, i en markad punkt (x, y), till en dold graf ";
+    let headerTxt = "Figuren nedan visar tangenten, i en markad punkt (x, y), till en graf (ej utritad). Prova att flytta tangenten längst grafen och se om du kan svara på frågorna om grafen.";
+    let figureTxt = " <b>Figur 1:</b> Tangenten till en dold graf i en punkt (x, y). Punkten (x, y), i vilken tangent skär grafen är markerad med en circle och tangentens lutning (k) är utritad";
     let quizTxt = "<b>Övning:</b> Utgå från tangentlinjen och svara på följande frågor om den dold grafen";
 
         /* Text Paragraphs */
@@ -275,7 +275,6 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
             let fxLabelColor = "black";
             let fxLabel = "";
             for(let i=0; i<fxOptions.length; i++){
-                console.log(fxOptions[i]);
                 if(fxOptions[i].points > 0){ 
                     fxLabel = fxOptions[i].label;
                     break;
@@ -284,9 +283,10 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
             if(q4.answer[0].points < 1){ fxLabelColor = "red"; };
             let fxL = new LabelObj(id+"fxLabel", [[0.5, 9]], ["f(x)= "+fxLabel], {"anchors": ["start"], "color": [fxLabelColor]}, canvas);
 
-            window.scrollTo(0, 0);  // Scroll to window top to display visual elements
 
-            
+            FigureP.P.innerHTML = " <b>Figur 1:</b> Tangenten till en graf i en punkt (x, y). Punkten (x, y), i vilken tangent skär grafen är markerad med en circle och tangentens lutning (k) är utritad. Utmarkerat är punkterna angivna i Q2 samt eventuella ej angivna extrempunkter";
+
+            window.scrollTo(0, 0);  // Scroll to window top to display visual elements
 
         }
 
@@ -319,9 +319,9 @@ function togle_excercises(i){
 
 togle_excercises(0);
 
-let togleBtn = new ButtonStepObj("toggleExcercise", "", [1, excerciseFx.length], 1, 1);
-togleBtn.assignToDiv(document.getElementById("header"));
-togleBtn.addListener((val)=>{
+    let togleBtn = new ButtonStepObj("toggleExcercise", "", [1, excerciseFx.length], 1, 1);
+    togleBtn.assignToDiv(document.getElementById("header"));
+    togleBtn.addListener((val)=>{
 
     togle_excercises(val-1);
 

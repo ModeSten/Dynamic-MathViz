@@ -19,16 +19,12 @@ class LabelAxisLineObj extends ExstensionObj{
 
         this.set_parent(parent);
 
-        console.log(this.parent);
-
     }
 
 
     get_data(){
 
         this.data = [];
-
-        console.log(this.params.points.length);
 
         let l = this.params.points.length;
         let p = this.params.points;
@@ -82,8 +78,6 @@ class AxisLineSecant extends LabelAxisLineObj{
     get_data(){
 
         this.data = [];
-
-        console.log(this.params.points.length);
 
         let l = this.params.points.length;
         let p = this.params.points;
