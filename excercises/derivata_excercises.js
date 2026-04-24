@@ -177,7 +177,7 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
                     ansPoints.push(ans.value);  
                     labels.push(ans.value.label);
                 });
-                let options = get_minMax_opts(ansPoints, q.N);
+                let options = get_minMax_opts(ansPoints, Math.max(extremeN, q.N));
                 q3.update(labels, q.N, 1, options);
 
             } else{
