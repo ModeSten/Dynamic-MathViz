@@ -112,8 +112,9 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
     let excercise = new Excercise(id);
 
         /* excercise description texts */
-    let headerTxt = "Figuren nedan visar tangenten, i en markad punkt (x, y), till en graf (ej utritad). Prova att flytta tangenten längst grafen och se om du kan svara på frågorna om grafen.";
+    let headerTxt = "Figuren nedan visar tangenten till en graf (ej utritad). Tangentlinjen lutningen är lika med grafens lutningen i markerad punkt (tangeringspunkten). Tangenten (tangeringspunkten) kan flyttas längst grafen med hjälp a slidern under figuren. Använd tangenten och försök svara på frågorna om grafen";
     let figureTxt = " <b>Figur 1:</b> Tangenten till en dold graf i en punkt (x, y). Punkten (x, y), i vilken tangent skär grafen är markerad med en circle och tangentens lutning (k) är utritad";
+    let figureTxtAns = " <b>Figur 1:</b> Tangenten till en graf i en punkt (x, y). Punkten (x, y), i vilken tangent skär grafen är markerad med en circle och tangentens lutning (k) är utritad. Utmarkerat är punkterna angivna i Q2 samt eventuella ej angivna extrempunkter";
     let quizTxt = "<b>Övning:</b> Utgå från tangentlinjen och svara på följande frågor om den dold grafen";
 
         /* Text Paragraphs */
@@ -283,8 +284,27 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
             if(q4.answer[0].points < 1){ fxLabelColor = "red"; };
             let fxL = new LabelObj(id+"fxLabel", [[0.5, 9]], ["f(x)= "+fxLabel], {"anchors": ["start"], "color": [fxLabelColor]}, canvas);
 
+                /* set answer legend */
+            let legBack = new RectObj(id+"legBackground", [[-3, 10]], {"height": [150], "width": [130]}, canvas, "txtBack");
+            let lablX = -2.75;
+            let lablY0 = 9.25;
+            let labelPos = [[lablX, lablY0]];
+            let labelTxt = ["facit: svar rätt", "facit: svar saknat", "facti: svar fel", "extrempunkt", "missad ext-pkt", "ej ext-pkt"];
+             let legCol = ["black", "blue", "red", "black", "blue", "red"];
+            for(let i=1; i<labelTxt.length; i++){
+                labelPos.push([lablX, labelPos[i-1][1]-0.6]);
+            }
+            let legLabel = new LabelObj(id+"legLabel", labelPos, labelTxt, {"anchors": ["start"], "color": legCol}, canvas);
 
-            FigureP.P.innerHTML = " <b>Figur 1:</b> Tangenten till en graf i en punkt (x, y). Punkten (x, y), i vilken tangent skär grafen är markerad med en circle och tangentens lutning (k) är utritad. Utmarkerat är punkterna angivna i Q2 samt eventuella ej angivna extrempunkter";
+            legenMarkerX = lablX - 0.1;
+            let legMrkPos = [];
+            for(let i=3; i<labelTxt.length; i++){
+                legMrkPos.push( [ legenMarkerX, labelPos[i][1]+0.1 ] );
+            }
+            let legenMarker = new MarkerObj(id+"legMarker", legMrkPos, {"color": legCol, "r": [4]}, canvas);
+
+
+            FigureP.P.innerHTML = figureTxtAns; // Update figure text
 
             window.scrollTo(0, 0);  // Scroll to window top to display visual elements
 

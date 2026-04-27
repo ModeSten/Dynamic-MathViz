@@ -33,6 +33,7 @@ button{
 }
 
 #header div{
+
     position: relative;
     display: flex;
     width: 100%;
@@ -109,6 +110,7 @@ button{
     display: flex;
     height: fit-content;
     margin-top: 5px;
+    margin-left: 15px;
 }
 
 
@@ -191,5 +193,13 @@ button{
 
     align-items: center;
     justify-content: center;
+
+}
+
+
+.txtBack{
+
+    outline: solid black 0.5px;
+    fill: #faebd7;
 
 }
