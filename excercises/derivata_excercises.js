@@ -16,7 +16,7 @@ function ex1(rootName="content"){  // create / set excercise 1xw
 
     let root = document.getElementById(rootName);
     
-    let fx = (x)=>{return x**3/12 - 0.9*x**2 + 2.5*x + 4};
+    let fx = (x)=>{return x**3/12 - 0.9*x**2 + 2.5*x + 4};  // graph function
 
     let pt1_6 = new Point(1.9, 6.1, "max");   // graph max point
     let pt5_4 = new Point(5.3, 4.4, "min"); // graph min point
@@ -25,7 +25,7 @@ function ex1(rootName="content"){  // create / set excercise 1xw
     let pt3_6 = new Point(3.2, 6.4, "");
     let pt6_5 = new Point(6.3, 5.2, "");
 
-    let data = [pt0_0, pt1_6, pt3_6, pt4_1, pt5_4, pt6_5];
+    let data = [pt0_0, pt1_6, pt3_6, pt4_1, pt5_4, pt6_5];  // answer (options) corindate points 
 
     let fxLabels = ["(1/4)x^2  - 1.8x + 2.5", "(1/12)x^3 - 0.9x^2 + 2.5x + 4", "-x^2 + 3x + 2"];
     let fxOptions = get_options(fxLabels, fxLabels, [0, 1, 0]);
@@ -39,7 +39,7 @@ function ex2(rootName = "content"){
 
     let root = document.getElementById(rootName);
     
-    let fx = (x)=>{return x**2/4 - 3*x/2 + 5 };
+    let fx = (x)=>{return x**2/4 - 3*x/2 + 5 }; // graph function
 
     let pt0_0 = new Point(0.0, 0.0, "");
     let pt1_6 = new Point(1.9, 6, "");
@@ -48,9 +48,9 @@ function ex2(rootName = "content"){
     let pt4_1 = new Point(4.4, 1.9, "");
     let pt6_5 = new Point(6.3, 5.2, "");
 
-    let data = [pt0_0, pt1_6, pt3_2, pt3_6, pt4_1, pt6_5];
+    let data = [pt0_0, pt1_6, pt3_2, pt3_6, pt4_1, pt6_5]; // answer (options) corindate points 
 
-    let fxLabels = ["(1/4)x^2  - 1.8x + 2.5 ", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];
+    let fxLabels = ["(1/4)x^2  - 1.8x + 2.5 ", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"]; 
     let fxOptions = get_options(fxLabels, fxLabels, [1, 0, 0]);
 
     return hidden_graph_tangent("Excercise2", root, 1, data, fx, fxOptions);
@@ -62,7 +62,7 @@ function ex3(rootName="content"){
 
     let root = document.getElementById(rootName);
 
-    let fx = (x)=>{return x**3/3 - 2.5*x**2 + 6.25*x};
+    let fx = (x)=>{return x**3/3 - 2.5*x**2 + 6.25*x};  // graph function
 
     let pt0_0 = new Point(0.0, 0.0, "");
     let pt1_5 = new Point(1.7, 5.2, "");
@@ -71,7 +71,7 @@ function ex3(rootName="content"){
     let pt3_6 = new Point(3.2, 6.4, "");
     let pt4_1 = new Point(4.4, 1.9, "");
 
-    let data = [pt0_0, pt1_5, pt2_5, pt3_2, pt3_6, pt4_1];
+    let data = [pt0_0, pt1_5, pt2_5, pt3_2, pt3_6, pt4_1]; // answer (options) corindate points 
 
     let fxLabels = ["x^2 - 5x +6.25", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];
     let fxOptions = get_options(fxLabels, fxLabels, [0, 0, 1]);
@@ -220,24 +220,23 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
 
             graph.update(new UpdateNode({"drawT": 1}, 1500));   // Reveal hidden graph
 
-            let ansDataPts = [];
+            let ansDataPts = [];    // answered pints
             q2.answer.forEach((ans)=>{ansDataPts.push(ans.value)});
 
-            let missedExtPts = [];
-            let ansExtPts = [];
-            let ansErrPts = [];
+            let missedExtPts = [];  // Position of missed (not in answer) extreme-points
+            let ansExtPts = [];     // Position of found (in answer) extreme-points
+            let ansErrPts = [];     // Position of None extreem points in answer
 
-            let missedLabels = [];
-            let foundLabels = [];
-            let foundLabelColor = [];
-            let errLabels = [];
+            let missedLabels = [];      // Type labels for missed extreme-Points
+            let foundLabels = [];       // Type labels for found extreme-points
+            let foundLabelColor = [];   // Colors for found found extrme-points type labels
 
-            let cords = [];
-            let cordLabelTxt = [];
+            let cords = [];             // cordinates for points (in answer + missed extreme-points)
+            let cordLabelTxt = [];      // labels showing points cordinate values (x,y)
 
-            dataPts.forEach((d)=>{
+            dataPts.forEach((d)=>{  // lope through al cordinate points (from function input parameter)
 
-                if(extremeDict.includes(d.type) && !ansDataPts.includes(d)){
+                if(extremeDict.includes(d.type) && !ansDataPts.includes(d)){    // Point is an extreme-point but not in the answer
                     missedExtPts.push([d.x, d.y]);
                     missedLabels.push(d.type);
                     cordLabelTxt.push(d.label);
@@ -246,21 +245,23 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
 
             });
 
-            ansDataPts.forEach((d, i)=>{
-                if(extremeDict.includes(d.type)){
+            ansDataPts.forEach((d, i)=>{    // lope through al points in answer
+
+                if(extremeDict.includes(d.type)){   // point is an extreme-point
                     ansExtPts.push([d.x, d.y]);
                     foundLabels.push(d.type);
-                    if(d.type === q3.answer[i].value){
+                    if(d.type === q3.answer[i].value){  // Point type (min, max or teras) corectly identified
                         foundLabelColor.push("black");
-                    } else{
+                    } else{ 
                         foundLabelColor.push("red");
                     }
-                } else{
+                } else{     
                     ansErrPts.push([d.x, d.y]);
                     errLabels.push(d.label);
                 }
                 cordLabelTxt.push(d.label);
                 cords.push([d.x, d.y]);
+
             });
 
                 /* Mark answered points and missed extreme points */
@@ -268,12 +269,11 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
             let ansExtM = new MarkerObj(id+"foundM", ansExtPts, {"color": ["blaxk"], "r": 4}, canvas);      // Mark found extreme points
             let errM = new MarkerObj(id+"wrongAnsM", ansErrPts, {"color": ["red"], "r": 4}, canvas );       // Mark answered none extreme points (wrong answersx)
 
-            let miseedL = new LabelObj(id+"missedL", missedExtPts, missedLabels, {"color": ["blue"], "dy": [15]}, canvas);
-            let ansExtL = new LabelObj(id+"foundExtL", ansExtPts, foundLabels, {"color": foundLabelColor, "dy": [15] }, canvas);
-            //let errL = new LabelObj(id+"wrongAnsL", ansErrPts, errLabels, {"color": ["red"], "dy": [15]}, canvas);
-            let cordL = new LabelObj(id+"cordL", cords, cordLabelTxt, {"dy": [-10]}, canvas);
+            let miseedL = new LabelObj(id+"missedL", missedExtPts, missedLabels, {"color": ["blue"], "dy": [15]}, canvas);          // label missed extreme-points (type)
+            let ansExtL = new LabelObj(id+"foundExtL", ansExtPts, foundLabels, {"color": foundLabelColor, "dy": [15] }, canvas);    // label found extreme points (type)
+            let cordL = new LabelObj(id+"cordL", cords, cordLabelTxt, {"dy": [-10]}, canvas);   // label cordinates for al points (answer + missed extreme-points)
 
-            let fxLabelColor = "black";
+            let fxLabelColor = "black";     
             let fxLabel = "";
             for(let i=0; i<fxOptions.length; i++){
                 if(fxOptions[i].points > 0){ 
@@ -282,14 +282,14 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
                  }
             };
             if(q4.answer[0].points < 1){ fxLabelColor = "red"; };
-            let fxL = new LabelObj(id+"fxLabel", [[0.5, 9]], ["f(x)= "+fxLabel], {"anchors": ["start"], "color": [fxLabelColor]}, canvas);
+            let fxL = new LabelObj(id+"fxLabel", [[0.5, 9]], ["f(x)= "+fxLabel], {"anchors": ["start"], "color": [fxLabelColor]}, canvas);  // Label showing correct graph function 
 
                 /* set answer legend */
-            let legBack = new RectObj(id+"legBackground", [[-3, 10]], {"height": [150], "width": [130]}, canvas, "txtBack");
-            let lablX = -2.75;
+            let legBack = new RectObj(id+"legBackground", [[-3, 10]], {"height": [150], "width": [130]}, canvas, "txtBack");    // legend background
+            let lablX = -2.75;  
             let lablY0 = 9.25;
             let labelPos = [[lablX, lablY0]];
-            let labelTxt = ["facit: svar rätt", "facit: svar saknat", "facti: svar fel", "extrempunkt", "missad ext-pkt", "ej ext-pkt"];
+            let labelTxt = ["facit: rätt svarat", "facit: missat svar", "facti: fel svarat", "extrempunkt", "missad ext-pkt", "ej ext-pkt"];
              let legCol = ["black", "blue", "red", "black", "blue", "red"];
             for(let i=1; i<labelTxt.length; i++){
                 labelPos.push([lablX, labelPos[i-1][1]-0.6]);
