@@ -56,32 +56,37 @@ class TangentObj extends ExstensionObj{
 
 
     // Create update chain for changing tangent origin x value
-    translate_center(center, stepSize=0.05, duration=this.duration){
+    translate_center(center, callback=()=>{}, duration=15, stepSize=0.05){
 
         let direction = Math.sign( center - this.params.x0 );  // translate direction: new center is left (negative) or right (positive) of old
         let x = this.params.x0 + direction * stepSize;         
 
         let T = duration; // transition duration 
-
+        let stepN = 0;
 
         let root = new UpdateNode({"x0": x}, T);
         let node = root;
         x +=  direction * stepSize;
 
+        let last = node;
 
         while ( Math.abs(center-x) > 0.05 ){
 
             node.next = new UpdateNode({"x0": x}, T);
             node = node.next;
+            last = node;
 
             x +=  direction * stepSize;
             if( (x > center && center > this.params.x0) || (x < center && center < this.params.x0) ){
                 x = center;
                 node.next = new UpdateNode({"x0": x}, T);
+                last = node;
                 break;
             }
 
         }
+
+        last.callback = callback;
 
         this.update(root);
 

@@ -319,6 +319,113 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
 }
 
 
+function exc_intro(rootDiv){
+
+    let root = document.getElementById("content");
+
+    let exc = new Excercise("intro");
+
+    root.appendChild(exc.containerDiv);
+
+    let fx = (x)=>{ return x**3/12 - 0.9*x**2 + 2.5*x + 4 };
+    let xRange = [-3, 10];
+
+    let canvas = new CanvasObj("introCanvas", width, height, margin, Xrange, [-5, 10], exc.svgDiv.id );
+    let chart = new ChartObj("introChart", {}, canvas );
+    let graph = new GraphObj("introGraph", fx, xRange, {}, canvas);
+    let tangent = new TangentObj("introTangent", fx, {"x0": 0.5}, canvas, graph);
+    let tangentM = new SegmentMarkerObj("tangentM", tangent.svgObj, {"r":[5]}, canvas);
+    let tangentL = new TangentLabel("introTangentL", tangent, {}, canvas);
+
+    let tanPosNeg = new TangentChainObj("tanPosNeg", fx, [-1, 9], {"x0": [0, 3.75, 7], "lenght":[5, 4, 4.75], "width": 0}, canvas, graph);
+    let posNegL = new LabelObj("posNegM", [[0.25, 3.75], [3.5, 5], [7.25, 5.75]],[], {}, canvas );
+
+    let extPos = [[1.9, 6.1], [5.3, 4.4]];
+
+    let extM = new MarkerObj("extMarkers", extPos, {"r": [0], "color": ["black"]}, canvas );
+    let extL = new LabelObj("extL", extPos, [], {"dy":[-10]}, canvas );
+
+    let pt1_6 = new Point(1.9, 6.1, "max");   // graph max point
+    let pt5_4 = new Point(5.3, 4.4, "min"); // graph min point
+
+
+    let step0 = ()=>{
+
+        tangent.update( new UpdateNode({"width": 2.5, "x0": 0.5}, 500));
+        tangentM.update( new UpdateNode({"r": [5]}, 10));
+        tangentL.assigne_to_canvas(canvas);
+        tanPosNeg.update( new UpdateNode({"width": 0}, 10) );
+        posNegL.update( new UpdateNode({"text": []}, 10) );
+        extL.update( new UpdateNode({"text": []}, 10) );
+        extM.update( new UpdateNode({"r": [0, 0]}, 10));
+
+    }
+
+
+    let step1 = ()=>{
+
+        let seq = [];
+        seq.push( ()=>{ tangent.translate_center(3, ()=>{seqStep(1)}) } );
+        seq.push( ()=>{ tangent.translate_center(1.81, ()=>{seqStep(2)}) } );
+        seq.push( ()=>{ extM.update(new UpdateNode({"r":[4, 0]}, 10)) } );
+
+        let seqStep = (i, timeout = 500)=>{
+            setTimeout( seq[i], timeout );
+        }
+        seqStep(0, 250);
+
+    }
+
+    let step2 = ()=>{
+
+        tangent.update( new UpdateNode({"width": 2.5}, 500));
+        tangentM.update( new UpdateNode({"r": [4]}, 500));
+        tangentL.assigne_to_canvas();
+
+        tanPosNeg.update( new UpdateNode({"width": 0}, 500) );
+        posNegL.update( new UpdateNode({"text": []}, 500) );
+        extL.update( new UpdateNode({"text": []}, 500) );
+
+        let seq = [];
+        seq.push( ()=>{ tangent.translate_center(7, ()=>{seqStep(1)}) } );
+        seq.push( ()=>{ tangent.translate_center(5.2, ()=>{seqStep(2)}) } );
+        seq.push( ()=>{ extM.update(new UpdateNode({"r":[4, 4]}, 10)) } );
+
+        let seqStep = (i, timeout = 500)=>{
+            setTimeout( seq[i], timeout );
+        }
+        seqStep(0, 250);
+        
+    }
+
+    let step3 = ()=>{
+
+        tangent.update( new UpdateNode({"width": 0}, 500));
+        tangentM.update( new UpdateNode({"r": [0]}, 500));
+        tangentL.assigne_to_canvas();
+
+        tanPosNeg.update( new UpdateNode({"width": 2.5}, 500) );
+        posNegL.update( new UpdateNode({"text": ["+", "––", "+"]}, 500) );
+        extL.update( new UpdateNode({"text": ["max", "min"]}, 500) );
+        
+    }
+
+    let stepS = [step0, step1, step2, step3];
+
+    let togleIntro = (i)=>{
+
+        stepS[i-1]();
+
+    }
+
+    let btn = new ButtonStepObj("introTogle", "", [1, 4], 1, 1 );
+    btn.addListener(togleIntro);
+
+    exc.controlDiv.appendChild(btn.container);
+
+}
+
+
 
 function togle_excercises(i){
 
@@ -337,11 +444,12 @@ function togle_excercises(i){
 }
 
 
-togle_excercises(0);
+//togle_excercises(0);
+exc_intro()
 
-    let togleBtn = new ButtonStepObj("toggleExcercise", "", [1, excerciseFx.length], 1, 1);
-    togleBtn.assignToDiv(document.getElementById("header"));
-    togleBtn.addListener((val)=>{
+let togleBtn = new ButtonStepObj("toggleExcercise", "", [1, excerciseFx.length], 1, 1);
+togleBtn.assignToDiv(document.getElementById("header"));
+togleBtn.addListener((val)=>{
 
     togle_excercises(val-1);
 

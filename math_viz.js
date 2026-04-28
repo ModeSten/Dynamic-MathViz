@@ -290,7 +290,7 @@ class VisualObj{
             state.delay = this.delay
         }
 
-        this.svg_init( state.duration, state.delay, ()=>{ this.update(state.next) } );
+        this.svg_init( state.duration, state.delay, ()=>{ this.update(state.next); state.callback() } );
 
     }
 
@@ -678,7 +678,7 @@ class MarkerObj extends VisualObj{
         this.params={
             "data": data,       // marker positions
             "color": ["red"],     // marker color
-            "r": 3,             // marker (circle) radius 
+            "r": [3],             // marker (circle) radius 
         };
         this.parse_params(params);
 
@@ -726,7 +726,7 @@ class MarkerObj extends VisualObj{
                 .transition()
                 .duration(duration)
                     .attr("fill", (d, i)=>{ return this.params.color[i%this.params.color.length] })
-                    .attr("r", this.params.r)
+                    .attr("r", (d,i)=>{return this.params.r[i%this.params.r.length]})
                     .attr("cx", (d)=>{ return this.canvas.xScale(d[0]) })
                     .attr("cy", (d)=>{ return this.canvas.yScale(d[1]) })
                     .delay(delay)
@@ -1264,12 +1264,13 @@ class GraphObj extends ExstensionObj{
 
 class UpdateNode{   // Specify update parameters for other classes; link nodes (linked list) to chain updates
 
-    constructor( params, duration=null, delay=null,  next=null ){
+    constructor( params, duration=null, delay=null,  next=null, callback=()=>{} ){
 
         this.params = params;       // parameters to be updated; ex {"data": data, "color": color}
         this.duration = duration;   // delya before next chained update
         this.delay = delay;
         this.next = next;           // next (chained) update node
+        this.callback =  callback;
 
     }
 

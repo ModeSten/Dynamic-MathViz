@@ -12,7 +12,7 @@ class SpacedMarkerObj extends ExstensionObj{
 
         this.params = {
             "color": "red",     // marker color
-            "r": 3.5,           // marker (circle) radius
+            "r": [3.5],           // marker (circle) radius
             "space": 3          // space between markers
         };
         this.parse_params(params);
@@ -91,7 +91,7 @@ constructor(id, parent, params={}, canvas=null, duration=0, delay=0, classname="
 
         this.params = {
             "color": "red",     // marker color
-            "r": 3.5,           // marker (circle) radius
+            "r": [3.5],           // marker (circle) radius
             "p": [0.5]          // (relative) positions alogn line segment (between 0 & 1); multiple values => multiple markers / segment
         };
         this.parse_params(params);
@@ -166,7 +166,7 @@ constructor(id, parent, params={}, canvas=null, duration=0, delay=0, classname="
 
         this.params = {
             "color": "red",     // marker color
-            "r": 3.5,           // marker (circle) radius
+            "r": [3.5],           // marker (circle) radius
             "p": [0.5],         // (relative) positions alogn line segment (between 0 & 1); multiple values => multiple markers / segment
         };
         this.parse_params(params);
@@ -249,7 +249,7 @@ class SecantMarkerObj extends ExstensionObj{
 
         this.params={
             "color": "blue", 
-            "r": 3.5,            // marker (circle) radius
+            "r": [3.5],            // marker (circle) radius
             "show": [true]
         };
         this.parse_params(params);
@@ -305,7 +305,7 @@ class PointMarkerFxObj extends ExstensionObj{
 
         this.params = {
             "color": "blue",    // marker color
-            "r": 3.5,           // marker (circle) radius
+            "r": [3.5],           // marker (circle) radius
             "x": [1],           // (relative) positions alogn line segment (between 0 & 1); multiple values => multiple markers / segment
             "fx": fx            // target function
         };
@@ -361,7 +361,7 @@ class X0MarkerObj extends ExstensionObj{
         super(id, classname, duration, delay);
 
         this.params={
-            "r": "3.5",         // marker (circle) radius
+            "r": [3.5],         // marker (circle) radius
             "color": "blue",    // marker (circle) color
         };
         this.parse_params(params);
