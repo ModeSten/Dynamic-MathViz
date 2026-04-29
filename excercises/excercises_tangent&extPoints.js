@@ -104,6 +104,13 @@ function ex4(rootName="content"){
 }
 
 
+function graph_tangent_intor(id, rootDiv, extremeN, dataPts, fx, fxOptions){
+
+
+
+}
+
+
 function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
 
     let xRange = [-3, 10];
@@ -336,7 +343,7 @@ function exc_intro(rootDiv){
     let canvas = new CanvasObj("introCanvas", width, height, margin, Xrange, [-5, 10], exc.svgDiv.id );
     let chart = new ChartObj("introChart", {}, canvas );
     let graph = new GraphObj("introGraph", fx, xRange, {}, canvas);
-    let tangent = new TangentObj("introTangent", fx, {"x0": 0.5}, canvas, graph);
+    let tangent = new TangentObj("introTangent", fx, {"x0": 0.5, "length":50}, canvas, graph);
     let tangentM = new SegmentMarkerObj("tangentM", tangent.svgObj, {"r":[5]}, canvas);
     let tangentL = new TangentLabel("introTangentL", tangent, {}, canvas);
 
@@ -346,9 +353,8 @@ function exc_intro(rootDiv){
     let extPos = [[1.9, 6.1], [5.3, 4.4]];
 
     let extM = new MarkerObj("extMarkers", extPos, {"r": [0], "color": ["black"]}, canvas );
-    let extL = new LabelObj("extL", extPos, [], {"dy":[-10]}, canvas );
-    let cordL = new LabelObj("extCordL", [pt1_6.cord, pt5_4.cord], [], {"dy": [20]}, canvas, "", 500);
-
+    let extL = new LabelObj("extL", extPos, [], {"dy":[20]}, canvas );
+    let cordL = new LabelObj("extCordL", [pt1_6.cord, pt5_4.cord], [], {"dy": [-10]}, canvas, "", 500);
 
 
     let step0 = ()=>{
@@ -378,6 +384,7 @@ function exc_intro(rootDiv){
 
     }
 
+
     let step2 = ()=>{
 
         tangent.update( new UpdateNode({"width": 2.5}, 500));
@@ -389,7 +396,7 @@ function exc_intro(rootDiv){
         extL.update( new UpdateNode({"text": []}, 500) );
 
         let seq = [];
-        seq.push( ()=>{ tangent.translate_center(6, ()=>{seqStep(1)}, 20) } );
+        seq.push( ()=>{ tangent.translate_center(5.75, ()=>{seqStep(1)}, 20) } );
         seq.push( ()=>{ tangent.translate_center(5.25, ()=>{seqStep(2)}, 20, 0.01) } );
         seq.push( ()=>{ extM.update(new UpdateNode({"r":[4, 4]}, 10)); cordL.update(new UpdateNode({"text": [pt1_6.label, pt5_4.label]})) } );
 
@@ -399,6 +406,7 @@ function exc_intro(rootDiv){
         seqStep(0, 250);
         
     }
+
 
     let step3 = ()=>{
 
@@ -428,7 +436,6 @@ function exc_intro(rootDiv){
 }
 
 
-
 function togle_excercises(i){
 
     let root = document.getElementById("content");
@@ -449,9 +456,9 @@ function togle_excercises(i){
 //togle_excercises(0);
 exc_intro()
 
-let togleBtn = new ButtonStepObj("toggleExcercise", "", [1, excerciseFx.length], 1, 1);
-togleBtn.assignToDiv(document.getElementById("header"));
-togleBtn.addListener((val)=>{
+    let togleBtn = new ButtonStepObj("toggleExcercise", "", [1, excerciseFx.length], 1, 1, "back", "next");
+    togleBtn.assignToDiv(document.getElementById("header"));
+    togleBtn.addListener((val)=>{
 
     togle_excercises(val-1);
 
