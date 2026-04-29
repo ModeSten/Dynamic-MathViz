@@ -499,6 +499,7 @@ class Point{    // class specifying a cordinated point
         this.x = x;     // point x value 
         this.y = y;     // point y value
         this.type = type;   // point type; ex min, max, teras, "" (not an extreme point)
+        this.cord = [x, y];
 
 
         this.label = `(${this.x}, ${this.y})`;  // point text label

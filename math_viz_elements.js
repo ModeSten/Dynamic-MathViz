@@ -299,6 +299,7 @@ class ButtonStepObj{
         this.val = value;               // curent value
         this.labelName = labelName;     // text to display before value: ex "x="
         this.listener = [];             // call on button click
+        this.showN = true;
 
         this.container = document.createElement("div"); // create conatining div
             this.container.id = this.id;
@@ -319,21 +320,15 @@ class ButtonStepObj{
         this.label = document.createElement("h3");      // create text for displaying value and label text
             this.label.id = this.id+"label";
             this.className = "stepLabel";
-            this.label.innerHTML = `${labelName}${this.val}`;
+        
+        this.set_label();
 
 
         this.container.appendChild(this.btnL);
         this.container.appendChild(this.label);
         this.container.appendChild(this.btnR);
 
-
-        // disabel / enable button
-        if(this.val - this.stepSize < this.range[0]){
-            this.btnL.disabled = true;
-        } else if(this.val + this.stepSize > this.range[1]){
-            this.btnR.disabled = true;
-        }
-
+       this.enable();
 
         this.assignToDiv(parentDiv);
 
@@ -375,7 +370,7 @@ class ButtonStepObj{
 
         }
 
-        this.label.innerHTML = `${this.labelName}${this.val}`;  // set display text
+        this.set_label();
 
         this.listener.forEach( (func)=>{ func(this.val) } );    // handle listener functions
 
@@ -393,6 +388,34 @@ class ButtonStepObj{
     removeAllListeners(){
 
         this.listener = [];
+
+    }
+
+
+    enable(active=true){
+
+        if(active){
+            if(this.val - this.stepSize < this.range[0]){
+                this.btnL.disabled = true;
+            } else if(this.val + this.stepSize > this.range[1]){
+                this.btnR.disabled = true;
+            }
+        } else{
+            this.btnL.disabled = false;
+            this.btnR.disabled = false;
+        }
+
+    }
+
+
+    set_label(){
+
+        let labelText = `${this.labelName}${this.val}`;
+        if (this.showN){
+            labelText += `/${this.range[1]}`;
+        }
+        //this.label.innerHTML = `${this.labelName}${this.val}`;  // set display text
+        this.label.innerHTML = labelText;
 
     }
 

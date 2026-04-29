@@ -199,7 +199,7 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
     let chart = new ChartObj(id+"Chart",{}, canvas);
     let graph = new GraphObj(id+"Graph", fx, xRange, {"draw": true, "drawT": 0}, canvas);
     let tangent = new TangentObj(id+"Tangent", fx, {"x0": 2, "length": 100, "color": "black"}, canvas, graph);
-    let tangentMarker = new SegmentMarkerObj(id+"TangMark", tangent, {"color": "black", "r": 5}, canvas);
+    let tangentMarker = new SegmentMarkerObj(id+"TangMark", tangent, {"color": "black", "r": [5]}, canvas);
     let tangentL = new TangentLabel(id+"TangentM", tangent, {}, canvas);
     let supLines = new LabelAxisLineObj(id+"valLines", tangentMarker.data, {}, canvas, tangentMarker);
 
@@ -321,6 +321,9 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
 
 function exc_intro(rootDiv){
 
+    let pt1_6 = new Point(1.9, 6.1, "max");   // graph max point
+    let pt5_4 = new Point(5.3, 4.4, "min"); // graph min point
+
     let root = document.getElementById("content");
 
     let exc = new Excercise("intro");
@@ -338,15 +341,14 @@ function exc_intro(rootDiv){
     let tangentL = new TangentLabel("introTangentL", tangent, {}, canvas);
 
     let tanPosNeg = new TangentChainObj("tanPosNeg", fx, [-1, 9], {"x0": [0, 3.75, 7], "lenght":[5, 4, 4.75], "width": 0}, canvas, graph);
-    let posNegL = new LabelObj("posNegM", [[0.25, 3.75], [3.5, 5], [7.25, 5.75]],[], {}, canvas );
+    let posNegL = new LabelObj("posNegM", [[0.25, 3.75], [3.5, 4.75], [7.25, 5.75]],[], {}, canvas );
 
     let extPos = [[1.9, 6.1], [5.3, 4.4]];
 
     let extM = new MarkerObj("extMarkers", extPos, {"r": [0], "color": ["black"]}, canvas );
     let extL = new LabelObj("extL", extPos, [], {"dy":[-10]}, canvas );
+    let cordL = new LabelObj("extCordL", [pt1_6.cord, pt5_4.cord], [], {"dy": [20]}, canvas, "", 500);
 
-    let pt1_6 = new Point(1.9, 6.1, "max");   // graph max point
-    let pt5_4 = new Point(5.3, 4.4, "min"); // graph min point
 
 
     let step0 = ()=>{
@@ -365,9 +367,9 @@ function exc_intro(rootDiv){
     let step1 = ()=>{
 
         let seq = [];
-        seq.push( ()=>{ tangent.translate_center(3, ()=>{seqStep(1)}) } );
-        seq.push( ()=>{ tangent.translate_center(1.81, ()=>{seqStep(2)}) } );
-        seq.push( ()=>{ extM.update(new UpdateNode({"r":[4, 0]}, 10)) } );
+        seq.push( ()=>{ tangent.translate_center(2.25, ()=>{seqStep(1)}, 20, 0.05) } );
+        seq.push( ()=>{ tangent.translate_center(1.81, ()=>{seqStep(2)}, 20, 0.01) } );
+        seq.push( ()=>{ extM.update(new UpdateNode({"r":[4, 0]}, 10)); cordL.update(new UpdateNode({"text": [pt1_6.label]})) } );
 
         let seqStep = (i, timeout = 500)=>{
             setTimeout( seq[i], timeout );
@@ -387,9 +389,9 @@ function exc_intro(rootDiv){
         extL.update( new UpdateNode({"text": []}, 500) );
 
         let seq = [];
-        seq.push( ()=>{ tangent.translate_center(7, ()=>{seqStep(1)}) } );
-        seq.push( ()=>{ tangent.translate_center(5.2, ()=>{seqStep(2)}) } );
-        seq.push( ()=>{ extM.update(new UpdateNode({"r":[4, 4]}, 10)) } );
+        seq.push( ()=>{ tangent.translate_center(6, ()=>{seqStep(1)}, 20) } );
+        seq.push( ()=>{ tangent.translate_center(5.25, ()=>{seqStep(2)}, 20, 0.01) } );
+        seq.push( ()=>{ extM.update(new UpdateNode({"r":[4, 4]}, 10)); cordL.update(new UpdateNode({"text": [pt1_6.label, pt5_4.label]})) } );
 
         let seqStep = (i, timeout = 500)=>{
             setTimeout( seq[i], timeout );
@@ -402,7 +404,7 @@ function exc_intro(rootDiv){
 
         tangent.update( new UpdateNode({"width": 0}, 500));
         tangentM.update( new UpdateNode({"r": [0]}, 500));
-        tangentL.assigne_to_canvas();
+        tangentL.remove_from_canvas();
 
         tanPosNeg.update( new UpdateNode({"width": 2.5}, 500) );
         posNegL.update( new UpdateNode({"text": ["+", "––", "+"]}, 500) );
