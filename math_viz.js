@@ -275,8 +275,10 @@ class VisualObj{
     // update element
     update(state){
 
+        console.log(this.id, state);
+
         if(state === null){
-            return
+            return true
         }
 
         this.parse_params(state.params);
@@ -712,6 +714,11 @@ class MarkerObj extends VisualObj{
             return
         }
 
+        function end_all(transition, callback){
+
+        }
+
+        let N = Object.keys(this.data).length;  
 
         let u = this.canvas.svg.selectAll("."+this.id) // selected target SVG elements 
         .data( this.data );    // bind data
@@ -730,11 +737,10 @@ class MarkerObj extends VisualObj{
                     .attr("cx", (d)=>{ return this.canvas.xScale(d[0]) })
                     .attr("cy", (d)=>{ return this.canvas.yScale(d[1]) })
                     .delay(delay)
-                .on("end", callback);
+                .on("end", ()=>{ N--; if(N<=0){callback()} });
 
             u.exit().remove();
         }
-
     
 
 }
@@ -780,6 +786,8 @@ class LabelObj extends VisualObj{
         let dyL = this.params.dy.length;
         let showL = this.params.show.length;
 
+        let N = Object.keys(this.params.data).length;
+
         let u = this.canvas.svg.selectAll("."+this.id)
             .data(this.params.data);
 
@@ -797,7 +805,7 @@ class LabelObj extends VisualObj{
                 .attr("dy", (d, i)=>{ return this.params.dy[i%dyL] })
                 .attr("text-anchor", (d, i)=>{ return this.params.anchors[i%this.params.anchors.length]})
                 .style("fill", (d, i)=>{ return this.params.color[i%this.params.color.length] })
-            .on("end", callback);
+            .on("end", ()=>{ N--; if(N<=0){callback()} });
 
     }
 
@@ -873,6 +881,8 @@ class RectObj extends VisualObj{
         let u = this.canvas.svg.selectAll("."+this.id)
             .data(this.params.data);
 
+        let N = Object.keys(this.params.data).length;
+
         u.enter()
             .append("rect")
             .attr("class", this.classname)
@@ -883,7 +893,7 @@ class RectObj extends VisualObj{
                 .attr("y", (d)=>{ return this.canvas.yScale(d[1])})
                 .attr("width", (d, i)=>{return this.params.width[i%wL]})
                 .attr("height", (d, i)=>{return this.params.height[i%hL]})
-            .on("end", callback);
+            .on("end", ()=>{ N--; if(N<=0){callback()} });
 
     }
 
@@ -961,7 +971,7 @@ class ExstensionObj{
         }
 
         if(this.svgObj !== null){
-            this.svgObj.update(state);   
+            return this.svgObj.update(state);   
         }
 
         // update child (visual) object; pass root update node
