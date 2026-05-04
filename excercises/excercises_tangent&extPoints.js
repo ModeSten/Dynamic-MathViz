@@ -372,6 +372,8 @@ function exc_intro(rootDiv){
 
     let step0 = ()=>{
 
+        console.log("0");
+
         tangent.update( new UpdateNode({"width": 2.5, "x0": 0.5}, 500));
         tangentM.update( new UpdateNode({"r": [5]}, 10));
         tangentL.assigne_to_canvas(canvas);
@@ -379,11 +381,14 @@ function exc_intro(rootDiv){
         posNegL.update( new UpdateNode({"text": []}, 10) );
         extL.update( new UpdateNode({"text": []}, 10) );
         extM.update( new UpdateNode({"r": [0, 0]}, 10));
+        cordL.update(new UpdateNode({"text": []}, 10))
 
     }
 
 
     let step1 = ()=>{
+
+        console.log("1");
 
         let seq = [];
         seq.push( ()=>{ tangent.translate_center(3, ()=>{seqStep(1)}, 20) } );
@@ -443,7 +448,7 @@ function exc_intro(rootDiv){
         
     }
 
-    let stepS = [ step1, step2, step3];
+    let stepS = [ step0, step1, step2, step3];
 
     let togleIntro = (i)=>{
 
@@ -474,12 +479,40 @@ function exc_intro(rootDiv){
 
     }
 
-    let btn = new ButtonStepObj("introTogle", "", [1, 4], 1, 1 );
-    btn.addListener(togleIntro);
-
+    /*
+    let btn = new ButtonStepObj("introTogle", "", [1, stepS.length], 1, 1 );
+    btn.addListener(
+        (val)=>{
+            togleIntro(val-1);
+        }
+    );
     exc.controlDiv.appendChild(btn.container);
+    */
 
-    auto_step_intro();
+    let I = 0;
+    let nextBtn = new ButtonObj("introNext", "next", exc.controlDiv);
+    nextBtn.addListener((obj)=>{
+
+        I++;
+        if(I < stepS.length){
+            togleIntro(I);
+        } 
+        if (I+1 >= stepS.length){
+             obj.button.disabled = true;
+        }
+
+    });
+    let resetBtn = new ButtonObj("introReset", "reset", exc.controlDiv);
+    resetBtn.addListener((obj)=>{
+
+        I = 0;
+        togleIntro(I);
+        nextBtn.button.disabled = false;
+
+    });
+
+
+    //auto_step_intro();
 
 }
 
@@ -501,14 +534,18 @@ function togle_excercises(i){
 }
 
 
+function initialize_excercises(){
+
+
+
+
+}
+
+
 exc_intro()
 
 let togleBtn = new ButtonStepObj("toggleExcercise", "", [1, excerciseFx.length], 1, 1, "back", "next");
 togleBtn.assignToDiv(document.getElementById("header"));
-togleBtn.addListener((val)=>{
-
-togle_excercises(val-1);
-
-})
+togleBtn.addListener( (val)=>{ togle_excercises(val-1) } );
 
 
