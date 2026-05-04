@@ -275,8 +275,6 @@ class VisualObj{
     // update element
     update(state){
 
-        console.log(this.id, state);
-
         if(state === null){
             return true
         }

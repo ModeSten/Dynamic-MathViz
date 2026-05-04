@@ -6,13 +6,13 @@ const height = 500;
 
 var extremeDict = ["min", "max", "teras"] // String (labels) denoting extreme points
 
-var excerciseFx = [ex1, ex2, ex3, ex4];
+var excerciseFx = [tangX3_2, tangX2_1, tangX3_1, tangX2_2];
 var ExcerciseN = excerciseFx.length;
 var excercises = new Array(ExcerciseN).fill(null);
 
 
 
-function ex1(rootName="content"){  // create / set excercise 1xw
+function tangX3_2(rootName="content"){  // create / set excercise 1xw
 
     let root = document.getElementById(rootName);
     
@@ -35,7 +35,7 @@ function ex1(rootName="content"){  // create / set excercise 1xw
 }
 
 
-function ex2(rootName = "content"){
+function tangX2_1(rootName = "content"){
 
     let root = document.getElementById(rootName);
     
@@ -58,7 +58,7 @@ function ex2(rootName = "content"){
 }
 
 
-function ex3(rootName="content"){
+function tangX3_1(rootName="content"){
 
     let root = document.getElementById(rootName);
 
@@ -81,7 +81,7 @@ function ex3(rootName="content"){
 }
 
 
-function ex4(rootName="content"){
+function tangX2_2(rootName="content"){
 
     let root = document.getElementById(rootName);
 
@@ -111,10 +111,7 @@ function graph_tangent_intor(id, rootDiv, extremeN, dataPts, fx, fxOptions){
 }
 
 
-function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
-
-    let xRange = [-3, 10];
-    let yRange = [-5, 10];
+function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions, xRange=[-3, 10], yRange=[-5, 10]){
 
     let excercise = new Excercise(id);
 
@@ -206,9 +203,9 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
     let chart = new ChartObj(id+"Chart",{}, canvas);
     let graph = new GraphObj(id+"Graph", fx, xRange, {"draw": true, "drawT": 0}, canvas);
     let tangent = new TangentObj(id+"Tangent", fx, {"x0": 2, "length": 100, "color": "black"}, canvas, graph);
-    let tangentMarker = new SegmentMarkerObj(id+"TangMark", tangent, {"color": "black", "r": [5]}, canvas);
+    let tangentMarker = new SegmentMarkerObj(id+"TangMark", tangent.svgObj, {"color": "black", "r": [5]}, canvas);
     let tangentL = new TangentLabel(id+"TangentM", tangent, {}, canvas);
-    let supLines = new LabelAxisLineObj(id+"valLines", tangentMarker.data, {}, canvas, tangentMarker);
+    let supLines = new LabelAxisLineObj(id+"valLines", tangentMarker.data, {}, canvas, tangentMarker.svgObj);
 
     tangentSlider.addListener((val)=>{
         tangent.translate_center(val);
@@ -326,16 +323,24 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions){
 }
 
 
+function hidden_graph_tangentMulti( id, rootDiv, extremeN, dataPts, fx, fxOptions, xRange=[-3, 10], yRange=[-5, 10] ){
+
+
+
+
+}
+
+
 function exc_intro(rootDiv){
 
     let pt1_6 = new Point(1.9, 6.1, "max");   // graph max point
     let pt5_4 = new Point(5.3, 4.4, "min"); // graph min point
 
     let root = document.getElementById("content");
-
     let exc = new Excercise("intro");
-
     root.appendChild(exc.containerDiv);
+
+    let header = new Paragraph("IntroHeader", "Introudktion till övning: Tangenter och Extrempunkter", exc.headerDiv);
 
     let fx = (x)=>{ return x**3/12 - 0.9*x**2 + 2.5*x + 4 };
     let xRange = [-3, 10];
@@ -345,7 +350,7 @@ function exc_intro(rootDiv){
     let graph = new GraphObj("introGraph", fx, xRange, {}, canvas);
     let tangent = new TangentObj("introTangent", fx, {"x0": 0.5, "length":50}, canvas, graph);
     let tangentM = new SegmentMarkerObj("tangentM", tangent.svgObj, {"r":[5]}, canvas);
-    let tangentL = new TangentLabel("introTangentL", tangent, {}, canvas);
+    let tangentL = new TangentLabel("introTangentL", tangent, {"decimal": 1}, canvas);
 
     let tanPosNeg = new TangentChainObj("tanPosNeg", fx, [-1, 9], {"x0": [0, 3.75, 7], "lenght":[5, 4, 4.75], "width": 0}, canvas, graph);
     let posNegL = new LabelObj("posNegM", [[0.25, 3.75], [3.5, 4.75], [7.25, 5.75]],[], {}, canvas );
@@ -356,6 +361,14 @@ function exc_intro(rootDiv){
     let extL = new LabelObj("extL", extPos, [], {"dy":[20]}, canvas );
     let cordL = new LabelObj("extCordL", [pt1_6.cord, pt5_4.cord], [], {"dy": [-10]}, canvas, "", 500);
 
+    let introTxt = [
+        "<b>1:</b> En tangent till en graf är en rätt linje varse lutning / riktningskoficient är lika med grafens lutning i en punkt (tangeringspunkten)",
+        "<b>2:</b> Flyttar vi tangenten (tangeringspunkten) längs grafen så ser vi hur tangentens, pch där med grafens, lutning varierar för olika x värden",
+        "<b>3:</b> Vi kan identifiera grafens extrempunkter genom att se i vilka punkter lutningen är lika med 0",
+        "<b>4:</b> Vi kan se vilken vad en extrempunkt har för typ (min, max eller teras) genom att se vilket tecken (+ eller -) lutningen har innan och efter"
+    ];
+
+    let introP = new Paragraph("introP", introTxt[0], exc.figTxtDiv);
 
     let step0 = ()=>{
 
@@ -373,9 +386,7 @@ function exc_intro(rootDiv){
     let step1 = ()=>{
 
         let seq = [];
-        seq.push( ()=>{ tangent.translate_center(2.25, ()=>{seqStep(1)}, 20, 0.05) } );
-        seq.push( ()=>{ tangent.translate_center(1.81, ()=>{seqStep(2)}, 20, 0.01) } );
-        seq.push( ()=>{ extM.update(new UpdateNode({"r":[4, 0]}, 10)); cordL.update(new UpdateNode({"text": [pt1_6.label]})) } );
+        seq.push( ()=>{ tangent.translate_center(3, ()=>{seqStep(1)}, 20) } );
 
         let seqStep = (i, timeout = 500)=>{
             setTimeout( seq[i], timeout );
@@ -396,12 +407,24 @@ function exc_intro(rootDiv){
         extL.update( new UpdateNode({"text": []}, 500) );
 
         let seq = [];
-        seq.push( ()=>{ tangent.translate_center(5.75, ()=>{seqStep(1)}, 20) } );
-        seq.push( ()=>{ tangent.translate_center(5.25, ()=>{seqStep(2)}, 20, 0.01) } );
-        seq.push( ()=>{ extM.update(new UpdateNode({"r":[4, 4]}, 10)); cordL.update(new UpdateNode({"text": [pt1_6.label, pt5_4.label]})) } );
+        seq.push( (next)=>{ 
+                        tangent.translate_center(1.81, ()=>{seqStep(next)}, 10, 0.01) 
+                    } );
+        seq.push( (next)=>{ 
+                        extM.update( new UpdateNode( {"r":[4, 0]}, 10) ); 
+                        cordL.update( new UpdateNode( {"text": [pt1_6.label]}, 100 )); 
+                        tangent.translate_center(5.30, ()=>{seqStep(next)});
+                    } );
+        seq.push( (next)=>{ 
+                        tangent.translate_center(5.34, ()=>{seqStep(next)}, 1, 0.01);
+                    } );
+        seq.push( (next)=>{ 
+                        extM.update(new UpdateNode({"r":[4, 4]}, 10)); 
+                        cordL.update(new UpdateNode({"text": [pt1_6.label, pt5_4.label]})) 
+                    } );
 
         let seqStep = (i, timeout = 500)=>{
-            setTimeout( seq[i], timeout );
+            setTimeout( ()=>{seq[i](i+1)}, timeout );
         }
         seqStep(0, 250);
         
@@ -420,11 +443,34 @@ function exc_intro(rootDiv){
         
     }
 
-    let stepS = [step0, step1, step2, step3];
+    let stepS = [ step1, step2, step3];
 
     let togleIntro = (i)=>{
 
-        stepS[i-1]();
+        introP.P.innerHTML = introTxt[i];
+        stepS[i]();
+
+    }
+
+
+    let auto_step_intro = ()=>{
+
+        let T = [500, 3000, 5000];
+
+        let tsum = 0;
+
+        for(let i=1; i<T.length; i++){
+            tsum+= T[i-1];
+            T[i] += tsum;
+        }
+
+        for( let i=0; i<stepS.length; i++){
+
+            setTimeout( 
+                ()=>{ togleIntro(i);}, T[i]
+            );
+        
+        }
 
     }
 
@@ -432,6 +478,8 @@ function exc_intro(rootDiv){
     btn.addListener(togleIntro);
 
     exc.controlDiv.appendChild(btn.container);
+
+    auto_step_intro();
 
 }
 
@@ -453,14 +501,13 @@ function togle_excercises(i){
 }
 
 
-//togle_excercises(0);
 exc_intro()
 
-    let togleBtn = new ButtonStepObj("toggleExcercise", "", [1, excerciseFx.length], 1, 1, "back", "next");
-    togleBtn.assignToDiv(document.getElementById("header"));
-    togleBtn.addListener((val)=>{
+let togleBtn = new ButtonStepObj("toggleExcercise", "", [1, excerciseFx.length], 1, 1, "back", "next");
+togleBtn.assignToDiv(document.getElementById("header"));
+togleBtn.addListener((val)=>{
 
-    togle_excercises(val-1);
+togle_excercises(val-1);
 
 })
 

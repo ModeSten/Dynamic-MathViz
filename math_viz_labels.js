@@ -292,7 +292,8 @@ class TangentLabel extends ExstensionObj{
             "showVal": [true],      // specifie if label should include data value
             "dx" : [ 30 ],          // label xOffset
             "dy" : [ 20 ],          // label yOffset
-            "show": [true]          // specifiy if label should be shown or hidden
+            "show": [true],         // specifiy if label should be shown or hidden
+            "decimal": 2
         };
         this.parse_params(params);   
         
@@ -330,7 +331,7 @@ class TangentLabel extends ExstensionObj{
             k = (y1-y0) / (x1-x0);
         }
 
-        this.labelText = [`k= ${k.toFixed(2)}`];
+        this.labelText = [`k= ${k.toFixed(this.params.decimal)}`];
 
 
         let dx = this.params.dx[0];
