@@ -10,7 +10,8 @@ var excerciseFx = [tangX3_2, tangX2_1, tangX3_1, tangX2_2]; // Excercises initli
 var ExcerciseN = excerciseFx.length;                        // Number of excercises
 var excercises = new Array(ExcerciseN).fill(null);          // Excerices list; store excercises class instances
 
-var headerElements = {};
+var headerElements = {};    // store header elements that needs referencing
+var intro = null;           // store excercise intro (class object)
 
 function tangX3_2(rootName="content"){  // create / set excercise 1xw
 
@@ -38,7 +39,7 @@ function tangX3_2(rootName="content"){  // create / set excercise 1xw
 
 function tangX2_1(rootName = "content"){
 
-    let root = document.getElementById(rootName);
+    let root = document.getElementById(rootName);   
     
     let fx = (x)=>{return x**2/4 - 3*x/2 + 5 }; // graph function
 
@@ -69,7 +70,7 @@ function tangX3_1(rootName="content"){
         /* answer option points */
     let pt0_0 = new Point(0.0, 0.0, "");
     let pt1_5 = new Point(1.7, 5.2, "");
-    let pt2_5 = new Point(2.5, 5.2, "teras");   
+    let pt2_5 = new Point(2.5, 5.2, "teras");   // graph extreme point
     let pt3_2 = new Point(3.2, 2.7, ""); 
     let pt3_6 = new Point(3.2, 6.4, "");
     let pt4_1 = new Point(4.4, 1.9, "");
@@ -88,7 +89,7 @@ function tangX2_2(rootName="content"){
 
     let root = document.getElementById(rootName);
 
-    let fx = (x)=>{return -1*x**2 + 3*x + 2};
+    let fx = (x)=>{return -1*x**2 + 3*x + 2};   // graph function
 
         /* answer option points */
     let pt0_0 = new Point(0.0, 0.0, "");
@@ -114,10 +115,10 @@ function graph_tangent_intor(id, rootDiv, extremeN, dataPts, fx, fxOptions){
 
 }
 
-
+    /* create "tangent and hidden graph" excercise */
 function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions, xRange=[-3, 10], yRange=[-5, 10]){
 
-    let excercise = new Excercise(id);
+    let excercise = new Excercise(id);  
 
     let toIntroBtn = new ButtonObj("toIntroBtn", "Intro", excercise.containerDiv);  
     toIntroBtn.addListener(()=>{
@@ -145,8 +146,8 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions, xRa
 
         /* Quesion 1: Number of extreme points*/
     let q1Txt = "<b>Q1:</b> Hur många extrempunkter har grafen?"
-    let q1Points = new Array(4).fill(0);
-    q1Points[extremeN-1] = 1;   // One point for correct number of extreme points
+    let q1Points = new Array(4).fill(0);    // initalize al option points to 0
+    q1Points[extremeN-1] = 1;               // One point for correct number of extreme points
     let q1Opts = get_options([" 1", " 2", " 3"], [1, 2, 3], q1Points);
     let q1 = new QuestionSelectOne(id+"Q1", q1Txt, 1, 1, [q1Opts]);
     excercise.add_question(q1);
@@ -207,7 +208,7 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions, xRa
         });
 
 
-    rootDiv.appendChild(excercise.containerDiv);
+    rootDiv.appendChild(excercise.containerDiv);    // add excercise container to root div
 
 
         /* SVG elements */
@@ -217,10 +218,10 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions, xRa
     let graph = new GraphObj(id+"Graph", fx, xRange, {"draw": true, "drawT": 0}, canvas);
     let tangent = new TangentObj(id+"Tangent", fx, {"x0": 2, "length": 100, "color": "black"}, canvas, graph);
     let tangentMarker = new SegmentMarkerObj(id+"TangMark", tangent.svgObj, {"color": "black", "r": [5]}, canvas);
-    let tangentL = new TangentLabel(id+"TangentM", tangent, {}, canvas);
+    let tangentL = new TangentLabel(id+"TangentM", tangent, {}, canvas);   
     let supLines = new LabelAxisLineObj(id+"valLines", tangentMarker.data, {}, canvas, tangentMarker.svgObj);
 
-    tangentSlider.addListener((val)=>{
+    tangentSlider.addListener((val)=>{  // slider controling tangent (sets tangent 'middpoint')
         tangent.translate_center(val);
     });
 
@@ -229,7 +230,7 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions, xRa
         /* Check answers and reveal answer visual elements */
     checkAnsBtn.addListener(()=>{
 
-        if(!excercise.check()){
+        if(!excercise.check()){ // run answer check and see if all questions have been answered => true
             scoreP.P.innerHTML = "En eller flera frågor ej besvarade";
         } else{
 
@@ -262,9 +263,9 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions, xRa
 
             });
 
-            ansDataPts.forEach((d, i)=>{    // lope through al points in answer
+            ansDataPts.forEach((d, i)=>{                // lope through al points in answer
 
-                if(extremeDict.includes(d.type)){   // point is an extreme-point
+                if(extremeDict.includes(d.type)){       // point is an extreme-point
                     ansExtPts.push([d.x, d.y]);
                     foundLabels.push(d.type);
                     if(d.type === q3.answer[i].value){  // Point type (min, max or teras) corectly identified
@@ -273,23 +274,23 @@ function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions, xRa
                         foundLabelColor.push("red");
                     }
                 } else{     
-                    ansErrPts.push([d.x, d.y]);
-                    errLabels.push(d.label);
+                    ansErrPts.push([d.x, d.y]);         // Answered points not part of correct answer (not extreme points)
                 }
-                cordLabelTxt.push(d.label);
-                cords.push([d.x, d.y]);
+                cordLabelTxt.push(d.label);             // Answered points position labels
+                cords.push([d.x, d.y]);                 // Answered points xy positions
 
             });
 
                 /* Mark answered points and missed extreme points */
-            let missedM = new MarkerObj(id+"missedM", missedExtPts, {"color": ["blue"], "r": 4}, canvas);   // Mark missed extreme points
-            let ansExtM = new MarkerObj(id+"foundM", ansExtPts, {"color": ["blaxk"], "r": 4}, canvas);      // Mark found extreme points
-            let errM = new MarkerObj(id+"wrongAnsM", ansErrPts, {"color": ["red"], "r": 4}, canvas );       // Mark answered none extreme points (wrong answersx)
+            let missedM = new MarkerObj(id+"missedM", missedExtPts, {"color": ["blue"], "r": [4]}, canvas);   // Mark missed extreme points
+            let ansExtM = new MarkerObj(id+"foundM", ansExtPts, {"color": ["blaxk"], "r": [4]}, canvas);      // Mark found extreme points
+            let errM = new MarkerObj(id+"wrongAnsM", ansErrPts, {"color": ["red"], "r": [4]}, canvas );       // Mark answered none extreme points (wrong answersx)
 
             let miseedL = new LabelObj(id+"missedL", missedExtPts, missedLabels, {"color": ["blue"], "dy": [15]}, canvas);          // label missed extreme-points (type)
             let ansExtL = new LabelObj(id+"foundExtL", ansExtPts, foundLabels, {"color": foundLabelColor, "dy": [15] }, canvas);    // label found extreme points (type)
             let cordL = new LabelObj(id+"cordL", cords, cordLabelTxt, {"dy": [-10]}, canvas);   // label cordinates for al points (answer + missed extreme-points)
 
+                /* create label for showing correct graph function*/ 
             let fxLabelColor = "black";     
             let fxLabel = "";
             for(let i=0; i<fxOptions.length; i++){
@@ -344,29 +345,36 @@ function hidden_graph_tangentMulti( id, rootDiv, extremeN, dataPts, fx, fxOption
 }
 
 
+    /* Initialize excercise introduction */
 function exc_intro(rootDiv){
 
     set_header(false);
+    let root = document.getElementById("content");
+
+    if(intro !== null){
+        root.appendChild(intro.containerDiv);
+        return
+    }
 
     let pt1_6 = new Point(1.9, 6.1, "max");   // graph max point
     let pt5_4 = new Point(5.3, 4.4, "min"); // graph min point
 
-    let root = document.getElementById("content");
-    let exc = new Excercise("intro");
-    root.appendChild(exc.containerDiv);
-    exc.containerDiv.removeChild(exc.quizDiv);
-    let toExcBtn = new ButtonObj("toExcBtn", "Excercises", exc.containerDiv);
+    intro = new Excercise("intro");
+
+    root.appendChild(intro.containerDiv);
+    intro.containerDiv.removeChild(intro.quizDiv);
+    let toExcBtn = new ButtonObj("toExcBtn", "Excercises", intro.containerDiv);
     toExcBtn.addListener(()=>{
         set_header();
         togle_excercises(0)}
     );
 
-    let header = new Paragraph("IntroHeader", "Introudktion till övning: Tangenter och Extrempunkter", exc.headerDiv);
+    let header = new Paragraph("IntroHeader", "Introudktion till övning: Tangenter och Extrempunkter", intro.headerDiv);
 
     let fx = (x)=>{ return x**3/12 - 0.9*x**2 + 2.5*x + 4 };
     let xRange = [-3, 10];
 
-    let canvas = new CanvasObj("introCanvas", width, height, margin, Xrange, [-5, 10], exc.svgDiv.id );
+    let canvas = new CanvasObj("introCanvas", width, height, margin, Xrange, [-5, 10], intro.svgDiv.id );
     let chart = new ChartObj("introChart", {}, canvas );
     let graph = new GraphObj("introGraph", fx, xRange, {}, canvas);
     let tangent = new TangentObj("introTangent", fx, {"x0": 0.5, "length":50}, canvas, graph);
@@ -389,7 +397,7 @@ function exc_intro(rootDiv){
         "<b>4:</b> Vi kan se vilken vad en extrempunkt har för typ (min, max eller teras) genom att se vilket tecken (+ eller -) lutningen har innan och efter"
     ];
 
-    let introP = new Paragraph("introP", introTxt[0], exc.figTxtDiv);
+    let introP = new Paragraph("introP", introTxt[0], intro.figTxtDiv);
 
     let step0 = ()=>{
 
@@ -509,7 +517,7 @@ function exc_intro(rootDiv){
     let stateLbl = document.createElement("h3");
 
     let I = 0;
-    let nextBtn = new ButtonObj("introNext", "next", exc.controlDiv);
+    let nextBtn = new ButtonObj("introNext", "next", intro.controlDiv);
     nextBtn.addListener((obj)=>{
 
         I++;
@@ -525,9 +533,9 @@ function exc_intro(rootDiv){
     });
 
     stateLbl.innerHTML = `${I+1}/${stepS.length}`;
-    exc.controlDiv.appendChild(stateLbl);
+    intro.controlDiv.appendChild(stateLbl);
 
-    let resetBtn = new ButtonObj("introReset", "reset", exc.controlDiv);
+    let resetBtn = new ButtonObj("introReset", "reset", intro.controlDiv);
     resetBtn.addListener((obj)=>{
 
         I = 0;
