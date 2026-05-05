@@ -1,25 +1,26 @@
 
     /* SVG sizing parameters */
-const margin = { top: 40, right: 10, bottom: 10, left: 30 };
-const width = 800;
-const height = 500;
+const margin = { top: 40, right: 10, bottom: 10, left: 30 };    // SVG margin
+const width = 800;  // SVG width
+const height = 500; // SVG height
 
 var extremeDict = ["min", "max", "teras"] // String (labels) denoting extreme points
 
-var excerciseFx = [tangX3_2, tangX2_1, tangX3_1, tangX2_2];
-var ExcerciseN = excerciseFx.length;
-var excercises = new Array(ExcerciseN).fill(null);
+var excerciseFx = [tangX3_2, tangX2_1, tangX3_1, tangX2_2]; // Excercises initlization functions
+var ExcerciseN = excerciseFx.length;                        // Number of excercises
+var excercises = new Array(ExcerciseN).fill(null);          // Excerices list; store excercises class instances
 
-
+var headerElements = {};
 
 function tangX3_2(rootName="content"){  // create / set excercise 1xw
 
-    let root = document.getElementById(rootName);
+    let root = document.getElementById(rootName);           // Excercises root div
     
     let fx = (x)=>{return x**3/12 - 0.9*x**2 + 2.5*x + 4};  // graph function
 
-    let pt1_6 = new Point(1.9, 6.1, "max");   // graph max point
-    let pt5_4 = new Point(5.3, 4.4, "min"); // graph min point
+        /* answer option points */
+    let pt1_6 = new Point(1.9, 6.1, "max");     // graph max point
+    let pt5_4 = new Point(5.3, 4.4, "min");     // graph min point
     let pt0_0 = new Point(0.0, 0.0, "");
     let pt4_1 = new Point(4.4, 1.9, "");
     let pt3_6 = new Point(3.2, 6.4, "");
@@ -27,8 +28,8 @@ function tangX3_2(rootName="content"){  // create / set excercise 1xw
 
     let data = [pt0_0, pt1_6, pt3_6, pt4_1, pt5_4, pt6_5];  // answer (options) corindate points 
 
-    let fxLabels = ["(1/4)x^2  - 1.8x + 2.5", "(1/12)x^3 - 0.9x^2 + 2.5x + 4", "-x^2 + 3x + 2"];
-    let fxOptions = get_options(fxLabels, fxLabels, [0, 1, 0]);
+    let fxLabels = ["(1/4)x^2  - 1.8x + 2.5", "(1/12)x^3 - 0.9x^2 + 2.5x + 4", "-x^2 + 3x + 2"];    // Function (options) labels 
+    let fxOptions = get_options(fxLabels, fxLabels, [0, 1, 0]);                                     // Function options
 
     return hidden_graph_tangent("Excercise1", root, 2, data, fx, fxOptions);
 
@@ -41,6 +42,7 @@ function tangX2_1(rootName = "content"){
     
     let fx = (x)=>{return x**2/4 - 3*x/2 + 5 }; // graph function
 
+        /* answer option points */
     let pt0_0 = new Point(0.0, 0.0, "");
     let pt1_6 = new Point(1.9, 6, "");
     let pt3_2 = new Point(3.0, 2.7, "min"); // graph min point
@@ -50,8 +52,8 @@ function tangX2_1(rootName = "content"){
 
     let data = [pt0_0, pt1_6, pt3_2, pt3_6, pt4_1, pt6_5]; // answer (options) corindate points 
 
-    let fxLabels = ["(1/4)x^2  - 1.8x + 2.5 ", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"]; 
-    let fxOptions = get_options(fxLabels, fxLabels, [1, 0, 0]);
+    let fxLabels = ["(1/4)x^2  - 1.8x + 2.5 ", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];  // Function (options) labels 
+    let fxOptions = get_options(fxLabels, fxLabels, [1, 0, 0]);                                 // Function options
 
     return hidden_graph_tangent("Excercise2", root, 1, data, fx, fxOptions);
 
@@ -64,6 +66,7 @@ function tangX3_1(rootName="content"){
 
     let fx = (x)=>{return x**3/3 - 2.5*x**2 + 6.25*x};  // graph function
 
+        /* answer option points */
     let pt0_0 = new Point(0.0, 0.0, "");
     let pt1_5 = new Point(1.7, 5.2, "");
     let pt2_5 = new Point(2.5, 5.2, "teras");   
@@ -73,8 +76,8 @@ function tangX3_1(rootName="content"){
 
     let data = [pt0_0, pt1_5, pt2_5, pt3_2, pt3_6, pt4_1]; // answer (options) corindate points 
 
-    let fxLabels = ["x^2 - 5x +6.25", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];
-    let fxOptions = get_options(fxLabels, fxLabels, [0, 0, 1]);
+    let fxLabels = ["x^2 - 5x +6.25", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];    // Function (options) labels 
+    let fxOptions = get_options(fxLabels, fxLabels, [0, 0, 1]);                          // Function options
 
     return hidden_graph_tangent("Excercise3", root, 1, data, fx, fxOptions);
 
@@ -87,6 +90,7 @@ function tangX2_2(rootName="content"){
 
     let fx = (x)=>{return -1*x**2 + 3*x + 2};
 
+        /* answer option points */
     let pt0_0 = new Point(0.0, 0.0, "");
     let pt1_5 = new Point(1.5, 4.2, "max"); // graph teras point
     let pt3_2 = new Point(3.0, 2.7, ""); 
@@ -96,8 +100,8 @@ function tangX2_2(rootName="content"){
 
     let data = [pt0_0, pt1_5, pt3_2, pt3_6, pt4_1, pt6_5];
 
-    let fxLabels = ["x^2 - 5x +6.25", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];
-    let fxOptions = get_options(fxLabels, fxLabels, [0, 1, 0]);
+    let fxLabels = ["x^2 - 5x +6.25", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];   // Function (options) labels 
+    let fxOptions = get_options(fxLabels, fxLabels, [0, 1, 0]);                         // Function options
 
     return hidden_graph_tangent("Excercise3", root, 1, data, fx, fxOptions);
 
@@ -114,6 +118,15 @@ function graph_tangent_intor(id, rootDiv, extremeN, dataPts, fx, fxOptions){
 function hidden_graph_tangent(id, rootDiv, extremeN, dataPts, fx, fxOptions, xRange=[-3, 10], yRange=[-5, 10]){
 
     let excercise = new Excercise(id);
+
+    let toIntroBtn = new ButtonObj("toIntroBtn", "Intro", excercise.containerDiv);  
+    toIntroBtn.addListener(()=>{
+            while(rootDiv.lastChild){
+                rootDiv.removeChild(rootDiv.lastChild);
+            }
+            exc_intro();
+        }
+    );
 
         /* excercise description texts */
     let headerTxt = "Figuren nedan visar tangenten till en graf (ej utritad). Tangentlinjen lutningen är lika med grafens lutningen i markerad punkt (tangeringspunkten). Tangenten (tangeringspunkten) kan flyttas längst grafen med hjälp a slidern under figuren. Använd tangenten och försök svara på frågorna om grafen";
@@ -333,12 +346,20 @@ function hidden_graph_tangentMulti( id, rootDiv, extremeN, dataPts, fx, fxOption
 
 function exc_intro(rootDiv){
 
+    set_header(false);
+
     let pt1_6 = new Point(1.9, 6.1, "max");   // graph max point
     let pt5_4 = new Point(5.3, 4.4, "min"); // graph min point
 
     let root = document.getElementById("content");
     let exc = new Excercise("intro");
     root.appendChild(exc.containerDiv);
+    exc.containerDiv.removeChild(exc.quizDiv);
+    let toExcBtn = new ButtonObj("toExcBtn", "Excercises", exc.containerDiv);
+    toExcBtn.addListener(()=>{
+        set_header();
+        togle_excercises(0)}
+    );
 
     let header = new Paragraph("IntroHeader", "Introudktion till övning: Tangenter och Extrempunkter", exc.headerDiv);
 
@@ -372,8 +393,6 @@ function exc_intro(rootDiv){
 
     let step0 = ()=>{
 
-        console.log("0");
-
         tangent.update( new UpdateNode({"width": 2.5, "x0": 0.5}, 500));
         tangentM.update( new UpdateNode({"r": [5]}, 10));
         tangentL.assigne_to_canvas(canvas);
@@ -387,8 +406,6 @@ function exc_intro(rootDiv){
 
 
     let step1 = ()=>{
-
-        console.log("1");
 
         let seq = [];
         seq.push( ()=>{ tangent.translate_center(3, ()=>{seqStep(1)}, 20) } );
@@ -489,6 +506,8 @@ function exc_intro(rootDiv){
     exc.controlDiv.appendChild(btn.container);
     */
 
+    let stateLbl = document.createElement("h3");
+
     let I = 0;
     let nextBtn = new ButtonObj("introNext", "next", exc.controlDiv);
     nextBtn.addListener((obj)=>{
@@ -501,13 +520,20 @@ function exc_intro(rootDiv){
              obj.button.disabled = true;
         }
 
+        stateLbl.innerHTML = `${I+1}/${stepS.length}`;
+
     });
+
+    stateLbl.innerHTML = `${I+1}/${stepS.length}`;
+    exc.controlDiv.appendChild(stateLbl);
+
     let resetBtn = new ButtonObj("introReset", "reset", exc.controlDiv);
     resetBtn.addListener((obj)=>{
 
         I = 0;
         togleIntro(I);
         nextBtn.button.disabled = false;
+        stateLbl.innerHTML = `${I+1}/${stepS.length}`;
 
     });
 
@@ -534,18 +560,41 @@ function togle_excercises(i){
 }
 
 
-function initialize_excercises(){
+function set_header(excercise=true){
+
+    let header = document.getElementById("header");
+
+    if( headerElements["stText"] === undefined ){
+         headerElements["stText"] = new Paragraph("headerStTxt", "", header);
+    }
+
+    if( headerElements["excTogle"] === undefined){
+        headerElements["excTogle"] = new ButtonStepObj("excTogleBtn", "", [1, excercises.length-1], 1, 1);
+        headerElements["excTogle"].addListener( (val)=>{ togle_excercises(val-1) } );
+    }
+
+    if(excercise){
+
+        headerElements["stText"].P.innerHTML = "Övning";
+        headerElements["excTogle"].set_value(1);
+        headerElements["excTogle"].assignToDiv(document.getElementById("header"));
 
 
+    } else{
+
+        headerElements["excTogle"].remove_from_div();
+        headerElements["stText"].P.innerHTML = "intro";
+
+    }
 
 
 }
 
-
 exc_intro()
 
+/*
 let togleBtn = new ButtonStepObj("toggleExcercise", "", [1, excerciseFx.length], 1, 1, "back", "next");
 togleBtn.assignToDiv(document.getElementById("header"));
 togleBtn.addListener( (val)=>{ togle_excercises(val-1) } );
-
+*/
 

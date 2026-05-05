@@ -293,7 +293,7 @@ class ButtonStepObj{
     constructor(id, labelName, valRange, stepSize, value, btnLabelL="<", btnLabelR=">", parentDiv=null, className=""){
 
         this.id = id;
-        this.parent = null;             
+        this.parentDiv = null;             
         this.range = valRange;          // min and max values: [min, max]
         this.stepSize = stepSize;       // value to decrease, increase by on click
         this.val = value;               // curent value
@@ -348,6 +348,17 @@ class ButtonStepObj{
     }
 
 
+    remove_from_div(){
+
+        if(this.parentDiv === null){
+            return
+        }
+
+        this.parentDiv.removeChild(this.container);
+
+    }
+
+
     onClick(side){
 
         if(side === "L"){   // left button clicked => decreae value
@@ -397,8 +408,14 @@ class ButtonStepObj{
         if(active){
             if(this.val - this.stepSize < this.range[0]){
                 this.btnL.disabled = true;
-            } else if(this.val + this.stepSize > this.range[1]){
+            } else {
+                this.btnL.disabled = false;
+            }
+                
+            if(this.val + this.stepSize > this.range[1]){
                 this.btnR.disabled = true;
+            }else{
+                this.btnR.disabled = false;
             }
         } else{
             this.btnL.disabled = false;
@@ -416,6 +433,15 @@ class ButtonStepObj{
         }
         //this.label.innerHTML = `${this.labelName}${this.val}`;  // set display text
         this.label.innerHTML = labelText;
+
+    }
+
+
+    set_value(value){
+
+        this.val = value;
+        this.set_label();
+        this.enable();
 
     }
 
