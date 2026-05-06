@@ -270,7 +270,7 @@ class ButtonObj{
     }
 
 
-    removeAllListeners(){
+    remove_all_listeners(){
 
         this.listener = [];
 
