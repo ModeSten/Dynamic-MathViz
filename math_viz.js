@@ -946,7 +946,6 @@ class ExstensionObj{
 
 
     update(state){
-  
 
         let node = state;     
         let duration = 0; 
@@ -968,12 +967,13 @@ class ExstensionObj{
             
         }
 
+        this.notify_children(duration);
+
         if(this.svgObj !== null){
             return this.svgObj.update(state);   
         }
 
         // update child (visual) object; pass root update node
-        this.notify_children(duration);
 
     }
 
