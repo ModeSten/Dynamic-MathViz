@@ -283,6 +283,17 @@ class ButtonObj{
 
     }
 
+    remove_from_div(){
+
+        if(this.parentDiv === null){
+            return
+        }
+
+        this.parentDiv.removeChild(this.container);
+        this.parentDiv = null;
+
+    }
+
 
 }
 

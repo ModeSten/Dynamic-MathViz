@@ -120,12 +120,13 @@ function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, 
 
     let excercise = new Excercise(id);  
 
-    let toIntroBtn = new ButtonObj("toIntroBtn", "Intro", excercise.containerDiv);  
+    let toIntroBtn = new ButtonObj("toIntroBtn", "Intro", excercise.containerDiv, "exc_introBtn");  
     toIntroBtn.addListener(()=>{
             while(rootDiv.lastChild){
                 rootDiv.removeChild(rootDiv.lastChild);
             }
             exc_intro();
+            window.scrollTo(0, 0);
         }
     );
 
@@ -322,10 +323,14 @@ function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, 
             let legenMarker = new MarkerObj(id+"legMarker", legMrkPos, {"color": legCol, "r": [4]}, canvas);
 
 
-            FigureP.P.innerHTML = figureTxtAns; // Update figure text
-            obj.remove_all_listeners();
-            obj.button.textContent = "nästa uppgift";
-            obj.addListener(()=>{ window.scrollTo(0, 0); togle_excercises(i+1); headerElements["excTogle"].set_value(i+1)});
+            if(i+1 < excercise.lenght){
+                FigureP.P.innerHTML = figureTxtAns; // Update figure text
+                obj.remove_all_listeners();
+                obj.button.textContent = "nästa uppgift";
+                obj.addListener(()=>{ window.scrollTo(0, 0); togle_excercises(i+1); headerElements["excTogle"].set_value(i+1)});
+            } else{
+                obj.remove_from_div();
+            }
 
             window.scrollTo(0, 0);  // Scroll to window top to display visual elements
 
@@ -365,11 +370,13 @@ function exc_intro(rootDiv){
     intro = new Excercise("intro");
 
     root.appendChild(intro.containerDiv);
-    intro.containerDiv.removeChild(intro.quizDiv);
-    let toExcBtn = new ButtonObj("toExcBtn", "Excercises", intro.containerDiv);
+    //intro.containerDiv.removeChild(intro.quizDiv);
+    let toExcBtn = new ButtonObj("toExcBtn", "Övningar", intro.quizDiv, "exc_introBtn");
     toExcBtn.addListener(()=>{
         set_header();
-        togle_excercises(0)}
+        togle_excercises(0);
+        window.scrollTo(0, 0);
+    }
     );
 
     let header = new Paragraph("IntroHeader", "Introudktion till övning: Tangenter och Extrempunkter", intro.headerDiv);
@@ -588,17 +595,24 @@ function set_header(excercise=true){
         headerElements["excTogle"].addListener( (val)=>{ togle_excercises(val-1) } );
     }
 
-    if(excercise){
+    if( headerElements["excBtn"] === undefined ){
+         headerElements["excBtn"] = new ButtonObj("excBtnHeader", "Övningar");
+         headerElements["excBtn"].addListener(()=>{ set_header(); togle_excercises(0); window.scrollTo(0, 0); });
+    }
 
+    if(excercise){
+        
+        headerElements["excBtn"].remove_from_div();
         headerElements["stText"].P.innerHTML = "Övning";
         headerElements["excTogle"].set_value(1);
-        headerElements["excTogle"].assignToDiv(document.getElementById("header"));
+        headerElements["excTogle"].assignToDiv(header);
 
 
     } else{
 
         headerElements["excTogle"].remove_from_div();
         headerElements["stText"].P.innerHTML = "intro";
+        headerElements["excBtn"].assignToDiv(header);
 
     }
 
