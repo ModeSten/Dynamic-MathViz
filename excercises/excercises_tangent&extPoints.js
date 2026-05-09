@@ -109,18 +109,10 @@ function tangX2_2(i, rootName="content"){
 }
 
 
-function graph_tangent_intor(id, rootDiv, extremeN, dataPts, fx, fxOptions){
+    // create questions for hidden graph excercises
+function hiddenGraph_questions(exc, headerTxt, figureTxt, figureTxtAns, quizTxt, extremeN, dataPts, fxOptions){
 
-
-
-}
-
-    /* create "tangent and hidden graph" excercise */
-function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, xRange=[-3, 10], yRange=[-5, 10]){
-
-    let excercise = new Excercise(id);  
-
-    let toIntroBtn = new ButtonObj("toIntroBtn", "Intro", excercise.containerDiv, "exc_introBtn");  
+    let toIntroBtn = new ButtonObj("toIntroBtn", "Intro", exc.containerDiv, "exc_introBtn");  
     toIntroBtn.addListener(()=>{
             while(rootDiv.lastChild){
                 rootDiv.removeChild(rootDiv.lastChild);
@@ -130,50 +122,40 @@ function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, 
         }
     );
 
-        /* excercise description texts */
-    let headerTxt = "Figuren nedan visar tangenten till en graf / kurva (ej utritad). Tangentlinjens lutningen är lika med grafens lutningen i en utmarkerad punkt (tangeringspunkten). Tangenten (tangeringspunkten) kan flyttas utmed grafen med hjälp a slidern under figuren. Utgå från tangenten och svara på frågorna om grafen";
-    let figureTxt = " <b>Figur 1:</b> Tangenten till en dold graf i en punkt (x, y). 'Tangeringspunkten' (x, y) är markerad med en en svart circle och tangentens lutning (k) är utritad";
-    let figureTxtAns = " <b>Figur 1:</b> Tangenten till en graf i en punkt (x, y). Punkten (x, y), i vilken tangent skär grafen är markerad med en circle och tangentens lutning (k) är utritad. Utmarkerat är punkterna angivna i Q2 + eventuella extrempunkter som inte angets i Q2";
-    let quizTxt = `<b>Uppgift${i}:</b> Utgå från tangentlinjen och svara på följande frågor om den dold grafen`;
-
         /* Text Paragraphs */
-    let headerP = new Paragraph(id+"HeaderP", headerTxt, excercise.headerDiv);  
-    let FigureP = new Paragraph(id+"FigureP", figureTxt, excercise.figTxtDiv);
-    let quizP = new Paragraph(id+"QuizP", quizTxt, excercise.qHeaderDiv);
-    
-        /* graph control (input) elements*/
-    let tangentSlider = new SliderObj(id, xRange, 2, "x= ", excercise.controlDiv);
-    excercise.inputs["tangentSlider"] = tangentSlider;
+    let headerP = new Paragraph(exc.id+"HeaderP", headerTxt, exc.headerDiv);  
+    let FigureP = new Paragraph(exc.id+"FigureP", figureTxt, exc.figTxtDiv);
+    let quizP = new Paragraph(exc.id+"QuizP", quizTxt, exc.qHeaderDiv);
 
         /* Quesion 1: Number of extreme points*/
     let q1Txt = "<b>Q1:</b> Hur många extrempunkter har grafen?"
     let q1Points = new Array(4).fill(0);    // initalize al option points to 0
     q1Points[extremeN-1] = 1;               // One point for correct number of extreme points
     let q1Opts = get_options([" 1", " 2", " 3"], [1, 2, 3], q1Points);
-    let q1 = new QuestionSelectOne(id+"Q1", q1Txt, 1, 1, [q1Opts]);
-    excercise.add_question(q1);
+    let q1 = new QuestionSelectOne(exc.id+"Q1", q1Txt, 1, 1, [q1Opts]);
+    exc.add_question(q1);
 
         /* Question 2: identifying extrem points*/
     let q2Txt = "<b>Q2:</b> Vilka är grafens extrempunkter?<br>Svar i formatetet (x, y) och värdena är rundade till en decimal<br>Välj samma antal punkter som svra ovan (Q1)";
     let q2Opts = get_xy_options(dataPts, 1);
-    let q2 = new QusetionMultiSelect(id+"Q2", q2Txt, 1, 1, q2Opts);
-    excercise.add_question(q2);
+    let q2 = new QusetionMultiSelect(exc.id+"Q2", q2Txt, 1, 1, q2Opts);
+    exc.add_question(q2);
 
         /* Question 3: Type of extreme points */ 
     let q3Txt = "<b>Q3:</b> För varje extrempunkt, ange om det är en min, max eller teraspunkt<br>Välj först vilka extrempunkterna är (Q2)";
-    let q3 = new QuestionMenSelect(id+"Q3", q3Txt, 0, 1, [], []);
-    excercise.add_question(q3);
+    let q3 = new QuestionMenSelect(exc.id+"Q3", q3Txt, 0, 1, [], []);
+    exc.add_question(q3);
 
         /* Question 4: Graph function */
     let q4Txt = "<b>Q4:</b> Vilken är grafens function?";
     let q4Opts = get_options([" x2", " x3", " sin"], ["x2", "x3", "sin"], [0, 1, 0]);
-    let q4 = new QuestionSelectOne(id+"q4", q4Txt, 1, 1, [fxOptions]);
-    excercise.add_question(q4);
+    let q4 = new QuestionSelectOne(exc.id+"q4", q4Txt, 1, 1, [fxOptions]);
+    exc.add_question(q4);
 
         /* Quiz Footer elements */
-    let checkAnsBtn = new ButtonObj(id+"CheckAns", "kolla svar", excercise.qFooterDiv);
-    let scoreP = new Paragraph(id+"ScoreP", "", excercise.qFooterDiv);
-    excercise.quizDiv.appendChild(excercise.qFooterDiv);
+    exc.inputs["checkAns"] = new ButtonObj(exc.id+"CheckAns", "kolla svar", exc.qFooterDiv);
+    exc.inputs["scoreP"] = new Paragraph(exc.id+"ScoreP", "", exc.qFooterDiv);
+    exc.quizDiv.appendChild(exc.qFooterDiv);
 
         /* Question listners handling dependency between questions: updating subsequent questions based on answer */
     q1.addListener((q)=>{
@@ -208,13 +190,33 @@ function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, 
 
         });
 
+}
 
-    rootDiv.appendChild(excercise.containerDiv);    // add excercise container to root div
+
+    // create "tangent and hidden graph" excercise 
+function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, xRange=[-3, 10], yRange=[-5, 10]){
+
+    let exc = new Excercise(id);  
+
+        // excercise description texts 
+    let headerTxt = "Figuren nedan visar tangenten till en graf / kurva (ej utritad). Tangentlinjens lutningen är lika med grafens lutningen i en utmarkerad punkt (tangeringspunkten). Tangenten (tangeringspunkten) kan flyttas utmed grafen med hjälp a slidern under figuren. Utgå från tangenten och svara på frågorna om grafen";
+    let figureTxt = " <b>Figur 1:</b> Tangenten till en dold graf i en punkt (x, y). 'Tangeringspunkten' (x, y) är markerad med en en svart circle och tangentens lutning (k) är utritad";
+    let figureTxtAns = " <b>Figur 1:</b> Tangenten till en graf i en punkt (x, y). Punkten (x, y), i vilken tangent skär grafen är markerad med en circle och tangentens lutning (k) är utritad. Utmarkerat är punkterna angivna i Q2 + eventuella extrempunkter som inte angets i Q2";
+    let quizTxt = `<b>Uppgift${i}:</b> Utgå från tangentlinjen och svara på följande frågor om den dold grafen`;
+
+    hiddenGraph_questions(exc, headerTxt, figureTxt, figureTxtAns, quizTxt, extremeN, dataPts, fxOptions);  // create questions
+
+           // graph control (input) elements
+    let tangentSlider = new SliderObj(id, xRange, 2, "x= ", exc.controlDiv);
+    exc.inputs["tangentSlider"] = tangentSlider;
+
+
+    rootDiv.appendChild(exc.containerDiv);    // add excercise container to root div
 
 
         /* SVG elements */
 
-    let canvas = new CanvasObj(id+"Canvas", width, height, margin, xRange, yRange, excercise.svgDiv.id);
+    let canvas = new CanvasObj(id+"Canvas", width, height, margin, xRange, yRange, exc.svgDiv.id);
     let chart = new ChartObj(id+"Chart",{}, canvas);
     let graph = new GraphObj(id+"Graph", fx, xRange, {"draw": true, "drawT": 0}, canvas);
     let tangent = new TangentObj(id+"Tangent", fx, {"x0": 2, "length": 100, "color": "black"}, canvas, graph);
@@ -229,18 +231,18 @@ function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, 
 
 
         /* Check answers and reveal answer visual elements */
-    checkAnsBtn.addListener((obj)=>{
+    exc.inputs["checkAns"].addListener((obj)=>{
 
-        if(!excercise.check()){ // run answer check and see if all questions have been answered => true
-            scoreP.P.innerHTML = "En eller flera frågor ej besvarade";
+        if(!exc.check()){ // run answer check and see if all questions have been answered => true
+            exc.inputs["scoreP"].P.innerHTML = "En eller flera frågor ej besvarade";
         } else{
 
-            scoreP.P.innerHTML = `${excercise.R}/${excercise.P} P`;     // Display scored points out of total possible
+            exc.inputs["scoreP"].P.innerHTML = `${exc.R}/${exc.P} P`;     // Display scored points out of total possible
 
             graph.update(new UpdateNode({"drawT": 1}, 1500));   // Reveal hidden graph
 
             let ansDataPts = [];    // answered pints
-            q2.answer.forEach((ans)=>{ansDataPts.push(ans.value)});
+            exc.questions[1].answer.forEach((ans)=>{ansDataPts.push(ans.value)}); // q2
 
             let missedExtPts = [];  // Position of missed (not in answer) extreme-points
             let ansExtPts = [];     // Position of found (in answer) extreme-points
@@ -269,7 +271,7 @@ function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, 
                 if(extremeDict.includes(d.type)){       // point is an extreme-point
                     ansExtPts.push([d.x, d.y]);
                     foundLabels.push(d.type);
-                    if(d.type === q3.answer[i].value){  // Point type (min, max or teras) corectly identified
+                    if(d.type === exc.questions[2].answer[i].value){  // Point type (min, max or teras) corectly identified
                         foundLabelColor.push("black");
                     } else{ 
                         foundLabelColor.push("red");
@@ -300,7 +302,7 @@ function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, 
                     break;
                  }
             };
-            if(q4.answer[0].points < 1){ fxLabelColor = "red"; };
+            if(exc.questions[3].answer[0].points < 1){ fxLabelColor = "red"; };
             let fxL = new LabelObj(id+"fxLabel", [[0.5, 9]], ["f(x)= "+fxLabel], {"anchors": ["start"], "color": [fxLabelColor]}, canvas);  // Label showing correct graph function 
 
                 /* set answer legend */
@@ -323,7 +325,7 @@ function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, 
             let legenMarker = new MarkerObj(id+"legMarker", legMrkPos, {"color": legCol, "r": [4]}, canvas);
 
 
-            if(i+1 < excercise.lenght){
+            if(i+1 < exc.lenght){
                 FigureP.P.innerHTML = figureTxtAns; // Update figure text
                 obj.remove_all_listeners();
                 obj.button.textContent = "nästa uppgift";
@@ -339,13 +341,20 @@ function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, 
     });
 
 
-    return excercise;
+    return exc;
 
 
 }
 
 
-function hidden_graph_tangentMulti( id, rootDiv, extremeN, dataPts, fx, fxOptions, xRange=[-3, 10], yRange=[-5, 10] ){
+function hidden_graph_derivata(id, i, rootDiv, extremN, dataPts, fx, fxOptions, Xrange=[-3, 10], yRange=[-5, 10]){
+
+
+
+}
+
+
+function hidden_graph_tangentMulti( id, i, rootDiv, extremeN, dataPts, fx, fxOptions, xRange=[-3, 10], yRange=[-5, 10] ){
 
 
 
