@@ -13,100 +13,6 @@ var excercises = new Array(ExcerciseN).fill(null);          // Excerices list; s
 var headerElements = {};    // store header elements that needs referencing
 var intro = null;           // store excercise intro (class object)
 
-function tangX3_2(i, rootName="content"){  // create / set excercise 1xw
-
-    let root = document.getElementById(rootName);           // Excercises root div
-    
-    let fx = (x)=>{return x**3/12 - 0.9*x**2 + 2.5*x + 4};  // graph function
-
-        /* answer option points */
-    let pt1_6 = new Point(1.9, 6.1, "max");     // graph max point
-    let pt1_4 = new Point(1.5, 4.2, "");
-    let pt3_6 = new Point(3.8, 6.4, "");
-    let pt4_1 = new Point(4.4, 1.9, "");
-    let pt5_4 = new Point(5.3, 4.4, "min");     // graph min point
-    let pt6_5 = new Point(6.3, 5.2, "");
-
-    let data = [pt1_4, pt1_6, pt3_6, pt4_1, pt5_4, pt6_5];  // answer (options) corindate points 
-
-    let fxLabels = ["(1/4)x^2  - 1.8x + 2.5", "(1/12)x^3 - 0.9x^2 + 2.5x + 4", "-x^2 + 3x + 2"];    // Function (options) labels 
-    let fxOptions = get_options(fxLabels, fxLabels, [0, 1, 0]);                                     // Function options
-
-    return hidden_graph_tangent("Excercise1", i, root, 2, data, fx, fxOptions);
-
-}
-
-
-function tangX2_1(i, rootName = "content"){
-
-    let root = document.getElementById(rootName);   
-    
-    let fx = (x)=>{return x**2/4 - 3*x/2 + 5 }; // graph function
-
-        /* answer option points */
-    let pt1_4 = new Point(1.5, 4.3, "");
-    let pt1_6 = new Point(1.9, 6.1, "");
-    let pt3_2 = new Point(3.0, 2.7, "min"); // graph min point
-    let pt3_6 = new Point(3.2, 6.4, "");
-    let pt4_1 = new Point(4.4, 2.3, "");
-    let pt6_5 = new Point(6.3, 5.2, "");
-
-    let data = [pt1_4, pt1_6, pt3_2, pt3_6, pt4_1, pt6_5]; // answer (options) corindate points 
-
-    let fxLabels = ["(1/4)x^2  - 1.8x + 2.5 ", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];  // Function (options) labels 
-    let fxOptions = get_options(fxLabels, fxLabels, [1, 0, 0]);                                 // Function options
-
-    return hidden_graph_tangent("Excercise2", i,  root, 1, data, fx, fxOptions);
-
-}
-
-
-function tangX3_1(i, rootName="content"){
-
-    let root = document.getElementById(rootName);
-
-    let fx = (x)=>{return x**3/3 - 2.5*x**2 + 6.25*x};  // graph function
-
-        /* answer option points */
-    let pt1_4 = new Point(1.5, 4.8, "");
-    let pt1_5 = new Point(1.7, 5.2, "");
-    let pt2_5 = new Point(2.5, 5.2, "teras");   // graph extreme point
-    let pt3_2 = new Point(3.6, 2.7, ""); 
-    let pt3_6 = new Point(3.6, 5.8, "");
-    let pt4_1 = new Point(4.4, 6.8, "");
-
-    let data = [pt1_4, pt1_5, pt2_5, pt3_2, pt3_6, pt4_1]; // answer (options) corindate points 
-
-    let fxLabels = ["x^2 - 5x +6.25", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];    // Function (options) labels 
-    let fxOptions = get_options(fxLabels, fxLabels, [0, 0, 1]);                          // Function options
-
-    return hidden_graph_tangent("Excercise3", i, root, 1, data, fx, fxOptions);
-
-}
-
-
-function tangX2_2(i, rootName="content"){
-
-    let root = document.getElementById(rootName);
-
-    let fx = (x)=>{return -1*x**2 + 3*x + 2};   // graph function
-
-        /* answer option points */
-    let pt1_1 = new Point(1.4, 1.2, "");
-    let pt1_5 = new Point(1.5, 4.2, "max"); // graph teras point
-    let pt3_2 = new Point(3.0, 2.7, ""); 
-    let pt3_6 = new Point(3.2, 6.4, "");
-    let pt4_1 = new Point(4.4, 1.9, "");
-    let pt6_5 = new Point(6.3, 5.2, "");
-
-    let data = [pt1_1, pt1_5, pt3_2, pt3_6, pt4_1, pt6_5];
-
-    let fxLabels = ["x^2 - 5x +6.25", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];   // Function (options) labels 
-    let fxOptions = get_options(fxLabels, fxLabels, [0, 1, 0]);                         // Function options
-
-    return hidden_graph_tangent("Excercise3", i, root, 1, data, fx, fxOptions);
-
-}
 
 
     // create questions for hidden graph excercises
@@ -287,7 +193,6 @@ function hidde_graph_ansReveal(exc, dataPts, canvas, graph, fxOptions){
 function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, xRange=[-3, 10], yRange=[-5, 10]){
 
     let exc = new Excercise(id);  
-    console.log(i);
 
     let toIntroBtn = new ButtonObj("toIntroBtn", "Intro", exc.containerDiv, "exc_introBtn");  
     toIntroBtn.addListener(()=>{
@@ -356,10 +261,10 @@ function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, 
 }
 
 
-function hidden_graph_derivata(id, i, rootDiv, extremN, dataPts, fx, fxOptions, Xrange=[-3, 10], yRange=[-5, 10]){
+function hidden_graph_derivata(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, xRange=[-3, 10], yRange=[-5, 10]){
 
-    let exc = new Excercise(id);
 
+    let exc = new Excercise(id);  
 
     let toIntroBtn = new ButtonObj("toIntroBtn", "Intro", exc.containerDiv, "exc_introBtn");  
     toIntroBtn.addListener(()=>{
@@ -371,8 +276,47 @@ function hidden_graph_derivata(id, i, rootDiv, extremN, dataPts, fx, fxOptions, 
         }
     );
 
+        // excercise description texts 
+    let headerTxt = "Figuren nedan visar tangenten till en graf / kurva (ej utritad). Tangentlinjens lutningen är lika med grafens lutningen i en utmarkerad punkt (tangeringspunkten). Tangenten (tangeringspunkten) kan flyttas utmed grafen med hjälp a slidern under figuren. Utgå från tangenten och svara på frågorna om grafen";
+    let figureTxt = " <b>Figur 1:</b> Tangenten till en dold graf i en punkt (x, y). 'Tangeringspunkten' (x, y) är markerad med en en svart circle och tangentens lutning (k) är utritad";
+    let figureTxtAns = " <b>Figur 1:</b> Tangenten till en graf i en punkt (x, y). Punkten (x, y), i vilken tangent skär grafen är markerad med en circle och tangentens lutning (k) är utritad. Utmarkerat är punkterna angivna i Q2 + eventuella extrempunkter som inte angets i Q2";
+    let quizTxt = `<b>Uppgift${i}:</b> Utgå från tangentlinjen och svara på följande frågor om den dold grafen`;
+
+    hiddenGraph_questions(exc, headerTxt, figureTxt, figureTxtAns, quizTxt, extremeN, dataPts, fxOptions);  // create questions
+
+    rootDiv.appendChild(exc.containerDiv);    // add excercise container to root div
+
+        /* SVG elements */
+    let canvas = new CanvasObj(id+"Canvas", width, height, margin, xRange, yRange, exc.svgDiv.id);
+    let chart = new ChartObj(id+"Chart",{}, canvas);
+    let graph = new GraphObj(id+"Graph", fx, xRange, {"draw": true, "drawT": 0}, canvas);
+    let dx = new DerivativeApxObj(id+"dx", fx, Xrange, {}, canvas);
+    let ddx= new DxApxDataObj(id+"ddx", null, Xrange, {}, canvas, dx);
 
 
+
+        /* Check answers and reveal answer visual elements */
+    exc.inputs["checkAns"].addListener((obj)=>{
+
+        if( hidde_graph_ansReveal(exc, dataPts, canvas, graph, fxOptions) ){
+
+            if(i < excercises.length){
+                    exc.inputs["figureP"].P.innerHTML = figureTxtAns; // Update figure text
+                    obj.remove_all_listeners();
+                    obj.button.textContent = "nästa uppgift";
+                    obj.addListener(()=>{ window.scrollTo(0, 0); togle_excercises(i); headerElements["excTogle"].set_value(i+1)});
+            } else{
+                obj.remove_from_div();
+            }
+
+            window.scrollTo(0, 0);  // Scroll to window top to display visual elements
+
+        }
+
+    });
+
+
+    return exc;
 
 }
 
@@ -653,11 +597,134 @@ function set_header(excercise=true){
 
 }
 
-exc_intro()
 
-/*
-let togleBtn = new ButtonStepObj("toggleExcercise", "", [1, excerciseFx.length], 1, 1, "back", "next");
-togleBtn.assignToDiv(document.getElementById("header"));
-togleBtn.addListener( (val)=>{ togle_excercises(val-1) } );
-*/
+function tangX3_2(i, type="derivata", rootName="content"){  // create / set excercise 1xw
+
+    let root = document.getElementById(rootName);           // Excercises root div
+    
+    let fx = (x)=>{return x**3/12 - 0.9*x**2 + 2.5*x + 4};  // graph function
+
+        /* answer option points */
+    let pt1_6 = new Point(1.9, 6.1, "max");     // graph max point
+    let pt1_4 = new Point(1.5, 4.2, "");
+    let pt3_6 = new Point(3.8, 6.4, "");
+    let pt4_1 = new Point(4.4, 1.9, "");
+    let pt5_4 = new Point(5.3, 4.4, "min");     // graph min point
+    let pt6_5 = new Point(6.3, 5.2, "");
+
+    let data = [pt1_4, pt1_6, pt3_6, pt4_1, pt5_4, pt6_5];  // answer (options) corindate points 
+
+    let fxLabels = ["(1/4)x^2  - 1.8x + 2.5", "(1/12)x^3 - 0.9x^2 + 2.5x + 4", "-x^2 + 3x + 2"];    // Function (options) labels 
+    let fxOptions = get_options(fxLabels, fxLabels, [0, 1, 0]);                                     // Function options
+
+    if(type === "derivata"){
+        return hidden_graph_derivata("excX3_2", i, root, 2, data, fx, fxOptions);
+    } else if(type === "multiTangent"){
+        return hidden_graph_derivata("excX3_2", i, rootDiv, 2, data, fx, fxOptions)
+    }
+
+        return hidden_graph_tangent("excX3_2", i, root, 2, data, fx, fxOptions);
+
+}
+
+
+function tangX2_1(i, type="tangent", rootName = "content"){
+
+    let root = document.getElementById(rootName);   
+    
+    let fx = (x)=>{return x**2/4 - 3*x/2 + 5 }; // graph function
+
+        /* answer option points */
+    let pt1_4 = new Point(1.5, 4.3, "");
+    let pt1_6 = new Point(1.9, 6.1, "");
+    let pt3_2 = new Point(3.0, 2.7, "min"); // graph min point
+    let pt3_6 = new Point(3.2, 6.4, "");
+    let pt4_1 = new Point(4.4, 2.3, "");
+    let pt6_5 = new Point(6.3, 5.2, "");
+
+    let data = [pt1_4, pt1_6, pt3_2, pt3_6, pt4_1, pt6_5]; // answer (options) corindate points 
+
+    let fxLabels = ["(1/4)x^2  - 1.8x + 2.5 ", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];  // Function (options) labels 
+    let fxOptions = get_options(fxLabels, fxLabels, [1, 0, 0]);                                 // Function options
+
+    if(type === "derivata"){
+        return hidden_graph_derivata("excX2_1", i, root, 1, data, fx, fxOptions);
+    } else if(type === "multiTangent"){
+        return hidden_graph_derivata("excX2_1", i, rootDiv, 1, data, fx, fxOptions)
+    }
+
+        return hidden_graph_tangent("excX2_1", i, root, 1, data, fx, fxOptions);
+
+}
+
+
+function tangX3_1(i, type="tangent", rootName="content"){
+
+    let root = document.getElementById(rootName);
+
+    let fx = (x)=>{return x**3/3 - 2.5*x**2 + 6.25*x};  // graph function
+
+        /* answer option points */
+    let pt1_4 = new Point(1.5, 4.8, "");
+    let pt1_5 = new Point(1.7, 5.2, "");
+    let pt2_5 = new Point(2.5, 5.2, "teras");   // graph extreme point
+    let pt3_2 = new Point(3.6, 2.7, ""); 
+    let pt3_6 = new Point(3.6, 5.8, "");
+    let pt4_1 = new Point(4.4, 6.8, "");
+
+    let data = [pt1_4, pt1_5, pt2_5, pt3_2, pt3_6, pt4_1]; // answer (options) corindate points 
+
+    let fxLabels = ["x^2 - 5x +6.25", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];    // Function (options) labels 
+    let fxOptions = get_options(fxLabels, fxLabels, [0, 0, 1]);                          // Function options
+
+    if(type === "derivata"){
+        return hidden_graph_derivata("excX3_1", i, root, 1, data, fx, fxOptions);
+    } else if(type === "multiTangent"){
+        return hidden_graph_derivata("excX3_1", i, rootDiv, 1, data, fx, fxOptions)
+    }
+
+        return hidden_graph_tangent("excX3_1", i, root, 1, data, fx, fxOptions);
+
+}
+
+
+function tangX2_2(i, type="tangent", rootName="content"){
+
+    let root = document.getElementById(rootName);
+
+    let fx = (x)=>{return -1*x**2 + 3*x + 2};   // graph function
+
+        /* answer option points */
+    let pt1_1 = new Point(1.4, 1.2, "");
+    let pt1_5 = new Point(1.5, 4.2, "max"); // graph teras point
+    let pt3_2 = new Point(3.0, 2.7, ""); 
+    let pt3_6 = new Point(3.2, 6.4, "");
+    let pt4_1 = new Point(4.4, 1.9, "");
+    let pt6_5 = new Point(6.3, 5.2, "");
+
+    let data = [pt1_1, pt1_5, pt3_2, pt3_6, pt4_1, pt6_5];
+
+    let fxLabels = ["x^2 - 5x +6.25", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];   // Function (options) labels 
+    let fxOptions = get_options(fxLabels, fxLabels, [0, 1, 0]);                         // Function options
+
+    if(type === "derivata"){
+        return hidden_graph_derivata("excX2_2", i, root, 1, data, fx, fxOptions);
+    } else if(type === "multiTangent"){
+        return hidden_graph_derivata("excX2_2", i, rootDiv, 1, data, fx, fxOptions)
+    }
+
+        return hidden_graph_tangent("excX2_2", i, root, 1, data, fx, fxOptions);
+    
+
+}
+
+
+function derivataX2_1(i, rootName="content"){
+
+}
+
+
+
+
+exc_intro()
 
