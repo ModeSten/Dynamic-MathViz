@@ -112,15 +112,6 @@ function tangX2_2(i, rootName="content"){
     // create questions for hidden graph excercises
 function hiddenGraph_questions(exc, headerTxt, figureTxt, figureTxtAns, quizTxt, extremeN, dataPts, fxOptions){
 
-    let toIntroBtn = new ButtonObj("toIntroBtn", "Intro", exc.containerDiv, "exc_introBtn");  
-    toIntroBtn.addListener(()=>{
-            while(rootDiv.lastChild){
-                rootDiv.removeChild(rootDiv.lastChild);
-            }
-            exc_intro();
-            window.scrollTo(0, 0);
-        }
-    );
 
         /* Text Paragraphs */
     let headerP = new Paragraph(exc.id+"HeaderP", headerTxt, exc.headerDiv);  
@@ -193,10 +184,118 @@ function hiddenGraph_questions(exc, headerTxt, figureTxt, figureTxtAns, quizTxt,
 }
 
 
+function hidde_graph_ansReveal(exc, dataPts, canvas, graph, fxOptions){
+
+    if(!exc.check()){ // run answer check and see if all questions have been answered => true
+        exc.inputs["scoreP"].P.innerHTML = "En eller flera frågor ej besvarade";
+    } else{
+
+        exc.inputs["scoreP"].P.innerHTML = `${exc.R}/${exc.P} P`;     // Display scored points out of total possible
+
+        graph.update(new UpdateNode({"drawT": 1}, 1500));   // Reveal hidden graph
+
+        let ansDataPts = [];    // answered pints
+        exc.questions[1].answer.forEach((ans)=>{ansDataPts.push(ans.value)}); // q2
+
+        let missedExtPts = [];  // Position of missed (not in answer) extreme-points
+        let ansExtPts = [];     // Position of found (in answer) extreme-points
+        let ansErrPts = [];     // Position of None extreem points in answer
+
+        let missedLabels = [];      // Type labels for missed extreme-Points
+        let foundLabels = [];       // Type labels for found extreme-points
+        let foundLabelColor = [];   // Colors for found found extrme-points type labels
+
+        let cords = [];             // cordinates for points (in answer + missed extreme-points)
+        let cordLabelTxt = [];      // labels showing points cordinate values (x,y)
+
+        dataPts.forEach((d)=>{  // lope through al cordinate points (from function input parameter)
+
+            if(extremeDict.includes(d.type) && !ansDataPts.includes(d)){    // Point is an extreme-point but not in the answer
+                missedExtPts.push([d.x, d.y]);
+                missedLabels.push(d.type);
+                cordLabelTxt.push(d.label);
+                cords.push([d.x, d.y]);
+            }
+
+        });
+
+        ansDataPts.forEach((d, i)=>{                // lope through al points in answer
+
+            if(extremeDict.includes(d.type)){       // point is an extreme-point
+                ansExtPts.push([d.x, d.y]);
+                foundLabels.push(d.type);
+                if(d.type === exc.questions[2].answer[i].value){  // Point type (min, max or teras) corectly identified
+                    foundLabelColor.push("black");
+                } else{ 
+                    foundLabelColor.push("red");
+                }
+            } else{     
+                ansErrPts.push([d.x, d.y]);         // Answered points not part of correct answer (not extreme points)
+            }
+            cordLabelTxt.push(d.label);             // Answered points position labels
+            cords.push([d.x, d.y]);                 // Answered points xy positions
+
+        });
+
+            /* Mark answered points and missed extreme points */
+        let missedM = new MarkerObj(exc.id+"missedM", missedExtPts, {"color": ["blue"], "r": [4]}, canvas);   // Mark missed extreme points
+        let ansExtM = new MarkerObj(exc.id+"foundM", ansExtPts, {"color": ["blaxk"], "r": [4]}, canvas);      // Mark found extreme points
+        let errM = new MarkerObj(exc.id+"wrongAnsM", ansErrPts, {"color": ["red"], "r": [4]}, canvas );       // Mark answered none extreme points (wrong answersx)
+
+        let miseedL = new LabelObj(exc.id+"missedL", missedExtPts, missedLabels, {"color": ["blue"], "dy": [15]}, canvas);          // label missed extreme-points (type)
+        let ansExtL = new LabelObj(exc.id+"foundExtL", ansExtPts, foundLabels, {"color": foundLabelColor, "dy": [15] }, canvas);    // label found extreme points (type)
+        let cordL = new LabelObj(exc.id+"cordL", cords, cordLabelTxt, {"dy": [-10]}, canvas);   // label cordinates for al points (answer + missed extreme-points)
+
+            // create label for showing correct graph function
+        let fxLabelColor = "black";     
+        let fxLabel = "";
+        for(let i=0; i<fxOptions.length; i++){
+            if(fxOptions[i].points > 0){ 
+                fxLabel = fxOptions[i].label;
+                break;
+                }
+        };
+        if(exc.questions[3].answer[0].points < 1){ fxLabelColor = "red"; };
+        let fxL = new LabelObj(exc.id+"fxLabel", [[0.5, 9]], ["f(x)= "+fxLabel], {"anchors": ["start"], "color": [fxLabelColor]}, canvas);  // Label showing correct graph function 
+
+            /* set answer legend */
+        let legBack = new RectObj(exc.id+"legBackground", [[-3, 10]], {"height": [150], "width": [130]}, canvas, "txtBack");    // legend background
+        let lablX = -2.75;  
+        let lablY0 = 9.25;
+        let labelPos = [[lablX, lablY0]];
+        let labelTxt = ["facit: rätt svarat", "facit: missat svar", "facti: fel svarat", "extrempunkt", "missad ext-pkt", "ej ext-pkt"];
+            let legCol = ["black", "blue", "red", "black", "blue", "red"];
+        for(let i=1; i<labelTxt.length; i++){
+            labelPos.push([lablX, labelPos[i-1][1]-0.6]);
+        }
+        let legLabel = new LabelObj(exc.id+"legLabel", labelPos, labelTxt, {"anchors": ["start"], "color": legCol}, canvas);
+
+        legenMarkerX = lablX - 0.1;
+        let legMrkPos = [];
+        for(let i=3; i<labelTxt.length; i++){
+            legMrkPos.push( [ legenMarkerX, labelPos[i][1]+0.1 ] );
+        }
+        let legenMarker = new MarkerObj(exc.id+"legMarker", legMrkPos, {"color": legCol, "r": [4]}, canvas);
+
+    }
+
+}
+
+
     // create "tangent and hidden graph" excercise 
 function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, xRange=[-3, 10], yRange=[-5, 10]){
 
     let exc = new Excercise(id);  
+
+    let toIntroBtn = new ButtonObj("toIntroBtn", "Intro", exc.containerDiv, "exc_introBtn");  
+    toIntroBtn.addListener(()=>{
+            while(rootDiv.lastChild){
+                rootDiv.removeChild(rootDiv.lastChild);
+            }
+            exc_intro();
+            window.scrollTo(0, 0);
+        }
+    );
 
         // excercise description texts 
     let headerTxt = "Figuren nedan visar tangenten till en graf / kurva (ej utritad). Tangentlinjens lutningen är lika med grafens lutningen i en utmarkerad punkt (tangeringspunkten). Tangenten (tangeringspunkten) kan flyttas utmed grafen med hjälp a slidern under figuren. Utgå från tangenten och svara på frågorna om grafen";
@@ -233,110 +332,18 @@ function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, 
         /* Check answers and reveal answer visual elements */
     exc.inputs["checkAns"].addListener((obj)=>{
 
-        if(!exc.check()){ // run answer check and see if all questions have been answered => true
-            exc.inputs["scoreP"].P.innerHTML = "En eller flera frågor ej besvarade";
+        hidde_graph_ansReveal(exc, dataPts, canvas, graph, fxOptions);
+
+        if(i+1 < excerciseFx.lenght){
+            FigureP.P.innerHTML = figureTxtAns; // Update figure text
+            obj.remove_all_listeners();
+            obj.button.textContent = "nästa uppgift";
+            obj.addListener(()=>{ window.scrollTo(0, 0); togle_excercises(i+1); headerElements["excTogle"].set_value(i+1)});
         } else{
-
-            exc.inputs["scoreP"].P.innerHTML = `${exc.R}/${exc.P} P`;     // Display scored points out of total possible
-
-            graph.update(new UpdateNode({"drawT": 1}, 1500));   // Reveal hidden graph
-
-            let ansDataPts = [];    // answered pints
-            exc.questions[1].answer.forEach((ans)=>{ansDataPts.push(ans.value)}); // q2
-
-            let missedExtPts = [];  // Position of missed (not in answer) extreme-points
-            let ansExtPts = [];     // Position of found (in answer) extreme-points
-            let ansErrPts = [];     // Position of None extreem points in answer
-
-            let missedLabels = [];      // Type labels for missed extreme-Points
-            let foundLabels = [];       // Type labels for found extreme-points
-            let foundLabelColor = [];   // Colors for found found extrme-points type labels
-
-            let cords = [];             // cordinates for points (in answer + missed extreme-points)
-            let cordLabelTxt = [];      // labels showing points cordinate values (x,y)
-
-            dataPts.forEach((d)=>{  // lope through al cordinate points (from function input parameter)
-
-                if(extremeDict.includes(d.type) && !ansDataPts.includes(d)){    // Point is an extreme-point but not in the answer
-                    missedExtPts.push([d.x, d.y]);
-                    missedLabels.push(d.type);
-                    cordLabelTxt.push(d.label);
-                    cords.push([d.x, d.y]);
-                }
-
-            });
-
-            ansDataPts.forEach((d, i)=>{                // lope through al points in answer
-
-                if(extremeDict.includes(d.type)){       // point is an extreme-point
-                    ansExtPts.push([d.x, d.y]);
-                    foundLabels.push(d.type);
-                    if(d.type === exc.questions[2].answer[i].value){  // Point type (min, max or teras) corectly identified
-                        foundLabelColor.push("black");
-                    } else{ 
-                        foundLabelColor.push("red");
-                    }
-                } else{     
-                    ansErrPts.push([d.x, d.y]);         // Answered points not part of correct answer (not extreme points)
-                }
-                cordLabelTxt.push(d.label);             // Answered points position labels
-                cords.push([d.x, d.y]);                 // Answered points xy positions
-
-            });
-
-                /* Mark answered points and missed extreme points */
-            let missedM = new MarkerObj(id+"missedM", missedExtPts, {"color": ["blue"], "r": [4]}, canvas);   // Mark missed extreme points
-            let ansExtM = new MarkerObj(id+"foundM", ansExtPts, {"color": ["blaxk"], "r": [4]}, canvas);      // Mark found extreme points
-            let errM = new MarkerObj(id+"wrongAnsM", ansErrPts, {"color": ["red"], "r": [4]}, canvas );       // Mark answered none extreme points (wrong answersx)
-
-            let miseedL = new LabelObj(id+"missedL", missedExtPts, missedLabels, {"color": ["blue"], "dy": [15]}, canvas);          // label missed extreme-points (type)
-            let ansExtL = new LabelObj(id+"foundExtL", ansExtPts, foundLabels, {"color": foundLabelColor, "dy": [15] }, canvas);    // label found extreme points (type)
-            let cordL = new LabelObj(id+"cordL", cords, cordLabelTxt, {"dy": [-10]}, canvas);   // label cordinates for al points (answer + missed extreme-points)
-
-                /* create label for showing correct graph function*/ 
-            let fxLabelColor = "black";     
-            let fxLabel = "";
-            for(let i=0; i<fxOptions.length; i++){
-                if(fxOptions[i].points > 0){ 
-                    fxLabel = fxOptions[i].label;
-                    break;
-                 }
-            };
-            if(exc.questions[3].answer[0].points < 1){ fxLabelColor = "red"; };
-            let fxL = new LabelObj(id+"fxLabel", [[0.5, 9]], ["f(x)= "+fxLabel], {"anchors": ["start"], "color": [fxLabelColor]}, canvas);  // Label showing correct graph function 
-
-                /* set answer legend */
-            let legBack = new RectObj(id+"legBackground", [[-3, 10]], {"height": [150], "width": [130]}, canvas, "txtBack");    // legend background
-            let lablX = -2.75;  
-            let lablY0 = 9.25;
-            let labelPos = [[lablX, lablY0]];
-            let labelTxt = ["facit: rätt svarat", "facit: missat svar", "facti: fel svarat", "extrempunkt", "missad ext-pkt", "ej ext-pkt"];
-             let legCol = ["black", "blue", "red", "black", "blue", "red"];
-            for(let i=1; i<labelTxt.length; i++){
-                labelPos.push([lablX, labelPos[i-1][1]-0.6]);
-            }
-            let legLabel = new LabelObj(id+"legLabel", labelPos, labelTxt, {"anchors": ["start"], "color": legCol}, canvas);
-
-            legenMarkerX = lablX - 0.1;
-            let legMrkPos = [];
-            for(let i=3; i<labelTxt.length; i++){
-                legMrkPos.push( [ legenMarkerX, labelPos[i][1]+0.1 ] );
-            }
-            let legenMarker = new MarkerObj(id+"legMarker", legMrkPos, {"color": legCol, "r": [4]}, canvas);
-
-
-            if(i+1 < exc.lenght){
-                FigureP.P.innerHTML = figureTxtAns; // Update figure text
-                obj.remove_all_listeners();
-                obj.button.textContent = "nästa uppgift";
-                obj.addListener(()=>{ window.scrollTo(0, 0); togle_excercises(i+1); headerElements["excTogle"].set_value(i+1)});
-            } else{
-                obj.remove_from_div();
-            }
-
-            window.scrollTo(0, 0);  // Scroll to window top to display visual elements
-
+            obj.remove_from_div();
         }
+
+        window.scrollTo(0, 0);  // Scroll to window top to display visual elements
 
     });
 
