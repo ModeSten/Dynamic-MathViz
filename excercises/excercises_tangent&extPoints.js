@@ -115,7 +115,7 @@ function hiddenGraph_questions(exc, headerTxt, figureTxt, figureTxtAns, quizTxt,
 
         /* Text Paragraphs */
     let headerP = new Paragraph(exc.id+"HeaderP", headerTxt, exc.headerDiv);  
-    let FigureP = new Paragraph(exc.id+"FigureP", figureTxt, exc.figTxtDiv);
+    exc.inputs["figureP"] = new Paragraph(exc.id+"FigureP", figureTxt, exc.figTxtDiv);
     let quizP = new Paragraph(exc.id+"QuizP", quizTxt, exc.qHeaderDiv);
 
         /* Quesion 1: Number of extreme points*/
@@ -128,7 +128,7 @@ function hiddenGraph_questions(exc, headerTxt, figureTxt, figureTxtAns, quizTxt,
 
         /* Question 2: identifying extrem points*/
     let q2Txt = "<b>Q2:</b> Vilka är grafens extrempunkter?<br>Svar i formatetet (x, y) och värdena är rundade till en decimal<br>Välj samma antal punkter som svra ovan (Q1)";
-    let q2Opts = get_xy_options(dataPts, 1);
+    let q2Opts = get_xy_options(dataPts, extremeN);
     let q2 = new QusetionMultiSelect(exc.id+"Q2", q2Txt, 1, 1, q2Opts);
     exc.add_question(q2);
 
@@ -152,7 +152,7 @@ function hiddenGraph_questions(exc, headerTxt, figureTxt, figureTxtAns, quizTxt,
     q1.addListener((q)=>{
 
         let N = q.answer[0].value;
-        let options = get_xy_options(dataPts, N);
+        let options = get_xy_options(dataPts, extremeN);
         q2.update(options, N);
 
         q3.update([], 0);
@@ -183,12 +183,13 @@ function hiddenGraph_questions(exc, headerTxt, figureTxt, figureTxtAns, quizTxt,
 
 }
 
-
+    // reveal answer (visuals coresponding to answer ) for hidden graph excercise
 function hidde_graph_ansReveal(exc, dataPts, canvas, graph, fxOptions){
 
     if(!exc.check()){ // run answer check and see if all questions have been answered => true
         exc.inputs["scoreP"].P.innerHTML = "En eller flera frågor ej besvarade";
-    } else{
+        return false;
+    }
 
         exc.inputs["scoreP"].P.innerHTML = `${exc.R}/${exc.P} P`;     // Display scored points out of total possible
 
@@ -277,7 +278,7 @@ function hidde_graph_ansReveal(exc, dataPts, canvas, graph, fxOptions){
         }
         let legenMarker = new MarkerObj(exc.id+"legMarker", legMrkPos, {"color": legCol, "r": [4]}, canvas);
 
-    }
+        return true
 
 }
 
@@ -286,6 +287,7 @@ function hidde_graph_ansReveal(exc, dataPts, canvas, graph, fxOptions){
 function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, xRange=[-3, 10], yRange=[-5, 10]){
 
     let exc = new Excercise(id);  
+    console.log(i);
 
     let toIntroBtn = new ButtonObj("toIntroBtn", "Intro", exc.containerDiv, "exc_introBtn");  
     toIntroBtn.addListener(()=>{
@@ -327,23 +329,23 @@ function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, 
         tangent.translate_center(val);
     });
 
-
-
         /* Check answers and reveal answer visual elements */
     exc.inputs["checkAns"].addListener((obj)=>{
 
-        hidde_graph_ansReveal(exc, dataPts, canvas, graph, fxOptions);
+        if( hidde_graph_ansReveal(exc, dataPts, canvas, graph, fxOptions) ){
 
-        if(i+1 < excerciseFx.lenght){
-            FigureP.P.innerHTML = figureTxtAns; // Update figure text
-            obj.remove_all_listeners();
-            obj.button.textContent = "nästa uppgift";
-            obj.addListener(()=>{ window.scrollTo(0, 0); togle_excercises(i+1); headerElements["excTogle"].set_value(i+1)});
+        if(i < excercises.length){
+                exc.inputs["figureP"].P.innerHTML = figureTxtAns; // Update figure text
+                obj.remove_all_listeners();
+                obj.button.textContent = "nästa uppgift";
+                obj.addListener(()=>{ window.scrollTo(0, 0); togle_excercises(i); headerElements["excTogle"].set_value(i+1)});
         } else{
             obj.remove_from_div();
         }
 
-        window.scrollTo(0, 0);  // Scroll to window top to display visual elements
+            window.scrollTo(0, 0);  // Scroll to window top to display visual elements
+
+        }
 
     });
 
@@ -355,6 +357,20 @@ function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, 
 
 
 function hidden_graph_derivata(id, i, rootDiv, extremN, dataPts, fx, fxOptions, Xrange=[-3, 10], yRange=[-5, 10]){
+
+    let exc = new Excercise(id);
+
+
+    let toIntroBtn = new ButtonObj("toIntroBtn", "Intro", exc.containerDiv, "exc_introBtn");  
+    toIntroBtn.addListener(()=>{
+            while(rootDiv.lastChild){
+                rootDiv.removeChild(rootDiv.lastChild);
+            }
+            exc_intro();
+            window.scrollTo(0, 0);
+        }
+    );
+
 
 
 
@@ -580,7 +596,7 @@ function exc_intro(rootDiv){
 function togle_excercises(i){
 
     if(i >= excercises.lenght){
-        return
+        return false
     }
 
     let root = document.getElementById("content");
@@ -594,6 +610,8 @@ function togle_excercises(i){
     } else{
         root.appendChild(excercises[i].containerDiv);
     }
+
+    return true
 
 }
 

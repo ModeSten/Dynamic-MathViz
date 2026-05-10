@@ -524,6 +524,7 @@ function get_options(labels, values, points){   // create answer options; Simply
 
 function get_xy_options(data, N=1){     // get options for qusetion rerquring the selection of one or more points; Simplifies option creation
 
+
     let extremDict = ["min", "max", "teras"];
 
     let options = [];
@@ -534,7 +535,6 @@ function get_xy_options(data, N=1){     // get options for qusetion rerquring th
         if(extremDict.includes(d.type)){
             p += 1/N;
         }
-
         options.push( new QuizOption(d.label, d, p ));
 
     });
