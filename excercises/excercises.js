@@ -509,12 +509,12 @@ class Point{    // class specifying a cordinated point
 }
 
 
-function get_options(labels, values, points){   // create answer options; Simplyfies creation of multiple options
+function get_options(labels, values, points, labelHeader=""){   // create answer options; Simplyfies creation of multiple options
 
     let opts = [];
 
     for(let i=0; i<labels.length; i++){
-        opts.push( new QuizOption(labels[i], values[i], points[i]));
+        opts.push( new QuizOption(labelHeader+labels[i], values[i], points[i]));
     }
 
     return opts;

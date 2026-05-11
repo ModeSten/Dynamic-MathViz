@@ -6,7 +6,7 @@ const height = 500; // SVG height
 
 var extremeDict = ["min", "max", "teras"] // String (labels) denoting extreme points
 
-var excerciseFx = [derivataX2_1, (i)=>{return tangX3_1(i, "derivata")}, multiTanX2_1, (i)=>{return tangX3_2(i, "multiTangent")}, tangX2_1, tangX3_1, tangX2_2, tangX3_2]; // Excercises initlization functions
+var excerciseFx = [derivataX2_1, (i)=>{return tangX3_1(i, "derivata")}, multiTanX2_1, (i)=>{return tangX3_2(i, "multiTangent")}, tangX2_1, tangX3_1, tangX3_2, tangX2_2]; // Excercises initlization functions
 var ExcerciseN = excerciseFx.length;                        // Number of excercises
 var excercises = new Array(ExcerciseN).fill(null);          // Excerices list; store excercises class instances
 
@@ -33,18 +33,18 @@ function hiddenGraph_questions(exc, headerTxt, figureTxt, figureTxtAns, quizTxt,
     exc.add_question(q1);
 
         /* Question 2: identifying extrem points*/
-    let q2Txt = "<b>Q2:</b> Vilka är grafens extrempunkter?<br>Svar i formatetet (x, y) och värdena är rundade till en decimal<br>Välj samma antal punkter som svra ovan (Q1)";
+    let q2Txt = "<b>Q2:</b> Vilka är grafens extrempunkter / teraspunkter?<br>Svar i formatetet (x, y) och värdena är avrundade till en decimal";
     let q2Opts = get_xy_options(dataPts, extremeN);
     let q2 = new QusetionMultiSelect(exc.id+"Q2", q2Txt, 1, 1, q2Opts);
     exc.add_question(q2);
 
         /* Question 3: Type of extreme points */ 
-    let q3Txt = "<b>Q3:</b> För varje extrempunkt, ange om det är en min, max eller teraspunkt<br>Välj först vilka extrempunkterna är (Q2)";
+    let q3Txt = "<b>Q3:</b> För varje punkt angiven i Q2, ange om det är en min, max eller teraspunkt";
     let q3 = new QuestionMenSelect(exc.id+"Q3", q3Txt, 0, 1, [], []);
     exc.add_question(q3);
 
         /* Question 4: Graph function */
-    let q4Txt = "<b>Q4:</b> Vilken är grafens function?";
+    let q4Txt = "<b>Q4:</b> Vilken är grafens funktion?";
     let q4Opts = get_options([" x2", " x3", " sin"], ["x2", "x3", "sin"], [0, 1, 0]);
     let q4 = new QuestionSelectOne(exc.id+"q4", q4Txt, 1, 1, [fxOptions]);
     exc.add_question(q4);
@@ -205,9 +205,9 @@ function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, 
     );
 
         // excercise description texts 
-    let headerTxt = "Figuren nedan visar tangenten till en graf / kurva (ej utritad). Tangentlinjens lutningen är lika med grafens lutningen i en utmarkerad punkt (tangeringspunkten). Tangenten (tangeringspunkten) kan flyttas utmed grafen med hjälp a slidern under figuren. Utgå från tangenten och svara på frågorna om grafen";
-    let figureTxt = " <b>Figur 1:</b> Tangenten till en dold graf i en punkt (x, y). 'Tangeringspunkten' (x, y) är markerad med en en svart circle och tangentens lutning (k) är utritad";
-    let figureTxtAns = " <b>Figur 1:</b> Tangenten till en graf i en punkt (x, y). Punkten (x, y), i vilken tangent skär grafen är markerad med en circle och tangentens lutning (k) är utritad. Utmarkerat är punkterna angivna i Q2 + eventuella extrempunkter som inte angets i Q2";
+    let headerTxt = "Figuren nedan visar tangenten till en graf / kurva (ej utritad). Tangentlinjens lutningen är lika med grafens lutningen i tangeringspunkten vilken är utmarkerad med en svart cirkel. Tangeringspunkten kan flyttas längs med grafen med hjälp a slidern under figuren. Utgå från tangenten och svara på frågorna om grafen";
+    let figureTxt = " <b>Figur 1:</b> Figuren visar tangenten till en dold graf i en punkt (x, y). 'Tangeringspunkten' (x, y) är markerad med en en svart circle och tangentens lutning visas med k";
+    let figureTxtAns = " <b>Figur 1:</b> Figuren visar tangenten till en dold graf i en punkt (x, y). 'Tangeringspunkten' (x, y) är markerad med en en svart circle och tangentens lutning visas med k. Utmarkerat är punkterna angivna i Q2 + eventuella extrempunkter som inte angets i Q2";
     let quizTxt = `<b>Uppgift${i}:</b> Utgå från tangentlinjen och svara på följande frågor om den dold grafen`;
 
     hiddenGraph_questions(exc, headerTxt, figureTxt, figureTxtAns, quizTxt, extremeN, dataPts, fxOptions);  // create questions
@@ -335,9 +335,9 @@ function hidden_graph_tangentMulti( id, i, rootDiv, extremeN, dataPts, fx, fxOpt
     );
 
         // excercise description texts 
-    let headerTxt = "Figuren nedan visar derivatan och andra derivatan till en graf / kurva (ej utritad). Derivatornas värde i en punkt x kan avslöja grafens karaktär i sagda punkt. Utgå från derivatan och andra derivatan och svara på frågorna om grafen";
-    let figureTxt = " <b>Figur 1:</b> figuren visar derivatan och andra derivatan till en ej utritad graf";
-    let figureTxtAns = " <b>Figur 1:</b> . figuren visar en graf, dess derivata och andra derivata. Utmarkerat är punkterna angivna i Q2 + eventuella extrempunkter som inte angets i Q2";
+    let headerTxt = "Figuren nedan visar ett antal tangentlinger till en graf / kurva (ej utritad). En tangentlinje är utritad i varje punkt där grafens lutning är lika med 0. En tangentlinje är också utritad före och efter varen av dessa punkter. Utgå från tangenterna och svara på frågorna om grafen";
+    let figureTxt = " <b>Figur 1:</b> figuren visar ett antal tangenter till en graf (ej utritad). Tangenternas tangerinspunkter är utmarkerade med svarta cirklar";
+    let figureTxtAns = " <b>Figur 1:</b> . figuren visar ett antal tangenter till en graf (ej utritad). Tangenternas tangerinspunkter är utmarkerade med svarta cirklar";
     let quizTxt = `<b>Uppgift${i}:</b> Utgå från derivtorna och svara på följande frågor om den dold grafen`;
 
     hiddenGraph_questions(exc, headerTxt, figureTxt, figureTxtAns, quizTxt, extremeN, dataPts, fxOptions);  // create questions
@@ -431,9 +431,9 @@ function exc_intro(rootDiv){
 
     let introTxt = [
         "<b>1:</b> En tangent till en graf är en rätt linje varse lutning / riktningskoficient är lika med grafens lutning i en punkt (tangeringspunkten)",
-        "<b>2:</b> Flyttar vi tangenten (tangeringspunkten) längs grafen så ser vi hur tangentens, pch där med grafens, lutning varierar för olika x värden",
-        "<b>3:</b> Vi kan identifiera grafens extrempunkter genom att se i vilka punkter lutningen är lika med 0",
-        "<b>4:</b> Vi kan se vilken vad en extrempunkt har för typ (min, max eller teras) genom att se vilket tecken (+ eller -) lutningen har innan och efter"
+        "<b>2:</b> Flyttar vi tangeringspunkten längs grafen så ser vi hur tangentens och där med grafens lutning varierar för olika x värden",
+        "<b>3:</b> Vi kan identifiera grafens extrem och eventuella teraspunkter genom att se i vilka punkter tangents lutningen är lika med 0",
+        "<b>4:</b> Vi kan identifiera en extrempunkts karaktär (min eller max), eller om det är en teraspunkt, genom att observera lutningens tecken (+ eller -) innan och efter punkten (tecken-studie)"
     ];
 
     let introP = new Paragraph("introP", introTxt[0], intro.figTxtDiv);
@@ -556,7 +556,7 @@ function exc_intro(rootDiv){
     let stateLbl = document.createElement("h3");
 
     let I = 0;
-    let nextBtn = new ButtonObj("introNext", "next", intro.controlDiv);
+    let nextBtn = new ButtonObj("introNext", "nästa steg", intro.controlDiv);
     nextBtn.addListener((obj)=>{
 
         I++;
@@ -574,7 +574,7 @@ function exc_intro(rootDiv){
     stateLbl.innerHTML = `${I+1}/${stepS.length}`;
     intro.controlDiv.appendChild(stateLbl);
 
-    let resetBtn = new ButtonObj("introReset", "reset", intro.controlDiv);
+    let resetBtn = new ButtonObj("introReset", "återställ", intro.controlDiv);
     resetBtn.addListener((obj)=>{
 
         I = 0;
@@ -671,7 +671,7 @@ function tangX3_2(i, type="tangent", rootName="content"){  // create / set excer
     let data = [pt1_4, pt1_6, pt3_6, pt4_1, pt5_4, pt6_5];  // answer (options) corindate points 
 
     let fxLabels = ["(1/4)x^2  - 1.8x + 2.5", "(1/12)x^3 - 0.9x^2 + 2.5x + 4", "-x^2 + 3x + 2"];    // Function (options) labels 
-    let fxOptions = get_options(fxLabels, fxLabels, [0, 1, 0]);                                     // Function options
+    let fxOptions = get_options(fxLabels, fxLabels, [0, 1, 0], "f(x)= ");                                     // Function options
 
     if(type === "derivata"){
         return hidden_graph_derivata("excX3_2", i, root, 2, data, fx, fxOptions);
@@ -701,7 +701,7 @@ function tangX2_1(i, type="tangent", rootName = "content"){
     let data = [pt1_4, pt1_6, pt3_2, pt3_6, pt4_1, pt6_5]; // answer (options) corindate points 
 
     let fxLabels = ["(1/4)x^2  - 1.8x + 2.5 ", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];  // Function (options) labels 
-    let fxOptions = get_options(fxLabels, fxLabels, [1, 0, 0]);                                 // Function options
+    let fxOptions = get_options(fxLabels, fxLabels, [1, 0, 0], "f(x)= ");                                 // Function options
 
     if(type === "derivata"){
         return hidden_graph_derivata("excX2_1", i, root, 1, data, fx, fxOptions);
@@ -734,7 +734,7 @@ function tangX3_1(i, type="tangent", rootName="content"){
     let data = [pt1_4, pt1_5, pt2_5, pt3_2, pt3_6, pt4_1]; // answer (options) corindate points 
 
     let fxLabels = ["x^2 - 5x +6.25", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];    // Function (options) labels 
-    let fxOptions = get_options(fxLabels, fxLabels, [0, 0, 1]);                          // Function options
+    let fxOptions = get_options(fxLabels, fxLabels, [0, 0, 1], "f(x)= ");                          // Function options
 
     if(type === "derivata"){
         return hidden_graph_derivata("excX3_1", i, root, 1, data, fx, fxOptions);
@@ -764,7 +764,7 @@ function tangX2_2(i, type="tangent", rootName="content"){
     let data = [pt1_1, pt1_5, pt3_2, pt3_6, pt4_1, pt6_5];
 
     let fxLabels = ["x^2 - 5x +6.25", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];   // Function (options) labels 
-    let fxOptions = get_options(fxLabels, fxLabels, [0, 1, 0]);                         // Function options
+    let fxOptions = get_options(fxLabels, fxLabels, [0, 1, 0], "f(x)= ");                         // Function options
 
     if(type === "derivata"){
         return hidden_graph_derivata("excX2_2", i, root, 1, data, fx, fxOptions);
@@ -794,8 +794,8 @@ function derivataX2_1(i, type="derivata", rootName="content"){
 
     let data = [pt1_4, pt1_6, pt3_1, pt3_4, pt4_0, pt6_5]; // answer (options) corindate points 
 
-    let fxLabels = ["(1/4)x^2  - 1.8x + 2.5 ", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];  // Function (options) labels 
-    let fxOptions = get_options(fxLabels, fxLabels, [1, 0, 0]);                                 // Function options
+    let fxLabels = ["(1/3)x^2  - 3x + 7 ", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x + 2"];  // Function (options) labels 
+    let fxOptions = get_options(fxLabels, fxLabels, [1, 0, 0], "f(x)= ");                                 // Function options
 
     if(type === "tangent"){
         return hidden_graph_tangent("excX2_1", i, root, 1, data, fx, fxOptions);
@@ -827,8 +827,8 @@ function multiTanX2_1(i, type="multiTangent", rootName="content"){
 
     let data = [pt1_6, pt3_1, pt3_4, pt4_3, pt6_3]; // answer (options) corindate points 
 
-    let fxLabels = ["(1/4)x^2  - 1.8x + 2.5 ", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];  // Function (options) labels 
-    let fxOptions = get_options(fxLabels, fxLabels, [1, 0, 0]);                                 // Function options
+    let fxLabels = ["(1/6)x^2  - 1.8x + 8.16 ", "-x^2 + 3x + 2.3", "(1/3)x^3 - 2.5x^2 + 6.25x + 2"];  // Function (options) labels 
+    let fxOptions = get_options(fxLabels, fxLabels, [1, 0, 0], "f(x)= ");                                 // Function options
 
     if(type === "tangent"){
         return hidden_graph_tangent("excX2_1", i, root, 1, data, fx, fxOptions);
