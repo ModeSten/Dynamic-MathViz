@@ -6,7 +6,7 @@ const height = 500; // SVG height
 
 var extremeDict = ["min", "max", "teras"] // String (labels) denoting extreme points
 
-var excerciseFx = [derivataX2_1, (i)=>{return tangX3_1(i, "derivata")}, multiTanX2_1, (i)=>{return tangX3_2(i, "multiTangent")}, tangX2_1, tangX3_1, tangX3_2, tangX2_2]; // Excercises initlization functions
+var excerciseFx = [multiTanX2_1, (i)=>{return tangX3_2(i, "multiTangent")}, derivataX2_1, (i)=>{return tangX3_1(i, "derivata")}, tangX2_1, tangX3_1, tangX3_2, tangX2_2]; // Excercises initlization functions
 var ExcerciseN = excerciseFx.length;                        // Number of excercises
 var excercises = new Array(ExcerciseN).fill(null);          // Excerices list; store excercises class instances
 
@@ -166,7 +166,7 @@ function hidde_graph_ansReveal(exc, dataPts, canvas, graph, fxOptions){
         let fxL = new LabelObj(exc.id+"fxLabel", [[0.5, 9]], ["f(x)= "+fxLabel], {"anchors": ["start"], "color": [fxLabelColor]}, canvas);  // Label showing correct graph function 
 
             /* set answer legend */
-        let legBack = new RectObj(exc.id+"legBackground", [[-3, 10]], {"height": [150], "width": [140]}, canvas, "txtBack");    // legend background
+        let legBack = new RectObj(exc.id+"legBackground", [[-3, 10]], {"height": [125], "width": [140]}, canvas, "txtBack");    // legend background
         let lablX = -2.9;  
         let lablY0 = 9.25;
         let labelPos = [[lablX, lablY0]];
