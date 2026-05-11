@@ -350,6 +350,11 @@ function hidden_graph_tangentMulti( id, i, rootDiv, extremeN, dataPts, fx, fxOpt
     let graph = new GraphObj(id+"Graph", fx, xRange, {"draw": true, "drawT": 0}, canvas);
     let tangents = new TangentChainObj("tanChain", fx, xRange, {"x0": x0, "lenght": tangentL}, canvas);
 
+    let tangPts = [];
+    x0.forEach((x)=>{ tangPts.push([x, fx(x)]) });
+
+    let tanMarker = new MarkerObj(id+"TangM", tangPts, {"color":["black"], "r":[5]}, canvas);
+
 
 
         /* Check answers and reveal answer visual elements */
