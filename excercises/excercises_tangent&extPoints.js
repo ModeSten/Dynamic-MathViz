@@ -134,7 +134,7 @@ function hidde_graph_ansReveal(exc, dataPts, canvas, graph, fxOptions){
                 if(d.type === exc.questions[2].answer[i].value){  // Point type (min, max or teras) corectly identified
                     foundLabelColor.push("black");
                 } else{ 
-                    foundLabelColor.push("red");
+                    foundLabelColor.push("blue");
                 }
             } else{     
                 ansErrPts.push([d.x, d.y]);         // Answered points not part of correct answer (not extreme points)
@@ -162,15 +162,15 @@ function hidde_graph_ansReveal(exc, dataPts, canvas, graph, fxOptions){
                 break;
                 }
         };
-        if(exc.questions[3].answer[0].points < 1){ fxLabelColor = "red"; };
+        if(exc.questions[3].answer[0].points < 1){ fxLabelColor = "blue"; };
         let fxL = new LabelObj(exc.id+"fxLabel", [[0.5, 9]], ["f(x)= "+fxLabel], {"anchors": ["start"], "color": [fxLabelColor]}, canvas);  // Label showing correct graph function 
 
             /* set answer legend */
-        let legBack = new RectObj(exc.id+"legBackground", [[-3, 10]], {"height": [150], "width": [130]}, canvas, "txtBack");    // legend background
-        let lablX = -2.75;  
+        let legBack = new RectObj(exc.id+"legBackground", [[-3, 10]], {"height": [150], "width": [140]}, canvas, "txtBack");    // legend background
+        let lablX = -2.9;  
         let lablY0 = 9.25;
         let labelPos = [[lablX, lablY0]];
-        let labelTxt = ["facit: rätt svarat", "facit: missat svar", "facti: fel svarat", "extrempunkt", "missad ext-pkt", "ej ext-pkt"];
+        let labelTxt = ["facit, svar rätt", "facit: svar fel/saknat", "felaktigt svar"];
             let legCol = ["black", "blue", "red", "black", "blue", "red"];
         for(let i=1; i<labelTxt.length; i++){
             labelPos.push([lablX, labelPos[i-1][1]-0.6]);
@@ -206,8 +206,8 @@ function hidden_graph_tangent(id, i, rootDiv, extremeN, dataPts, fx, fxOptions, 
 
         // excercise description texts 
     let headerTxt = "Figuren nedan visar tangenten till en graf / kurva (ej utritad). Tangentlinjens lutningen är lika med grafens lutningen i tangeringspunkten vilken är utmarkerad med en svart cirkel. Tangeringspunkten kan flyttas längs med grafen med hjälp a slidern under figuren. Utgå från tangenten och svara på frågorna om grafen";
-    let figureTxt = " <b>Figur 1:</b> Figuren visar tangenten till en dold graf i en punkt (x, y). 'Tangeringspunkten' (x, y) är markerad med en en svart circle och tangentens lutning visas med k";
-    let figureTxtAns = " <b>Figur 1:</b> Figuren visar tangenten till en dold graf i en punkt (x, y). 'Tangeringspunkten' (x, y) är markerad med en en svart circle och tangentens lutning visas med k. Utmarkerat är punkterna angivna i Q2 + eventuella extrempunkter som inte angets i Q2";
+    let figureTxt = " <b>Figur 1:</b> Figuren visar en tangent till en graf (ej utritad). 'Tangeringspunkten' (x, y) är markerad med en en svart circle och tangentens lutning visas med k";
+    let figureTxtAns = " <b>Figur 1:</b> figuren visar en tangent till en graf i en punkt. 'Tangeringspunkten' (x, y) är markerad med en en svart circle och tangentens lutning visas med k. Utmarkerat är punkterna angivna i Q2 samt eventuella extrempunkter som inte angets i Q2";
     let quizTxt = `<b>Uppgift${i}:</b> Utgå från tangentlinjen och svara på följande frågor om den dold grafen`;
 
     hiddenGraph_questions(exc, headerTxt, figureTxt, figureTxtAns, quizTxt, extremeN, dataPts, fxOptions);  // create questions
@@ -277,9 +277,9 @@ function hidden_graph_derivata(id, i, rootDiv, extremeN, dataPts, fx, fxOptions,
     );
 
         // excercise description texts 
-    let headerTxt = "Figuren nedan visar derivatan och andra derivatan till en graf / kurva (ej utritad). Derivatornas värde i en punkt x kan avslöja grafens karaktär i sagda punkt. Utgå från derivatan och andra derivatan och svara på frågorna om grafen";
-    let figureTxt = " <b>Figur 1:</b> figuren visar derivatan och andra derivatan till en ej utritad graf";
-    let figureTxtAns = " <b>Figur 1:</b> . figuren visar en graf, dess derivata och andra derivata. Utmarkerat är punkterna angivna i Q2 + eventuella extrempunkter som inte angets i Q2";
+    let headerTxt = "Figuren nedan visar derivatan och andra derivatan till en graf / kurva (ej utritad). Mins att derivatan till en graf / kurva beskriver hur dess lutning varierar för olika x värden. Utgå från derivatan och andra derivatan och svara på frågorna om grafen";
+    let figureTxt = " <b>Figur 1:</b> figuren visar derivatan (heldragen) och andra derivatan (streckad) till en graf (ej utritad)";
+    let figureTxtAns = " <b>Figur 1:</b> . figuren visar en graf, dess derivata och andra derivata. Utmarkerat är punkterna angivna i Q2 samt eventuella extrempunkter som inte angets i Q2";
     let quizTxt = `<b>Uppgift${i}:</b> Utgå från derivtorna och svara på följande frågor om den dold grafen`;
 
     hiddenGraph_questions(exc, headerTxt, figureTxt, figureTxtAns, quizTxt, extremeN, dataPts, fxOptions);  // create questions
@@ -299,6 +299,9 @@ function hidden_graph_derivata(id, i, rootDiv, extremeN, dataPts, fx, fxOptions,
     exc.inputs["checkAns"].addListener((obj)=>{
 
         if( hidde_graph_ansReveal(exc, dataPts, canvas, graph, fxOptions) ){
+
+            dx.update(new UpdateNode({"width":1.5, "dashArray":"20, 5"}));
+            ddx.update(new UpdateNode({"width": 1}));
 
             if(i < excercises.length){
                     exc.inputs["figureP"].P.innerHTML = figureTxtAns; // Update figure text
@@ -337,7 +340,7 @@ function hidden_graph_tangentMulti( id, i, rootDiv, extremeN, dataPts, fx, fxOpt
         // excercise description texts 
     let headerTxt = "Figuren nedan visar ett antal tangentlinger till en graf / kurva (ej utritad). En tangentlinje är utritad i varje punkt där grafens lutning är lika med 0. En tangentlinje är också utritad före och efter varen av dessa punkter. Utgå från tangenterna och svara på frågorna om grafen";
     let figureTxt = " <b>Figur 1:</b> figuren visar ett antal tangenter till en graf (ej utritad). Tangenternas tangerinspunkter är utmarkerade med svarta cirklar";
-    let figureTxtAns = " <b>Figur 1:</b> . figuren visar ett antal tangenter till en graf (ej utritad). Tangenternas tangerinspunkter är utmarkerade med svarta cirklar";
+    let figureTxtAns = " <b>Figur 1:</b> . figuren visar en graf ett antal tangenter till denna. Tangenternas tangerinspunkter är utmarkerade med svarta cirklar. Utmarkerat är punkterna angivna i Q2 samt eventuella extrempunkter som inte angets i Q2";
     let quizTxt = `<b>Uppgift${i}:</b> Utgå från derivtorna och svara på följande frågor om den dold grafen`;
 
     hiddenGraph_questions(exc, headerTxt, figureTxt, figureTxtAns, quizTxt, extremeN, dataPts, fxOptions);  // create questions
@@ -348,11 +351,9 @@ function hidden_graph_tangentMulti( id, i, rootDiv, extremeN, dataPts, fx, fxOpt
     let canvas = new CanvasObj(id+"Canvas", width, height, margin, xRange, yRange, exc.svgDiv.id);
     let chart = new ChartObj(id+"Chart",{}, canvas);
     let graph = new GraphObj(id+"Graph", fx, xRange, {"draw": true, "drawT": 0}, canvas);
-    let tangents = new TangentChainObj("tanChain", fx, xRange, {"x0": x0, "lenght": tangentL}, canvas);
-
+    let tangents = new TangentChainObj("tanChain", fx, xRange, {"x0": x0, "lenght": tangentL, "color":"black"}, canvas);
     let tangPts = [];
     x0.forEach((x)=>{ tangPts.push([x, fx(x)]) });
-
     let tanMarker = new MarkerObj(id+"TangM", tangPts, {"color":["black"], "r":[5]}, canvas);
 
 
@@ -361,6 +362,9 @@ function hidden_graph_tangentMulti( id, i, rootDiv, extremeN, dataPts, fx, fxOpt
     exc.inputs["checkAns"].addListener((obj)=>{
 
         if( hidde_graph_ansReveal(exc, dataPts, canvas, graph, fxOptions) ){
+
+            tangents.update(new UpdateNode({"width": 1}));
+            tanMarker.update(new UpdateNode({"r":[2]}));
 
             if(i < excercises.length){
                     exc.inputs["figureP"].P.innerHTML = figureTxtAns; // Update figure text
