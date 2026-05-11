@@ -704,7 +704,7 @@ function tangX2_1(i, type="tangent", rootName = "content"){
 
     let data = [pt1_4, pt1_6, pt3_2, pt3_6, pt4_1, pt6_5]; // answer (options) corindate points 
 
-    let fxLabels = ["(1/4)x^2  - 1.8x + 2.5 ", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];  // Function (options) labels 
+    let fxLabels = ["(1/4)x^2  - 3x + 5 ", "-x^2 + 3x + 2", "(1/3)x^3  - 2.5x^2 + 6.25x"];  // Function (options) labels 
     let fxOptions = get_options(fxLabels, fxLabels, [1, 0, 0], "f(x)= ");                                 // Function options
 
     if(type === "derivata"){
