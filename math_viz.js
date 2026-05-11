@@ -364,8 +364,14 @@ class ChartObj extends VisualObj{
     // get svg (D3) axis based on scale
     get_axis( scale ){
 
-        let xAxis = d3.axisBottom(scale.x); 
-        let yAxis = d3.axisLeft(scale.y); 
+        let xRange = this.canvas.params.xRange;
+        let xTicks = xRange[1]-xRange[0];
+
+        let yRange = this.canvas.params.yRange;
+        let yTicks = yRange[1]-yRange[0];
+
+        let xAxis = d3.axisBottom(scale.x);
+        let yAxis = d3.axisLeft(scale.y);
 
         return {"x": xAxis, "y": yAxis};
 
@@ -431,8 +437,8 @@ class ChartObj extends VisualObj{
         // x label
         this.xLabel = this.canvas.svg.append("text")
             .attr("class", `x-label ${this.id}`)
-            .attr("text-anchor", "end")
-            .attr("x",  -15)
+            .attr("text-anchor", "start")
+            .attr("x",  this.canvas.params.width+15)
             .attr("y", AxisOfset.x)
             .text("x");
 
@@ -442,9 +448,14 @@ class ChartObj extends VisualObj{
             .attr("text-anchor", "end")
             .attr("x", AxisOfset.y)
             .attr("y", -15)
-            .html("y");
+            .text("y");
 
         this.init = true;
+
+            //remove 0 (origo) ticks
+        this.canvas.svg.selectAll(".tick")
+            .filter((d)=>{return d===0;})
+            .remove();
 
     }
 
