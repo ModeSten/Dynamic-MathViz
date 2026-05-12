@@ -845,9 +845,5 @@ function multiTanX2_1(i, type="multiTangent", rootName="content"){
 }
 
 
-
-
-
-
 exc_intro()
 
